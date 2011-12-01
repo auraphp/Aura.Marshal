@@ -3,7 +3,7 @@ Aura.Marshal
 
 > marshal (verb): to arrange in proper order; set out in an orderly manner; arrange clearly: to marshal facts; to marshal one's arguments. --  [dictionary.com](http://dictionary.reference.com/browse/marshal)
 
-The Aura.Marshal package is a data-object marshalling tool. It takes results from data sources (whether from SQL, Mongo, CSV, or something else) and marshals those result sets into domain model objects of your own design, preserving data relationships along the way.
+The Aura.Marshal package is a data-object marshalling tool. It takes results from data sources and marshals those result sets into domain model objects of your own design, preserving data relationships along the way.
 
 You can use any database access layer you like with Aura.Marshal, such as ...
 
@@ -16,11 +16,11 @@ You can use any database access layer you like with Aura.Marshal, such as ...
 
 ... or anything else.  (In theory, you should be able to retrieve data from XML, CSV, Mongo, or anything else, and load it into Aura.Marshal.)
 
-With Aura.Marshal, you use the data retrieval tools of your choice and write your own queries to retrieve data from a data source. You then load that result data into Aura.Marshal, and it creates record and collection objects for you based on a mapping scheme you define for it.
+With Aura.Marshal, you use the data retrieval tools of your choice and write your own queries to retrieve data from a data source. You then load that result data into an entity type object, and it creates record and collection objects for you based on a mapping scheme you define for it.
 
-Above all, Aura.Marshal makes it easy to avoid the N+1 problem when working with a domain model.
+Aura.Marshal makes it easy to avoid the N+1 problem when working with a domain model.  It also uses an identity map (per type) to avoid retaining multiple copies of the same object.
 
-It is important to remember that Aura.Marshal, despite resembling an ORM iin many ways, it *not* an ORM proper:
+It is important to remember that Aura.Marshal, despite resembling an ORM in many ways, it *not* an ORM proper:
 
 - it does not have a query-building facility
 - it will not issue queries on its own
@@ -39,7 +39,7 @@ For the rest of this narrative, we will assume the existence of the following SQ
 
 - `authors`: primary key `id`; column `name`
 - `posts`: primary key `id`; columns `author_id`, `title`, and `body`
-- `summaries`: primary key `id`; column `comment_count`
+- `summaries`: primary key `id`; columns `post_id` and `read_sum`
 - `comments`: primary key `id`; columns `post_id` and `body`
 - `tags`: primary key `id`; column `name`
 - `posts_tags`: primary key `id`; columns `post_id` and `tag_id`
@@ -301,12 +301,13 @@ Now that the domain model has been loaded with data, we can read out the record 
         
         // address the native and foreign fields
         echo "The post titled {$post->title} "
-           . "was written by {$post->author->display_name} "
+           . "was written by {$post->author->display_name}. "
+           . "It has been read {$post->summary->read_sum} times "
            . "and has " . count($post->comments) . " comments. ";
         
         // loop through the tags
         if ($post->tags->isEmpty()) {
-            echo "It has no tags on it.";
+            echo "It has no tags.";
         } else {
             echo "It has these tags: ";
             $tags = array();
