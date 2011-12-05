@@ -323,4 +323,135 @@ Now that the domain model has been loaded with data, we can read out the record 
 Advanced Usage
 ==============
 
-(forthcoming)
+Record and Collection Builders
+------------------------------
+
+You have a good amount of control over how the type objects create records and collections.  The instantiation responsibilities are delegated to builder objects.  You can tell the type object what builders to use for record and collection objects by specifying `'record_builder'` and `'collection_builder'` values when defining the type. Similarly, you can tell the type object that the record builder will generate a particular type of object; this lets the type object know when the loaded data has been converted to a record object.
+
+    <?php
+    $manager->setType('posts', array(
+        // the field with the unique identifying value
+        'identity_field' => 'id',
+        
+        // an object to build records; default is a new instance of
+        // Aura\Marshal\Record\Builder
+        'record_builder' => new \Vendor\Package\Posts\RecordBuilder,
+        
+        // the kind of objects expected from the builder; default is
+        // 'Aura\Marshal\Record\GenericRecord'
+        'record_class' => 'Vendor\Package\Posts\Record',
+        
+        // an object to build collections; default is a new instance of
+        // Aura\Marshal\Collection\Builder
+        'collection_builder' => new \Vendor\Package\Posts\CollectionBuilder,
+    ));
+    
+The builders should implement `Aura\Marshal\Record\BuilderInterface` and `Aura\Marshal\Collection\CollectionInterface`, respectively.
+
+
+All-At-Once Definition
+----------------------
+
+You can define all your types and their relationships through the manager at instantiation time.  The following is the equivalent all-at-once definiiton array for the above programmatic definitions:
+
+    <?php
+    return array(
+    
+        'authors' => array(
+            'identity_field'                => 'id',
+            'relation_names'                => array(
+                'posts'                     => array(
+                    'relationship'          => 'has_many',
+                    'native_field'          => 'id',
+                    'foreign_field'         => 'author_id',
+                ),
+            ),
+        ),
+    
+        'posts' => array(
+            'identity_field'                => 'id',
+            'relation_names'                => array(
+                'meta'                      => array(
+                    'relationship'          => 'has_one',
+                    'foreign_type'          => 'metas',
+                    'native_field'          => 'id',
+                    'foreign_field'         => 'post_id',
+                ),
+                'comments'                  => array(
+                    'relationship'          => 'has_many',
+                    'native_field'          => 'id',
+                    'foreign_field'         => 'post_id'
+                ),
+                'author'                    => array(
+                    'relationship'          => 'belongs_to',
+                    'foreign_type'          => 'authors',
+                    'native_field'          => 'author_id',
+                    'foreign_field'         => 'id',
+                ),
+                'tags'                      => array(
+                    'relationship'          => 'has_many_through',
+                    'through_type'          => 'posts_tags',
+                    'native_field'          => 'id',
+                    'through_native_field'  => 'post_id',
+                    'through_foreign_field' => 'tag_id',
+                    'foreign_field'         => 'id'
+                ),
+            ),
+        ),
+    
+        'metas' => array(
+            'identity_field'                => 'id',
+            'relation_names'                => array(
+                'post'                      => array(
+                    'relationship'          => 'belongs_to',
+                    'foreign_type'          => 'posts',
+                    'native_field'          => 'post_id',
+                    'foreign_field'         => 'id',
+                ),
+            ),
+        ),
+    
+        'comments' => array(
+            'identity_field'                => 'id',
+            'relation_names'                => array(
+                'post'                      => array(
+                    'relationship'          => 'belongs_to',
+                    'foreign_type'          => 'posts',
+                    'native_field'          => 'post_id',
+                    'foreign_field'         => 'id',
+                ),
+            ),
+        ),
+    
+        'posts_tags' => array(
+            'identity_field'                => 'id',
+            'relation_names'                => array(
+                'post'                      => array(
+                    'relationship'          => 'belongs_to',
+                    'foreign_type'          => 'posts',
+                    'native_field'          => 'post_id',
+                    'foreign_field'         => 'id',
+                ),
+                'tag'                       => array(
+                    'relationship'          => 'belongs_to',
+                    'foreign_type'          => 'tags',
+                    'native_field'          => 'tag_id',
+                    'foreign_field'         => 'id',
+                ),
+            )
+        ),
+    
+        'tags' => array(
+            'identity_field'                => 'id',
+            'relation_names'                => array(
+                'posts'                     => array(
+                    'relationship'          => 'has_many_through',
+                    'native_field'          => 'id',
+                    'through_type'          => 'posts_tags',
+                    'through_native_field'  => 'tag_id',
+                    'through_foreign_field' => 'post_id',
+                    'foreign_field'         => 'id'
+                ),
+            ),
+        ),
+    );
