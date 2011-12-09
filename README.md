@@ -1,9 +1,13 @@
 Aura.Marshal
 ============
 
-> marshal (verb): to arrange in proper order; set out in an orderly manner; arrange clearly: to marshal facts; to marshal one's arguments. --  [dictionary.com](http://dictionary.reference.com/browse/marshal)
+> marshal (verb): to arrange in proper order; set out in an orderly manner;
+arrange clearly: to marshal facts; to marshal one's arguments. --
+[dictionary.com](http://dictionary.reference.com/browse/marshal)
 
-The Aura.Marshal package is a data-object marshalling tool. It takes results from data sources and marshals those result sets into domain model objects of your own design, preserving data relationships along the way.
+The Aura.Marshal package is a data-object marshalling tool. It takes results
+from data sources and marshals those result sets into domain model objects of
+your own design, preserving data relationships along the way.
 
 You can use any database access layer you like with Aura.Marshal, such as ...
 
@@ -14,13 +18,20 @@ You can use any database access layer you like with Aura.Marshal, such as ...
 - [`Zend_Db_Adapter`](http://framework.zend.com/manual/en/zend.db.adapter.html)
 - [`Doctrine2 DBAL`](http://www.doctrine-project.org/docs/dbal/2.1/en)
 
-... or anything else.  (In theory, you should be able to retrieve data from XML, CSV, Mongo, or anything else, and load it into Aura.Marshal.)
+... or anything else. (In theory, you should be able to retrieve data from
+XML, CSV, Mongo, or anything else, and load it into Aura.Marshal.)
 
-With Aura.Marshal, you use the data retrieval tools of your choice and write your own queries to retrieve data from a data source. You then load that result data into an entity type object, and it creates record and collection objects for you based on a mapping scheme you define for it.
+With Aura.Marshal, you use the data retrieval tools of your choice and write
+your own queries to retrieve data from a data source. You then load that
+result data into an entity type object, and it creates record and collection
+objects for you based on a mapping scheme you define for it.
 
-Aura.Marshal makes it easy to avoid the N+1 problem when working with a domain model.  It also uses an identity map (per type) to avoid retaining multiple copies of the same object.
+Aura.Marshal makes it easy to avoid the N+1 problem when working with a domain
+model. It also uses an identity map (per type) to avoid retaining multiple
+copies of the same object.
 
-It is important to remember that Aura.Marshal, despite resembling an ORM in many ways, it *not* an ORM proper:
+It is important to remember that Aura.Marshal, despite resembling an ORM in
+many ways, it *not* an ORM proper:
 
 - it does not have a query-building facility
 - it will not issue queries on its own
@@ -28,14 +39,23 @@ It is important to remember that Aura.Marshal, despite resembling an ORM in many
 - it will not lazy-load results from a data source
 - it will not read metadata or schemas from the datasource
 
-Those things are outside the scope of the Aura.Marshal pacakge. Their absence does provide a great amount of flexibility for power users who write their own hand-tuned SQL and need a way to marshal their result sets into a domain model, especially in legacy codebases.
+Those things are outside the scope of the Aura.Marshal package. Their absence
+does provide a great amount of flexibility for power users who write their own
+hand-tuned SQL and need a way to marshal their result sets into a domain
+model, especially in legacy codebases.
 
-Aura.Marshal works by using `Type` objects (which define the entity types in the domain model). Each `Type` has a definition indicating its identity field, how to build records and collections, and the relationships to other `Type` objects.  The `Type` objects are accessed through a type `Manager`. You load data into each `Type` in the `Manager`, then you retrieve records and collections from each `Type`.
+Aura.Marshal works by using `Type` objects (which define the entity types in
+the domain model). Each `Type` has a definition indicating its identity field,
+how to build records and collections, and the relationships to other `Type`
+objects. The `Type` objects are accessed through a type `Manager`. You load
+data into each `Type` in the `Manager`, then you retrieve records and
+collections from each `Type`.
 
 Example Schema
 --------------
 
-For the rest of this narrative, we will assume the existence of the following SQL tables and columns in a naive multiuser blogging system:
+For the rest of this narrative, we will assume the existence of the following
+SQL tables and columns in a naive multiuser blogging system:
 
 - `authors`: primary key `id`; column `name`
 - `posts`: primary key `id`; columns `author_id`, `title`, and `body`
@@ -44,13 +64,16 @@ For the rest of this narrative, we will assume the existence of the following SQ
 - `tags`: primary key `id`; column `name`
 - `posts_tags`: primary key `id`; columns `post_id` and `tag_id`
 
-(Note that the primary key and foreign key names are not important; they can be anything at all.)
+(Note that the primary key and foreign key names are not important; they can
+be anything at all.)
 
 Each author can have many posts.
 
 Each post belongs to one author, has one summary, and can have many comments.
 
-Posts and tags have a many-to-many relationship; that is, each post can have many tags, and each tag can be applied to many posts. They map to each other through `posts_tags`.
+Posts and tags have a many-to-many relationship; that is, each post can have
+many tags, and each tag can be applied to many posts. They map to each other
+through `posts_tags`.
 
 
 Basic Usage
@@ -59,12 +82,14 @@ Basic Usage
 Instantiation
 -------------
 
-First, instantiate a `Manager` so we can define our `Type` objects and relationships.
+First, instantiate a `Manager` so we can define our `Type` objects and
+relationships.
 
     <?php
     $manager = include '/path/to/Aura.Marshal/scripts/instance.php';
 
-Alternatively, you can add Aura.Marshal to your autoloader and instantiate it manually:
+Alternatively, you can add Aura.Marshal to your autoloader and instantiate it
+manually:
 
     <?php
     $manager = new Aura\Marshal\Manager(
@@ -75,9 +100,15 @@ Alternatively, you can add Aura.Marshal to your autoloader and instantiate it ma
 Defining Types
 --------------
 
-Now we add definitons for each of the entity types in our domain model. These do not have to map directly to tables, but it is often the case that they do.  Because Aura.Marshal does not read schemas, we need to identify explicitly the primary key fields and the relationships (along with the relationship fields).
+Now we add definitons for each of the entity types in our domain model. These
+do not have to map directly to tables, but it is often the case that they do.
+Because Aura.Marshal does not read schemas, we need to identify explicitly the
+primary key fields and the relationships (along with the relationship fields).
 
-First, let's set the basic definitions for each type in the domain model. In this case it turns out they all have the same primary key, so it's always `'id'`, but each could have a different primary key depending on your data source.
+First, let's set the basic definitions for each type in the domain model. In
+this case it turns out they all have the same primary key, so it's always
+`'id'`, but each could have a different primary key depending on your data
+source.
 
     <?php
     $manager->setType('authors', array(
@@ -105,15 +136,27 @@ Defining Relationships
 
 Aura.Marshal recognizes four kinds of relationships between types:
 
-- `has_one`: A one-to-one relationship where the native record is the owner of one foreign record.
+- `has_one`: A one-to-one relationship where the native record is the owner of
+  one foreign record.
 
-- `belongs_to`: A many-to-one relationship where the native record is owned by one foreign record.  (The foreign record might be the owner of many other records.)
+- `belongs_to`: A many-to-one relationship where the native record is owned by
+  one foreign record. (The foreign record might be the owner of many other
+  records.)
 
-- `has_many`: A one-to-many relationship where the native record is the owner of many foreign records.
+- `has_many`: A one-to-many relationship where the native record is the owner
+  of many foreign records.
 
-- `has_many_through`: A many-to-many relationship where each native record is linked to many foreign records; at the same time, each foreign record is linked to many native records. This kind of relationship requires an association mapping type through which the native and foreign records are linked to each other.
+- `has_many_through`: A many-to-many relationship where each native record is
+  linked to many foreign records; at the same time, each foreign record is
+  linked to many native records. This kind of relationship requires an
+  association mapping type through which the native and foreign records are
+  linked to each other.
 
-Let's add the simpler relationships to our `Manager` using the `setRelation()` method.  The first parameter is the name of the type we're setting the relationship on, the second parameter is the field name the related data should be saved in (as well as the implicit foreign type), and the third parameter is an array of information about the relationship.
+Let's add the simpler relationships to our `Manager` using the `setRelation()`
+method. The first parameter is the name of the type we're setting the
+relationship on, the second parameter is the field name the related data
+should be saved in (as well as the implicit foreign type), and the third
+parameter is an array of information about the relationship.
 
     <?php
     // each author has many posts
@@ -175,7 +218,8 @@ Let's add the simpler relationships to our `Manager` using the `setRelation()` m
         'foreign_field' => 'post_id'
     ));
     
-Now let's set up the more complex many-to-many relationship between posts and tags.
+Now let's set up the more complex many-to-many relationship between posts and
+tags.
 
     <?php
     // posts have many tags, as mapped through posts_tags
@@ -230,9 +274,17 @@ Now let's set up the more complex many-to-many relationship between posts and ta
 Loading Data
 ------------
 
-Now that we have defined the `Type` objects and their relationships to each other in the `Manager`, we can load data into the `Type` objects.  In the following example, we load data using `Zend_Db`, but any database access tool can be used.
+Now that we have defined the `Type` objects and their relationships to each
+other in the `Manager`, we can load data into the `Type` objects. In the
+following example, we load data using `Zend_Db`, but any database access tool
+can be used.
 
-Note that we are able to select, for example, all the comments for all the posts at once. This means that instead of issuing 10 queries to get comments (one for each blog post), we can issue a single query to get all comments at one time; the `Type` objects will wire up the related collections for us automatically as defined by the relationships.  This helps us avoid the N+1 problem easily.
+Note that we are able to select, for example, all the comments for all the
+posts at once. This means that instead of issuing 10 queries to get comments
+(one for each blog post), we can issue a single query to get all comments at
+one time; the `Type` objects will wire up the related collections for us
+automatically as defined by the relationships. This helps us avoid the N+1
+problem easily.
 
     <?php
     // instantiate a Zend_Db connection
@@ -289,7 +341,8 @@ Note that we are able to select, for example, all the comments for all the posts
 Reading Data
 ------------
 
-Now that the domain model has been loaded with data, we can read out the record objects, with related data wired up for us automatically.
+Now that the domain model has been loaded with data, we can read out the
+record objects, with related data wired up for us automatically.
 
     <?php
     
@@ -326,7 +379,13 @@ Advanced Usage
 Record and Collection Builders
 ------------------------------
 
-You have a good amount of control over how the type objects create records and collections.  The instantiation responsibilities are delegated to builder objects.  You can tell the type object what builders to use for record and collection objects by specifying `'record_builder'` and `'collection_builder'` values when defining the type. Similarly, you can tell the type object that the record builder will generate a particular type of object; this lets the type object know when the loaded data has been converted to a record object.
+We have a good amount of control over how the type objects create records and
+collections. The instantiation responsibilities are delegated to builder
+objects. We can tell the type object what builders to use for record and
+collection objects by specifying `'record_builder'` and `'collection_builder'`
+values when defining the type. Similarly, we can tell the type object that
+the record builder will generate a particular class of object; this lets the
+type object know when the loaded data has been converted to a record object.
 
     <?php
     $manager->setType('posts', array(
@@ -346,13 +405,40 @@ You have a good amount of control over how the type objects create records and c
         'collection_builder' => new \Vendor\Package\Posts\CollectionBuilder,
     ));
     
-The builders should implement `Aura\Marshal\Record\BuilderInterface` and `Aura\Marshal\Collection\CollectionInterface`, respectively.
+The builders should implement `Aura\Marshal\Record\BuilderInterface` and
+`Aura\Marshal\Collection\CollectionInterface`, respectively.
+
+
+Indexing
+--------
+
+By default, the `Type` objects do not index the values when loading records.
+You are likely to see a performance improvement when Aura.Marshal wires up
+related collections if you add indexes for native fields used in
+relationships. For example, you could tell the `posts_tags` assocation mapping
+type to index on `post_id` and `tag_id` for faster lookups:
+
+    $manager->setType('posts_tags', array(
+        'identity_field' => 'id',
+        'index_fields'   => array('post_id', 'tag_id'),
+    ));
+
+We suggest adding an index for all `native_field` fields in the relationships
+for a `Type` (except the `identity_field`, which is a special case and does
+not need indexing). Typically this is needed only on a type that `belongs_to`
+another type.
+
+Indexes are created *only at `load()` time*. They are not updated when the
+record object is modified.
 
 
 All-At-Once Definition
 ----------------------
 
-You can define all your types and their relationships through the manager at instantiation time.  The following is the equivalent all-at-once definiiton array for the above programmatic definitions:
+You can define all your types and their relationships through the manager at
+instantiation time. The following is the equivalent all-at-once definiiton
+array for the above programmatic definitions, including indexes and
+relationships:
 
     <?php
     return array(
@@ -367,9 +453,10 @@ You can define all your types and their relationships through the manager at ins
                 ),
             ),
         ),
-    
+        
         'posts' => array(
             'identity_field'                => 'id',
+            'index_fields'                  => array('author_id'),
             'relation_names'                => array(
                 'meta'                      => array(
                     'relationship'          => 'has_one',
@@ -398,9 +485,10 @@ You can define all your types and their relationships through the manager at ins
                 ),
             ),
         ),
-    
+        
         'metas' => array(
             'identity_field'                => 'id',
+            'index_fields'                  => array('post_id'),
             'relation_names'                => array(
                 'post'                      => array(
                     'relationship'          => 'belongs_to',
@@ -410,9 +498,10 @@ You can define all your types and their relationships through the manager at ins
                 ),
             ),
         ),
-    
+        
         'comments' => array(
             'identity_field'                => 'id',
+            'index_fields'                  => array('post_id'),
             'relation_names'                => array(
                 'post'                      => array(
                     'relationship'          => 'belongs_to',
@@ -422,9 +511,10 @@ You can define all your types and their relationships through the manager at ins
                 ),
             ),
         ),
-    
+        
         'posts_tags' => array(
             'identity_field'                => 'id',
+            'index_fields'                  => array('post_id', 'tag_id'),
             'relation_names'                => array(
                 'post'                      => array(
                     'relationship'          => 'belongs_to',
@@ -440,7 +530,7 @@ You can define all your types and their relationships through the manager at ins
                 ),
             )
         ),
-    
+        
         'tags' => array(
             'identity_field'                => 'id',
             'relation_names'                => array(
