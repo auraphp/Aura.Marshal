@@ -50,6 +50,7 @@ class Builder
     {
         $base = array(
             'identity_field'        => null,
+            'index_fields'          => array(),
             'record_class'          => 'Aura\Marshal\Record\GenericRecord',
             'record_builder'        => null,
             'collection_builder'    => null,
@@ -71,6 +72,7 @@ class Builder
         
         $type = new GenericType;
         $type->setIdentityField($info['identity_field']);
+        $type->setIndexFields($info['index_fields']);
         $type->setRecordClass($info['record_class']);
         $type->setRecordBuilder($info['record_builder']);
         $type->setCollectionBuilder($info['collection_builder']);

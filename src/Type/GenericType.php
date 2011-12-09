@@ -44,6 +44,18 @@ class GenericType extends Data
     
     /**
      * 
+     * An array of fields to index on for quicker lookups.  The array format
+     * is:
+     * 
+     *     $index_fields[$field_name][$field_value] = (array) $identity_values;
+     * 
+     * @var array
+     * 
+     */
+    protected $index_fields = array();
+    
+    /**
+     * 
      * A builder to create record objects for this type.
      * 
      * @var object
@@ -97,6 +109,24 @@ class GenericType extends Data
     public function getIdentityField()
     {
         return $this->identity_field;
+    }
+    
+    /**
+     * 
+     * Sets the fields that should be indexed at load() time; removes all
+     * previous indexes.
+     * 
+     * @param array $fields The fields to be indexed.
+     * 
+     * @return void
+     * 
+     */
+    public function setIndexFields(array $fields = array())
+    {
+        $this->index_fields = array();
+        foreach ($fields as $field) {
+            $this->index_fields[$field] = array();
+        }
     }
     
     /**
@@ -206,16 +236,38 @@ class GenericType extends Data
      */
     public function load($data)
     {
+        // what indexes do we need to track?
+        $index_fields    = array_keys($this->index_fields);
+        
+        // return a list of the identity values in $data
         $identity_values = array();
+        
+        // what is the identity field for the type?
         $identity_field  = $this->getIdentityField();
+        
+        // load each data element as a record
         foreach ($data as $record) {
+            
+            // cast the element to an object for consistent addressing
             $record = (object) $record;
+            
+            // retain the identity value on the record
             $identity_value    = $record->$identity_field;
             $identity_values[] = $identity_value;
+            
+            // does the identity already exist in the map?
             if (! isset($this->data[$identity_value])) {
+                // no, retain it in the map ...
                 $this->data[$identity_value] = $record;
+                // ... and put the identity value into the indexes
+                foreach ($index_fields as $field) {
+                    $value = $record->$field;
+                    $this->index_fields[$field][$value][] = $identity_value;
+                }
             }
         }
+        
+        // return the list of identity values in $data, and done
         return $identity_values;
     }
     
@@ -223,8 +275,6 @@ class GenericType extends Data
      * 
      * Returns the array keys for the for the records in the IdentityMap;
      * the keys were generated at load() time from the identity field values.
-     * 
-     * This will not create record objects.
      * 
      * @return array
      * 
@@ -238,8 +288,6 @@ class GenericType extends Data
      * 
      * Returns the values for a particular field for all the records in the
      * IdentityMap.
-     * 
-     * This will not create record objects.
      * 
      * @param string $field The field name to get values for.
      * 
@@ -258,11 +306,10 @@ class GenericType extends Data
     
     /**
      * 
-     * Retrieves a single entity from the IdentityMap by the value of its
-     * identity field; the entity will be converted to a record object if it
-     * is not already an object of the proper class.
+     * Retrieves a single record from the IdentityMap by the value of its
+     * identity field, converting it to a $record_class object if needed.
      * 
-     * @param int $identity_value The idenitty value of the record to be
+     * @param int $identity_value The identity value of the record to be
      * retrieved.
      * 
      * @return object A record object via the record builder.
@@ -270,6 +317,10 @@ class GenericType extends Data
      */
     public function getRecord($identity_value)
     {
+        if (! isset($this->data[$identity_value])) {
+            return null;
+        }
+        
         if ($this->data[$identity_value] instanceof $this->record_class) {
             return $this->data[$identity_value];
         }
@@ -283,12 +334,12 @@ class GenericType extends Data
     
     /**
      * 
-     * Retrieves the first entity from the IdentityMap that matches the value
-     * of an arbitrary field; the entity will be converted to a record object
+     * Retrieves the first record from the IdentityMap that matches the value
+     * of an arbitrary field; it will be converted to a record object
      * if it is not already an object of the proper class.
      * 
-     * N.b.: This is not performant for large sets; it performs a loop through
-     * each entity in the IdentityMap and checks the field value.
+     * N.b.: This will not be performant for large sets where the field is not
+     * an identity field and is not indexed.
      * 
      * @param string $field The field to match on.
      * 
@@ -304,9 +355,13 @@ class GenericType extends Data
             return $this->getRecord($value);
         }
         
+        // pre-emptively look for an indexed field for that value
+        if (isset($this->index_fields[$field][$value])) {
+            $identity_value = reset($this->index_fields[$field][$value]);
+            return $this->getRecord($identity_value);
+        }
+        
         // long slow loop through all the records to find a match.
-        // we could try indexing these but that might be premature.
-        // would need to worry about reindexing when values change.
         foreach ($this->data as $identity_value => $record) {
             if ($record->$field == $value) {
                 return $this->getRecord($identity_value);
@@ -345,11 +400,17 @@ class GenericType extends Data
      * value of an arbitrary field; these will be converted to records 
      * if they are not already objects of the proper class.
      * 
-     * N.b.: This is not performant for large sets; it performs a loop through
-     * each entity in the IdentityMap and checks the field value.
-     * 
-     * N.b.: The value to be matched can be an array of values, so that you
+     * The value to be matched can be an array of values, so that you
      * can get many values of the field being matched.
+     * 
+     * If the field is indexed, the order of the returned collection
+     * will match the order of the values being searched. If the field is not
+     * indexed, the order of the returned collection will be the same as the 
+     * IdentityMap.
+     * 
+     * The fastest results are from the identity field; second fastest, from
+     * an indexed field; slowest are from non-indexed fields, because it has
+     * to look through the entire IdentityMap to find matches.
      * 
      * @param string $field The field to match on.
      * 
@@ -368,27 +429,63 @@ class GenericType extends Data
             return $this->getCollection($values);
         }
         
-        // matching elements to be placed into the collection
-        $list = array();
+        // pre-emptively look for an indexed field
+        if (isset($this->index_fields[$field])) {
+            return $this->getCollectionByIndex($field, $values);
+        }
         
-        // long slow loop through all the records to find a match.
-        // we could try indexing these but that might be premature.
-        // would need to worry about reindexing when values change.
+        // long slow loop through all the records to find a match
+        $list = array();
         foreach ($this->data as $identity_value => $record) {
             if (in_array($record->$field, $values)) {
                 // assigning by reference keeps the connections
-                // when the entity is converted to a record
+                // when the original is converted to a record
                 $list[] =& $this->data[$identity_value];
             }
         }
-        
-        // done
         return $this->collection_builder->newInstance($this, $list);
     }
     
     /**
      * 
-     * Sets a relationship to another entity type, assigning it to a field
+     * Looks through the index for a field to retrieve a collection of
+     * objects from the IdentityMap; these will be converted to records 
+     * if they are not already objects of the proper class.
+     * 
+     * N.b.: The value to be matched can be an array of values, so that you
+     * can get many values of the field being matched.
+     * 
+     * N.b.: The order of the returned collection will match the order of the
+     * values being searched, not the order of the records in the IdentityMap.
+     * 
+     * @param string $field The field to match on.
+     * 
+     * @param mixed $values The value of the field to match on; if an array,
+     * any value in the array will be counted as a match.
+     * 
+     * @return object A collection object via the collection builder.
+     * 
+     */
+    public function getCollectionByIndex($field, $values)
+    {
+        $values = (array) $values;
+        $list = array();
+        foreach ($values as $value) {
+            // is there an index for that field value?
+            if (isset($this->index_fields[$field][$value])) {
+                // assigning by reference keeps the connections
+                // when the original is converted to a record.
+                foreach ($this->index_fields[$field][$value] as $identity_value) {
+                    $list[] =& $this->data[$identity_value];
+                }
+            }
+        }
+        return $this->collection_builder->newInstance($this, $list);
+    }
+    
+    /**
+     * 
+     * Sets a relationship to another type, assigning it to a field
      * name to be used in record objects.
      * 
      * @param string $name The field name to use for the related record
