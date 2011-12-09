@@ -92,9 +92,9 @@ Alternatively, you can add Aura.Marshal to your autoloader and instantiate it
 manually:
 
     <?php
-    $manager = new Aura\Marshal\Manager(
-        new Aura\Marshal\Type\Builder,
-        new Aura\Marshal\Relation\Builder
+    $manager = new \Aura\Marshal\Manager(
+        new \Aura\Marshal\Type\Builder,
+        new \Aura\Marshal\Relation\Builder
     );
 
 Defining Types
@@ -436,13 +436,16 @@ All-At-Once Definition
 ----------------------
 
 You can define all your types and their relationships through the manager at
-instantiation time. The following is the equivalent all-at-once definiiton
+instantiation time. The following is the equivalent all-at-once definition
 array for the above programmatic definitions, including indexes and
 relationships:
 
     <?php
-    return array(
-    
+    use Aura\Marshal\Manager;
+    use Aura\Marshal\Type\Builder as TypeBuilder;
+    use Aura\Marshal\Relation\Builder as RelationBuilder;
+    $manager = new Manager(new TypeBuilder, new RelationBuilder, array(
+        
         'authors' => array(
             'identity_field'                => 'id',
             'relation_names'                => array(
@@ -544,4 +547,4 @@ relationships:
                 ),
             ),
         ),
-    );
+    ));
