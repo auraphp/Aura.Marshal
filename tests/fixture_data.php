@@ -19,26 +19,31 @@ return array(
             'id' => '1',
             'author_id' => '1',
             'body' => 'Anna post #1',
+            'fake_field' => '69',
         ),
         array(
             'id' => '2',
             'author_id' => '1',
             'body' => 'Anna post #2',
+            'fake_field' => '69',
         ),
         array(
             'id' => '3',
             'author_id' => '1',
             'body' => 'Anna post #3',
+            'fake_field' => '69',
         ),
         array(
             'id' => '4',
             'author_id' => '2',
             'body' => 'Clara post #1',
+            'fake_field' => '88',
         ),
         array(
             'id' => '5',
             'author_id' => '2',
             'body' => 'Clara post #2',
+            'fake_field' => '88',
         ),
     ),
     'metas' => array(

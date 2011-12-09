@@ -116,6 +116,14 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($actual, $again);
     }
     
+    public function testGetRecord_none()
+    {
+        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
+        $this->type->load($data['posts']);
+        $actual = $this->type->getRecord(999);
+        $this->assertNull($actual);
+    }
+    
     public function testGetRecordByField()
     {
         $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
@@ -179,7 +187,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
         $this->type->load($data['posts']);
         
-        $collection = $this->type->getCollectionByField('author_id', 2);
+        $collection = $this->type->getCollectionByField('fake_field', 88);
         
         $expect = array(
             (object) $data['posts'][3],
@@ -190,6 +198,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             $this->assertSame($expect[$offset]->id, $actual->id);
             $this->assertSame($expect[$offset]->author_id, $actual->author_id);
             $this->assertSame($expect[$offset]->body, $actual->body);
+            $this->assertSame($expect[$offset]->fake_field, $actual->fake_field);
         }
     }
     
@@ -198,9 +207,12 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
         $this->type->load($data['posts']);
         
-        $collection = $this->type->getCollectionByField('author_id', 2);
+        $collection = $this->type->getCollectionByField('fake_field', array(88, 69));
         
         $expect = array(
+            (object) $data['posts'][0],
+            (object) $data['posts'][1],
+            (object) $data['posts'][2],
             (object) $data['posts'][3],
             (object) $data['posts'][4],
         );
@@ -209,6 +221,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             $this->assertSame($expect[$offset]->id, $actual->id);
             $this->assertSame($expect[$offset]->author_id, $actual->author_id);
             $this->assertSame($expect[$offset]->body, $actual->body);
+            $this->assertSame($expect[$offset]->fake_field, $actual->fake_field);
         }
     }
     
@@ -228,6 +241,30 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             $this->assertSame($expect[$offset]->id, $actual->id);
             $this->assertSame($expect[$offset]->author_id, $actual->author_id);
             $this->assertSame($expect[$offset]->body, $actual->body);
+            $this->assertSame($expect[$offset]->fake_field, $actual->fake_field);
+        }
+    }
+    
+    public function getCollectionByField_index()
+    {
+        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
+        $this->type->load($data['posts']);
+        
+        $collection = $this->type->getCollectionByField('author_id', array(2, 1));
+        
+        $expect = array(
+            (object) $data['posts'][3],
+            (object) $data['posts'][4],
+            (object) $data['posts'][0],
+            (object) $data['posts'][1],
+            (object) $data['posts'][2],
+        );
+        
+        foreach ($collection as $offset => $actual) {
+            $this->assertSame($expect[$offset]->id, $actual->id);
+            $this->assertSame($expect[$offset]->author_id, $actual->author_id);
+            $this->assertSame($expect[$offset]->body, $actual->body);
+            $this->assertSame($expect[$offset]->fake_field, $actual->fake_field);
         }
     }
     

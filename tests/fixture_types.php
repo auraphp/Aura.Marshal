@@ -14,6 +14,9 @@ return array(
     
     'posts' => array(
         'identity_field'                => 'id',
+        'index_fields'                  => array(
+            'author_id',
+        ),
         'relation_names'                => array(
             'meta'                      => array(
                 'relationship'          => 'has_one',
@@ -45,6 +48,9 @@ return array(
     
     'metas' => array(
         'identity_field'                => 'id',
+        'index_fields'                  => array(
+            'post_id',
+        ),
         'relation_names'                => array(
             'post'                      => array(
                 'relationship'          => 'belongs_to',
@@ -57,6 +63,9 @@ return array(
     
     'comments' => array(
         'identity_field'                => 'id',
+        'index_fields'                  => array(
+            'post_id',
+        ),
         'relation_names'                => array(
             'post'                      => array(
                 'relationship'          => 'belongs_to',
@@ -69,6 +78,10 @@ return array(
     
     'posts_tags' => array(
         'identity_field'                => 'id',
+        'index_fields'                  => array(
+            'post_id',
+            'tag_id',
+        ),
         'relation_names'                => array(
             'post'                      => array(
                 'relationship'          => 'belongs_to',

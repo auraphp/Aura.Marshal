@@ -73,4 +73,43 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('Aura\Marshal\Exception');
         $this->manager->setType('authors', array());
     }
+    
+    public function testSetRelation_noSuchType()
+    {
+        $this->setExpectedException('Aura\Marshal\Exception');
+        $this->manager->setRelation('no_such_type', 'relation_name', array());
+    }
+    
+    public function testSetRelation_typeNotInstantiated()
+    {
+        $relation_builder = new RelationBuilder;
+        $type_builder = new TypeBuilder;
+        $types = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
+        $manager = new Manager($type_builder, $relation_builder);
+        
+        foreach ($types as $name => $info) {
+            // remove the relationship information
+            unset($info['relation_names']);
+            // set into manager
+            $manager->setType($name, $info);
+        }
+        
+        // add relations just for authors, before instantiating the authors type
+        $type = $types['authors'];
+        $rels = $type['relation_names'];
+        unset($type['relation_names']);
+        foreach ($rels as $name => $info) {
+            $this->manager->setRelation('authors', $name, $info);
+        }
+        
+        // now instantiate the authors type...
+        $actual = $this->manager->authors;
+        $expect = 'Aura\Marshal\Type\GenericType';
+        $this->assertInstanceOf($expect, $actual);
+        
+        // ... and make sure we have a posts relation.
+        $actual = $this->manager->authors->getRelationNames();
+        $expect = array('posts');
+        $this->assertSame($expect, $actual);
+    }
 }
