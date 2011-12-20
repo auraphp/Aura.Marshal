@@ -44,10 +44,21 @@ class GenericType extends Data
     
     /**
      * 
-     * An array of fields to index on for quicker lookups.  The array format
+     * An index of records on the identity field. The format is:
+     * 
+     *      $identity_index[$identity_value] = $offset;
+     * 
+     * @var array
+     * 
+     */
+    protected $identity_index;
+    
+    /**
+     * 
+     * An array of fields to index on for quicker lookups. The array format
      * is:
      * 
-     *     $index_fields[$field_name][$field_value] = (array) $identity_values;
+     *     $index_fields[$field_name][$field_value] = (array) $offsets;
      * 
      * @var array
      * 
@@ -127,6 +138,18 @@ class GenericType extends Data
         foreach ($fields as $field) {
             $this->index_fields[$field] = array();
         }
+    }
+    
+    /**
+     * 
+     * Returns the list of indexed field names.
+     * 
+     * @return array
+     * 
+     */
+    public function getIndexFields()
+    {
+        return array_keys($this->index_fields);
     }
     
     /**
@@ -237,13 +260,16 @@ class GenericType extends Data
     public function load($data)
     {
         // what indexes do we need to track?
-        $index_fields    = array_keys($this->index_fields);
+        $index_fields = array_keys($this->index_fields);
         
         // return a list of the identity values in $data
         $identity_values = array();
         
         // what is the identity field for the type?
         $identity_field  = $this->getIdentityField();
+        
+        // what's the last data offset?
+        $offset = count($this->data);
         
         // load each data element as a record
         foreach ($data as $record) {
@@ -256,15 +282,23 @@ class GenericType extends Data
             $identity_values[] = $identity_value;
             
             // does the identity already exist in the map?
-            if (! isset($this->data[$identity_value])) {
-                // no, retain it in the map ...
-                $this->data[$identity_value] = $record;
-                // ... and put the identity value into the indexes
-                foreach ($index_fields as $field) {
-                    $value = $record->$field;
-                    $this->index_fields[$field][$value][] = $identity_value;
-                }
+            if (isset($this->identity_index[$identity_value])) {
+                // yes, skip it and go on
+                continue;
             }
+            
+            // no, retain it in the identity map and identity index ...
+            $this->data[$offset] = $record;
+            $this->identity_index[$identity_value] = $offset;
+            
+            // ... put the offset value into the indexes ...
+            foreach ($index_fields as $field) {
+                $value = $record->$field;
+                $this->index_fields[$field][$value][] = $offset;
+            }
+            
+            // ... and increment the offset for the next record.
+            $offset ++;
         }
         
         // return the list of identity values in $data, and done
@@ -281,7 +315,7 @@ class GenericType extends Data
      */
     public function getIdentityValues()
     {
-        return array_keys($this->data);
+        return array_keys($this->identity_index);
     }
     
     /**
@@ -298,7 +332,9 @@ class GenericType extends Data
     public function getFieldValues($field)
     {
         $values = array();
-        foreach ($this->data as $identity_value => $record) {
+        $identity_field = $this->getIdentityField();
+        foreach ($this->data as $offset => $record) {
+            $identity_value = $record->$identity_field;
             $values[$identity_value] = $record->$field;
         }
         return $values;
@@ -317,19 +353,14 @@ class GenericType extends Data
      */
     public function getRecord($identity_value)
     {
-        if (! isset($this->data[$identity_value])) {
+        // if the record is not in the identity index, exit early
+        if (! isset($this->identity_index[$identity_value])) {
             return null;
         }
         
-        if ($this->data[$identity_value] instanceof $this->record_class) {
-            return $this->data[$identity_value];
-        }
-        
-        $data = $this->data[$identity_value];
-        $record = $this->record_builder->newInstance($this, $data);
-        $this->data[$identity_value] = $record;
-        
-        return $this->data[$identity_value];
+        // look up the sequential offset for the identity value
+        $offset = $this->identity_index[$identity_value];
+        return $this->getRecordByOffset($offset);
     }
     
     /**
@@ -356,15 +387,14 @@ class GenericType extends Data
         }
         
         // pre-emptively look for an indexed field for that value
-        if (isset($this->index_fields[$field][$value])) {
-            $identity_value = reset($this->index_fields[$field][$value]);
-            return $this->getRecord($identity_value);
+        if (isset($this->index_fields[$field])) {
+            return $this->getRecordByIndex($field, $value);
         }
         
         // long slow loop through all the records to find a match.
-        foreach ($this->data as $identity_value => $record) {
+        foreach ($this->data as $offset => $record) {
             if ($record->$field == $value) {
-                return $this->getRecord($identity_value);
+                return $this->getRecordByOffset($offset);
             }
         }
         
@@ -374,8 +404,55 @@ class GenericType extends Data
     
     /**
      * 
+     * Retrieves a single record from the IdentityMap by its offset,
+     * converting it to a $record_class object if needed.
+     * 
+     * @param int $offset The record offset in the $data array.
+     * 
+     * @return object A record object via the record builder.
+     * 
+     */
+    protected function getRecordByOffset($offset)
+    {
+        // if it is already a record of the proper type, exit early
+        if ($this->data[$offset] instanceof $this->record_class) {
+            return $this->data[$offset];
+        }
+        
+        // convert to a record of the proper type ...
+        $data = $this->data[$offset];
+        $record = $this->record_builder->newInstance($this, $data);
+        
+        // ... then retain and return it.
+        $this->data[$offset] = $record;
+        return $this->data[$offset];
+    }
+    
+    /**
+     * 
+     * Retrieves the first record from the IdentityMap matching an index 
+     * lookup, converting it to a $record_class object if needed.
+     * 
+     * @param string $field The indexed field name.
+     * 
+     * @param string $value The field value to match on.
+     * 
+     * @return object A record object via the record builder.
+     * 
+     */
+    protected function getRecordByIndex($field, $value)
+    {
+        if (! isset($this->index_fields[$field][$value])) {
+            return null;
+        }
+        $offset = $this->index_fields[$field][$value][0];
+        return $this->getRecordByOffset($offset);
+    }
+    
+    /**
+     * 
      * Retrieves a collection of elements from the IdentityMap by the values
-     * of their identity fields; each entity will be converted to a record 
+     * of their identity fields; each element will be converted to a record 
      * object if it is not already an object of the proper class.
      * 
      * @param array $identity_values An array of identity values to retrieve.
@@ -387,9 +464,11 @@ class GenericType extends Data
     {
         $list = array();
         foreach ($identity_values as $identity_value) {
+            // look up the offset for the identity value
+            $offset = $this->identity_index[$identity_value];
             // assigning by reference keeps the connections
-            // when the entity is converted to a record
-            $list[] =& $this->data[$identity_value];
+            // when the element is converted to a record
+            $list[] =& $this->data[$offset];
         }
         return $this->collection_builder->newInstance($this, $list);
     }
@@ -466,7 +545,7 @@ class GenericType extends Data
      * @return object A collection object via the collection builder.
      * 
      */
-    public function getCollectionByIndex($field, $values)
+    protected function getCollectionByIndex($field, $values)
     {
         $values = (array) $values;
         $list = array();
@@ -475,8 +554,8 @@ class GenericType extends Data
             if (isset($this->index_fields[$field][$value])) {
                 // assigning by reference keeps the connections
                 // when the original is converted to a record.
-                foreach ($this->index_fields[$field][$value] as $identity_value) {
-                    $list[] =& $this->data[$identity_value];
+                foreach ($this->index_fields[$field][$value] as $offset) {
+                    $list[] =& $this->data[$offset];
                 }
             }
         }
