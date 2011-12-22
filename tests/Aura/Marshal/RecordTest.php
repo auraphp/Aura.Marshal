@@ -1,7 +1,7 @@
 <?php
 namespace Aura\Marshal;
 use Aura\Marshal\Record\GenericRecord;
-use Aura\Marshal\Type\GenericType;
+use Aura\Marshal\MockType;
 
 /**
  * Test class for Record.
@@ -25,8 +25,18 @@ class RecordTest extends \PHPUnit_Framework_TestCase
             'foo' => 'bar',
             'baz' => 'dim',
             'zim' => 'gir',
+            'numeric' => '123',
+            'zero' => 0,
+            'falsy' => false,
+            'nully' => null,
+            'related' => 'related_record',
         );
-        $type = new GenericType;
+        
+        $type = new MockType;
+        
+        // add a fake relation so we can check changes on relationships
+        $type->addFakeRelation('related');
+        
         $this->record = new GenericRecord($data, $type);
     }
 
@@ -38,7 +48,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     {
         parent::tearDown();
     }
-
+    
     public function testSetAndGet()
     {
         $this->record->irk = 'doom';
@@ -52,10 +62,72 @@ class RecordTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($this->record->foo));
         
         $this->assertFalse(isset($this->record->newfield));
+        
         $this->record->newfield = 'something';
         $this->assertTrue(isset($this->record->newfield));
+        
         unset($this->record->newfield);
         $this->assertTrue(isset($this->record->newfield));
     }
-
+    
+    public function testGetChangedFields_newField()
+    {
+        $this->record->newfield = 'something';
+        $expect = array('newfield' => 'something');
+        $actual = $this->record->getChangedFields();
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_numeric()
+    {
+        // change from string '123' to int 123;
+        // it should not be marked as a change
+        $this->record->numeric = 123;
+        $expect = array();
+        $actual = $this->record->getChangedFields();
+        $this->assertSame($expect, $actual);
+        
+        $this->record->numeric = 4.56;
+        $expect = array('numeric' => 4.56);
+        $actual = $this->record->getChangedFields();
+        $this->assertSame($expect, $actual);
+        
+        $this->record->zero = '';
+        $expect = array('numeric' => 4.56, 'zero' => '');
+        $actual = $this->record->getChangedFields();
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_toNull()
+    {
+        $this->record->zero = null;
+        $this->record->falsy = null;
+        $expect = array('zero' => null, 'falsy' => null);
+        $actual = $this->record->getChangedFields();
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_fromNull()
+    {
+        $this->record->nully = 0;
+        $expect = array('nully' => 0);
+        $actual = $this->record->getChangedFields();
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_other()
+    {
+        $this->record->foo = 'changed';
+        $expect = array('foo' => 'changed');
+        $actual = $this->record->getChangedFields();
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_related()
+    {
+        $this->record->related = 'change related record';
+        $expect = array();
+        $actual = $this->record->getChangedFields();
+        $this->assertSame($expect, $actual);
+    }
 }
