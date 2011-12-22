@@ -38,6 +38,13 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->type->setCollectionBuilder(new CollectionBuilder);
     }
     
+    protected function loadTypeWithPosts()
+    {
+        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
+        $this->type->load($data['posts']);
+        return $data['posts'];
+    }
+    
     /**
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
@@ -81,25 +88,21 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testLoadAndGetStorage()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
-        
-        $expect = count($data['posts']);
+        $data = $this->loadTypeWithPosts();
+        $expect = count($data);
         $actual = count($this->type);
         $this->assertSame($expect, $actual);
         
         // try loading again to make sure we don't double-load.
         // $expect stays as the original count value.
-        $this->type->load($data['posts']);
+        $this->loadTypeWithPosts();
         $actual = count($this->type);
         $this->assertSame($expect, $actual);
     }
     
     public function testGetIdentityValues()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
-        
+        $data = $this->loadTypeWithPosts();
         $expect = array(1, 2, 3, 4, 5);
         $actual = $this->type->getIdentityValues();
         $this->assertSame($expect, $actual);
@@ -107,8 +110,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetFieldValues()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
+        $data = $this->loadTypeWithPosts();
         $expect = array(1 => '1', 2 => '1', 3 => '1', 4 => '2', 5 => '2');
         $actual = $this->type->getFieldValues('author_id');
         $this->assertSame($expect, $actual);
@@ -116,10 +118,8 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetRecord()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
-        
-        $expect = (object) $data['posts'][2];
+        $data = $this->loadTypeWithPosts();
+        $expect = (object) $data[2];
         $actual = $this->type->getRecord(3);
         
         $this->assertSame($expect->id, $actual->id);
@@ -133,19 +133,15 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetRecord_none()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
+        $data = $this->loadTypeWithPosts();
         $actual = $this->type->getRecord(999);
         $this->assertNull($actual);
     }
     
     public function testGetRecordByField_identity()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
-        
-        $expect = (object) $data['posts'][3];
-        
+        $data = $this->loadTypeWithPosts();
+        $expect = (object) $data[3];
         $actual = $this->type->getRecordByField('id', 4);
         
         $this->assertSame($expect->id, $actual->id);
@@ -155,10 +151,8 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetRecordByField_index()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
-        
-        $expect = (object) $data['posts'][3];
+        $data = $this->loadTypeWithPosts();
+        $expect = (object) $data[3];
         $actual = $this->type->getRecordByField('author_id', 2);
         
         $this->assertSame($expect->id, $actual->id);
@@ -168,18 +162,15 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetRecordByField_indexNone()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
+        $data = $this->loadTypeWithPosts();
         $actual = $this->type->getRecordByField('author_id', 'no such value');
         $this->assertNull($actual);
     }
     
     public function testGetRecordByField_loop()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
-        
-        $expect = (object) $data['posts'][3];
+        $data = $this->loadTypeWithPosts();
+        $expect = (object) $data[3];
         $actual = $this->type->getRecordByField('fake_field', '88');
         
         $this->assertSame($expect->id, $actual->id);
@@ -190,22 +181,19 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetRecordByField_loopNone()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
+        $data = $this->loadTypeWithPosts();
         $actual = $this->type->getRecordByField('fake_field', 'no such value');
         $this->assertNull($actual);
     }
     
     public function getCollection()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
+        $data = $this->loadTypeWithPosts();
         $collection = $this->type->getCollection(array(1, 2, 3));
-        
         $expect = array(
-            (object) $data['posts'][0],
-            (object) $data['posts'][1],
-            (object) $data['posts'][2],
+            (object) $data[0],
+            (object) $data[1],
+            (object) $data[2],
         );
         
         foreach ($collection as $offset => $actual) {
@@ -217,14 +205,11 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetCollectionByField()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
-        
+        $data = $this->loadTypeWithPosts();
         $collection = $this->type->getCollectionByField('fake_field', 88);
-        
         $expect = array(
-            (object) $data['posts'][3],
-            (object) $data['posts'][4],
+            (object) $data[3],
+            (object) $data[4],
         );
         
         foreach ($collection as $offset => $actual) {
@@ -237,17 +222,14 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetCollectionByField_many()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
-        
+        $data = $this->loadTypeWithPosts();
         $collection = $this->type->getCollectionByField('fake_field', array(88, 69));
-        
         $expect = array(
-            (object) $data['posts'][0],
-            (object) $data['posts'][1],
-            (object) $data['posts'][2],
-            (object) $data['posts'][3],
-            (object) $data['posts'][4],
+            (object) $data[0],
+            (object) $data[1],
+            (object) $data[2],
+            (object) $data[3],
+            (object) $data[4],
         );
         
         foreach ($collection as $offset => $actual) {
@@ -260,14 +242,11 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetCollectionByField_identity()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
-        
+        $data = $this->loadTypeWithPosts();
         $collection = $this->type->getCollectionByField('id', array(4, 5));
-        
         $expect = array(
-            (object) $data['posts'][3],
-            (object) $data['posts'][4],
+            (object) $data[3],
+            (object) $data[4],
         );
         
         foreach ($collection as $offset => $actual) {
@@ -280,17 +259,14 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function getCollectionByField_index()
     {
-        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
-        
+        $data = $this->loadTypeWithPosts();
         $collection = $this->type->getCollectionByField('author_id', array(2, 1));
-        
         $expect = array(
-            (object) $data['posts'][3],
-            (object) $data['posts'][4],
-            (object) $data['posts'][0],
-            (object) $data['posts'][1],
-            (object) $data['posts'][2],
+            (object) $data[3],
+            (object) $data[4],
+            (object) $data[0],
+            (object) $data[1],
+            (object) $data[2],
         );
         
         foreach ($collection as $offset => $actual) {
@@ -327,5 +303,57 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $type_builder = new TypeBuilder;
         $this->setExpectedException('Aura\Marshal\Exception');
         $type = $type_builder->newInstance(array());
+    }
+    
+    public function testNewRecord()
+    {
+        $this->loadTypeWithPosts();
+        $before = count($this->type);
+        
+        // do we actually get a new record back?
+        $record = $this->type->newRecord();
+        $this->assertInstanceOf('Aura\Marshal\Record\GenericRecord', $record);
+        
+        // has it been added to the identity map?
+        $expect = $before + 1;
+        $actual = count($this->type);
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedRecords()
+    {
+        $data = $this->loadTypeWithPosts();
+        
+        // change record id 1 and 3
+        $record_1 = $this->type->getRecord(1);
+        $record_1->fake_field = 'changed';
+        $record_3 = $this->type->getRecord(3);
+        $record_3->fake_field = 'changed';
+        
+        // get record 2 but don't change it
+        $record_2 = $this->type->getRecord(2);
+        $fake_field = $record_2->fake_field;
+        $record_2->fake_field = $fake_field;
+        
+        // now check for changes
+        $expect = array(
+            $record_1->id => $record_1,
+            $record_3->id => $record_3,
+        );
+        
+        $actual = $this->type->getChangedRecords();
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetNewRecords()
+    {
+        $data = $this->loadTypeWithPosts();
+        $expect = array(
+            $this->type->newRecord(array('fake_field' => 101)),
+            $this->type->newRecord(array('fake_field' => 102)),
+            $this->type->newRecord(array('fake_field' => 105)),
+        );
+        $actual = $this->type->getNewRecords();
+        $this->assertSame($expect, $actual);
     }
 }
