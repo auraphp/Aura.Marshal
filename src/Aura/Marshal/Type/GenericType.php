@@ -48,11 +48,24 @@ class GenericType extends Data
      * 
      *      $index_identity[$identity_value] = $offset;
      * 
+     * Note that we always have only one offset, keyed by identity value.
+     * 
      * @var array
      * 
      */
     protected $index_identity;
     
+    /**
+     * 
+     * An index of all records added via newRecord(). The format is:
+     * 
+     *      $index_new[] = $offset;
+     * 
+     * Note that we always have one offset, and the key is merely sequential.
+     * 
+     * @var array
+     * 
+     */
     protected $index_new;
     
     /**
@@ -61,6 +74,9 @@ class GenericType extends Data
      * is:
      * 
      *     $index_fields[$field_name][$field_value] = (array) $offsets;
+     * 
+     * Note that we always have an array of offsets, and the keys are by
+     * the field name and the values for that field.
      * 
      * @var array
      * 
@@ -127,7 +143,7 @@ class GenericType extends Data
     /**
      * 
      * Sets the fields that should be indexed at load() time; removes all
-     * previous indexes.
+     * previous field indexes.
      * 
      * @param array $fields The fields to be indexed.
      * 
@@ -241,8 +257,8 @@ class GenericType extends Data
      * As long as the $data value can be iterated over and accessed as an 
      * array, you can pass in any kind of $data.
      * 
-     * The elements from $data will be placed into the IdentityMap; the
-     * IdentityMap key will be the value of the identity field in the element.
+     * The elements from $data will be placed into the IdentityMap and indexed
+     * according to the value of their identity field.
      * 
      * You can call load() multiple times, but records already in the 
      * IdentityMap will not be overwritten.
