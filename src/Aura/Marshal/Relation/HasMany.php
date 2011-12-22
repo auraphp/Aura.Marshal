@@ -11,7 +11,8 @@ namespace Aura\Marshal\Relation;
 /**
  * 
  * Represents a relationship where a native record has many foreign records
- * (i.e., a foreign collection).
+ * (i.e., a foreign collection); the foreign records are subordinate to the
+ * native one.
  * 
  * @package Aura.Marshal
  * 

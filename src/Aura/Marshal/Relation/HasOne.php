@@ -10,8 +10,8 @@ namespace Aura\Marshal\Relation;
 
 /**
  * 
- * Represents a relationship where the native entity has one of the foreign 
- * entity.
+ * Represents a relationship where the native record has one of the foreign 
+ * record; the foreign record is subordinate to the native one.
  * 
  * @package Aura.Marshal
  * 
