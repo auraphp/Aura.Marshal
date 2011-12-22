@@ -115,4 +115,22 @@ class GenericCollection extends Data
     {
         return empty($this->data);
     }
+
+    
+    /**
+     * 
+     * Adds a new record to the collection (and to the IdentityMap for the
+     * type).
+     * 
+     * @param array $data Data for the new record.
+     * 
+     * @return object
+     * 
+     */
+    public function appendNewRecord(array $data = array())
+    {
+        $record = $this->type->newRecord($data);
+        $this->data[] = $record;
+        return $record;
+    }
 }

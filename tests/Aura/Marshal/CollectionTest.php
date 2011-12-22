@@ -11,6 +11,8 @@ use Aura\Marshal\Collection\Builder as CollectionBuilder;
  */
 class CollectionTest extends \PHPUnit_Framework_TestCase
 {
+    protected $type;
+    
     protected $collection;
     
     protected $empty_collection;
@@ -21,8 +23,9 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $type = new GenericType;
-        $type->setIdentityField('id');
+        $this->type = new GenericType;
+        $this->type->setIdentityField('id');
+        $this->type->setRecordBuilder(new RecordBuilder);
         
         $ids = array(1, 2, 3, 5, 7, 11, 13);
         $names = array('foo', 'bar', 'baz', 'dib', 'zim', 'gir', 'irk');
@@ -34,8 +37,8 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
             );
         }
         
-        $this->collection = new GenericCollection($data, $type);
-        $this->empty_collection = new GenericCollection(array(), $type);
+        $this->collection = new GenericCollection($data, $this->type);
+        $this->empty_collection = new GenericCollection(array(), $this->type);
     }
     
     /**
@@ -94,5 +97,21 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         // note that collection is by offset, not identity value.
         $actual = $collection[0];
         $this->assertSame($expect->name, $actual->name);
+    }
+    
+    public function testAppendNewRecord()
+    {
+        $before = count($this->collection);
+        
+        $record = $this->collection->appendNewRecord();
+        $this->assertInstanceOf('Aura\Marshal\Record\GenericRecord', $record);
+        
+        $expect = $before + 1;
+        $actual = count($this->collection);
+        $this->assertSame($expect, $actual);
+        
+        $expect = array($record);
+        $actual = $this->type->getNewRecords();
+        $this->assertSame($expect, $actual);
     }
 }
