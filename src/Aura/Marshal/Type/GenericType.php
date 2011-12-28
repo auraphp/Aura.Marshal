@@ -647,6 +647,14 @@ class GenericType extends Data
         return $record;
     }
     
+    /**
+     * 
+     * Returns an array of all records in the IdentityMap that have been 
+     * modified.
+     * 
+     * @return array
+     * 
+     */
     public function getChangedRecords()
     {
         $list = array();
@@ -662,6 +670,14 @@ class GenericType extends Data
         return $list;
     }
     
+    /**
+     * 
+     * Returns an array of all records in the IdentityMap that were created
+     * using `newRecord()`.
+     * 
+     * @return array
+     * 
+     */
     public function getNewRecords()
     {
         $list = array();

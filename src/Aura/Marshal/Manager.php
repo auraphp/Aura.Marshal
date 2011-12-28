@@ -172,6 +172,19 @@ class Manager
         $this->types[$name] = $info;
     }
     
+    /**
+     * 
+     * Sets a one relation for a type in the manager.
+     * 
+     * @param string $type The type to set the relation on.
+     * 
+     * @param string $name The name for the relation.
+     * 
+     * @param array $info The relation information.
+     * 
+     * @return void
+     * 
+     */
     public function setRelation($type, $name, $info)
     {
         if (! isset($this->types[$type])) {
