@@ -48,13 +48,13 @@ class Builder
      */
     public function newInstance($info)
     {
-        $base = array(
+        $base = [
             'identity_field'        => null,
-            'index_fields'          => array(),
+            'index_fields'          => [],
             'record_class'          => 'Aura\Marshal\Record\GenericRecord',
             'record_builder'        => null,
             'collection_builder'    => null,
-        );
+        ];
         
         $info = array_merge($base, $info);
         

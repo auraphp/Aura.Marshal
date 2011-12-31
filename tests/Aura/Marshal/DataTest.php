@@ -20,11 +20,11 @@ class DataTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->data = new Data(array(
+        $this->data = new Data([
             'foo' => 'bar',
             'baz' => 'dib',
             'zim' => 'gir',
-        ));
+        ]);
     }
     
     /**

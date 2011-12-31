@@ -81,7 +81,7 @@ class GenericType extends Data
      * @var array
      * 
      */
-    protected $index_fields = array();
+    protected $index_fields = [];
     
     /**
      * 
@@ -110,7 +110,7 @@ class GenericType extends Data
      * @var array
      * 
      */
-    protected $relation = array();
+    protected $relation = [];
     
     /**
      * 
@@ -150,11 +150,11 @@ class GenericType extends Data
      * @return void
      * 
      */
-    public function setIndexFields(array $fields = array())
+    public function setIndexFields(array $fields = [])
     {
-        $this->index_fields = array();
+        $this->index_fields = [];
         foreach ($fields as $field) {
-            $this->index_fields[$field] = array();
+            $this->index_fields[$field] = [];
         }
     }
     
@@ -281,7 +281,7 @@ class GenericType extends Data
         $index_fields = array_keys($this->index_fields);
         
         // return a list of the identity values in $data
-        $identity_values = array();
+        $identity_values = [];
         
         // what is the identity field for the type?
         $identity_field  = $this->getIdentityField();
@@ -349,7 +349,7 @@ class GenericType extends Data
      */
     public function getFieldValues($field)
     {
-        $values = array();
+        $values = [];
         $identity_field = $this->getIdentityField();
         foreach ($this->data as $offset => $record) {
             $identity_value = $record->$identity_field;
@@ -480,7 +480,7 @@ class GenericType extends Data
      */
     public function getCollection(array $identity_values)
     {
-        $list = array();
+        $list = [];
         foreach ($identity_values as $identity_value) {
             // look up the offset for the identity value
             $offset = $this->index_identity[$identity_value];
@@ -532,7 +532,7 @@ class GenericType extends Data
         }
         
         // long slow loop through all the records to find a match
-        $list = array();
+        $list = [];
         foreach ($this->data as $identity_value => $record) {
             if (in_array($record->$field, $values)) {
                 // assigning by reference keeps the connections
@@ -566,7 +566,7 @@ class GenericType extends Data
     protected function getCollectionByIndex($field, $values)
     {
         $values = (array) $values;
-        $list = array();
+        $list = [];
         foreach ($values as $value) {
             // is there an index for that field value?
             if (isset($this->index_fields[$field][$value])) {
@@ -639,7 +639,7 @@ class GenericType extends Data
      * @return object
      * 
      */
-    public function newRecord(array $data = array())
+    public function newRecord(array $data = [])
     {
         $record = $this->record_builder->newInstance($this, $data);
         $this->index_new[] = count($this->data);
@@ -657,7 +657,7 @@ class GenericType extends Data
      */
     public function getChangedRecords()
     {
-        $list = array();
+        $list = [];
         foreach ($this->index_identity as $identity_value => $offset) {
             $record = $this->data[$offset];
             if (! $record instanceof $this->record_class) {
@@ -680,7 +680,7 @@ class GenericType extends Data
      */
     public function getNewRecords()
     {
-        $list = array();
+        $list = [];
         foreach ($this->index_new as $offset) {
             $list[] = $this->data[$offset];
         }

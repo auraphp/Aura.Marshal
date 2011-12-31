@@ -160,11 +160,11 @@ class RelationTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(3, count($post->comments));
         
         $data  = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $expect = array(
+        $expect = [
             $data['comments'][3],
             $data['comments'][4],
             $data['comments'][5],
-        );
+        ];
         
         foreach ($post->comments as $offset => $comment) {
             $this->assertSame($expect[$offset]['id'], $comment->id);
@@ -179,10 +179,10 @@ class RelationTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(2, count($post->tags));
         
         $data  = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $expect = array(
+        $expect = [
             $data['tags'][2],
             $data['tags'][0],
-        );
+        ];
         
         foreach ($post->tags as $offset => $tag) {
             $this->assertSame($expect[$offset]['id'], $tag->id);

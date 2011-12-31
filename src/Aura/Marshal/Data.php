@@ -33,7 +33,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      * @var array
      * 
      */
-    protected $data = array();
+    protected $data = [];
     
     /**
      * 
@@ -42,7 +42,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param array $data The data for this object.
      * 
      */
-    public function __construct(array $data = array())
+    public function __construct(array $data = [])
     {
         $this->data = $data;
     }

@@ -35,7 +35,7 @@ class GenericRecord extends Data
      * @var array
      * 
      */
-    protected $initial_data = array();
+    protected $initial_data = [];
     
     /**
      * 
@@ -178,7 +178,7 @@ class GenericRecord extends Data
     public function getChangedFields()
     {
         // the eventual list of changed fields and values
-        $changed = array();
+        $changed = [];
         
         // the list of relations
         $related = $this->type->getRelationNames();

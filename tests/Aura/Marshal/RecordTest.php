@@ -21,7 +21,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $data = array(
+        $data = [
             'foo' => 'bar',
             'baz' => 'dim',
             'zim' => 'gir',
@@ -30,7 +30,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
             'falsy' => false,
             'nully' => null,
             'related' => 'related_record',
-        );
+        ];
         
         $type = new MockType;
         
@@ -73,7 +73,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     public function testGetChangedFields_newField()
     {
         $this->record->newfield = 'something';
-        $expect = array('newfield' => 'something');
+        $expect = ['newfield' => 'something'];
         $actual = $this->record->getChangedFields();
         $this->assertSame($expect, $actual);
     }
@@ -83,17 +83,17 @@ class RecordTest extends \PHPUnit_Framework_TestCase
         // change from string '123' to int 123;
         // it should not be marked as a change
         $this->record->numeric = 123;
-        $expect = array();
+        $expect = [];
         $actual = $this->record->getChangedFields();
         $this->assertSame($expect, $actual);
         
         $this->record->numeric = 4.56;
-        $expect = array('numeric' => 4.56);
+        $expect = ['numeric' => 4.56];
         $actual = $this->record->getChangedFields();
         $this->assertSame($expect, $actual);
         
         $this->record->zero = '';
-        $expect = array('numeric' => 4.56, 'zero' => '');
+        $expect = ['numeric' => 4.56, 'zero' => ''];
         $actual = $this->record->getChangedFields();
         $this->assertSame($expect, $actual);
     }
@@ -102,7 +102,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     {
         $this->record->zero = null;
         $this->record->falsy = null;
-        $expect = array('zero' => null, 'falsy' => null);
+        $expect = ['zero' => null, 'falsy' => null];
         $actual = $this->record->getChangedFields();
         $this->assertSame($expect, $actual);
     }
@@ -110,7 +110,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     public function testGetChangedFields_fromNull()
     {
         $this->record->nully = 0;
-        $expect = array('nully' => 0);
+        $expect = ['nully' => 0];
         $actual = $this->record->getChangedFields();
         $this->assertSame($expect, $actual);
     }
@@ -118,7 +118,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     public function testGetChangedFields_other()
     {
         $this->record->foo = 'changed';
-        $expect = array('foo' => 'changed');
+        $expect = ['foo' => 'changed'];
         $actual = $this->record->getChangedFields();
         $this->assertSame($expect, $actual);
     }
@@ -126,7 +126,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     public function testGetChangedFields_related()
     {
         $this->record->related = 'change related record';
-        $expect = array();
+        $expect = [];
         $actual = $this->record->getChangedFields();
         $this->assertSame($expect, $actual);
     }

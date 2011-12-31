@@ -1,15 +1,15 @@
-Aura.Marshal
+Aura Marshal
 ============
 
 > marshal (verb): to arrange in proper order; set out in an orderly manner;
 arrange clearly: to marshal facts; to marshal one's arguments. --
 [dictionary.com](http://dictionary.reference.com/browse/marshal)
 
-The Aura.Marshal package is a data-object marshalling tool. It takes results
+The Aura Marshal package is a data-object marshalling tool. It takes results
 from data sources and marshals those result sets into domain model objects of
 your own design, preserving data relationships along the way.
 
-You can use any database access layer you like with Aura.Marshal, such as ...
+You can use any database access layer you like with Aura Marshal, such as ...
 
 - [`mysql`](http://php.net/mysql) or the other PHP database function sets
 - [`PDO`](http://php.net/PDO)
@@ -19,18 +19,18 @@ You can use any database access layer you like with Aura.Marshal, such as ...
 - [`Doctrine2 DBAL`](http://www.doctrine-project.org/docs/dbal/2.1/en)
 
 ... or anything else. (In theory, you should be able to retrieve data from
-XML, CSV, Mongo, or anything else, and load it into Aura.Marshal.)
+XML, CSV, Mongo, or anything else, and load it into Aura Marshal.)
 
-With Aura.Marshal, you use the data retrieval tools of your choice and write
+With Aura Marshal, you use the data retrieval tools of your choice and write
 your own queries to retrieve data from a data source. You then load that
 result data into an entity type object, and it creates record and collection
 objects for you based on a mapping scheme you define for it.
 
-Aura.Marshal makes it easy to avoid the N+1 problem when working with a domain
+Aura Marshal makes it easy to avoid the N+1 problem when working with a domain
 model. It also uses an identity map (per type) to avoid retaining multiple
 copies of the same object.
 
-It is important to remember that Aura.Marshal, despite resembling an ORM in
+It is important to remember that Aura Marshal, despite resembling an ORM in
 many ways, it *not* an ORM proper:
 
 - it does not have a query-building facility
@@ -39,12 +39,12 @@ many ways, it *not* an ORM proper:
 - it will not lazy-load results from a data source
 - it will not read metadata or schemas from the datasource
 
-Those things are outside the scope of the Aura.Marshal package. Their absence
+Those things are outside the scope of the Aura Marshal package. Their absence
 does provide a great amount of flexibility for power users who write their own
 hand-tuned SQL and need a way to marshal their result sets into a domain
 model, especially in legacy codebases.
 
-Aura.Marshal works by using `Type` objects (which define the entity types in
+Aura Marshal works by using `Type` objects (which define the entity types in
 the domain model). Each `Type` has a definition indicating its identity field,
 how to build records and collections, and the relationships to other `Type`
 objects. The `Type` objects are accessed through a type `Manager`. You load
@@ -88,13 +88,16 @@ relationships.
     <?php
     $manager = include '/path/to/Aura.Marshal/scripts/instance.php';
 
-Alternatively, you can add Aura.Marshal to your autoloader and instantiate it
+Alternatively, you can add Aura Marshal to your autoloader and instantiate it
 manually:
 
     <?php
+    use Aura\Marshal\Manager;
+    use Aura\Marshal\Type\Builder as TypeBuilder;
+    use Aura\Marshal\Relation\Builder as RelationBuilder;
     $manager = new \Aura\Marshal\Manager(
-        new \Aura\Marshal\Type\Builder,
-        new \Aura\Marshal\Relation\Builder
+        new TypeBuilder,
+        new RelationBuilder
     );
 
 Defining Types
@@ -102,7 +105,7 @@ Defining Types
 
 Now we add definitons for each of the entity types in our domain model. These
 do not have to map directly to tables, but it is often the case that they do.
-Because Aura.Marshal does not read schemas, we need to identify explicitly the
+Because Aura Marshal does not read schemas, we need to identify explicitly the
 primary key fields and the relationships (along with the relationship fields).
 
 First, let's set the basic definitions for each type in the domain model. In
@@ -111,30 +114,17 @@ this case it turns out they all have the same primary key, so it's always
 source.
 
     <?php
-    $manager->setType('authors', array(
-        'identity_field' => 'id',
-    ));
+    $manager->setType('authors',    ['identity_field' => 'id']);
+    $manager->setType('posts',      ['identity_field' => 'id']);
+    $manager->setType('summaries',  ['identity_field' => 'id']);
+    $manager->setType('tags',       ['identity_field' => 'id']);
+    $manager->setType('posts_tags', ['identity_field' => 'id']);
     
-    $manager->setType('posts', array(
-        'identity_field' => 'id',
-    ));
-    
-    $manager->setType('summaries', array(
-        'identity_field' => 'id',
-    ));
-    
-    $manager->setType('tags', array(
-        'identity_field' => 'id',
-    ));
-    
-    $manager->setType('posts_tags', array(
-        'identity_field' => 'id',
-    ));
-    
+
 Defining Relationships
 ----------------------
 
-Aura.Marshal recognizes four kinds of relationships between types:
+Aura Marshal recognizes four kinds of relationships between types:
 
 - `has_one`: A one-to-one relationship where the native record is the owner of
   one foreign record.
@@ -160,7 +150,7 @@ parameter is an array of information about the relationship.
 
     <?php
     // each author has many posts
-    $manager->setRelation('authors', 'posts', array(
+    $manager->setRelation('authors', 'posts', [
         
         // the kind of relationship
         'relationship'  => 'has_many',
@@ -170,10 +160,10 @@ parameter is an array of information about the relationship.
         
         // the posts field to match against
         'foreign_field' => 'author_id',
-    ));
+    ]);
     
     // each post belongs to one author
-    $manager->setRelation('posts', 'author', array(
+    $manager->setRelation('posts', 'author', [
         
         // the kind of relationship
         'relationship'  => 'belongs_to',
@@ -188,10 +178,10 @@ parameter is an array of information about the relationship.
         
         // the authors field to match against
         'foreign_field' => 'id',
-    ));
+    ]);
     
     // posts have one summary
-    $manager->setRelation('posts', 'summary', array(
+    $manager->setRelation('posts', 'summary', [
         
         // the kind of relationship
         'relationship'  => 'has_one',
@@ -204,10 +194,10 @@ parameter is an array of information about the relationship.
         
         // the summaries field to match against
         'foreign_field' => 'post_id'
-    ));
+    ]);
     
     // posts have many comments
-    $manager->setRelation('posts', 'comments', array(
+    $manager->setRelation('posts', 'comments', [
         // the kind of relationship
         'relationship'  => 'has_many',
         
@@ -216,14 +206,14 @@ parameter is an array of information about the relationship.
         
         // the comments field to match against
         'foreign_field' => 'post_id'
-    ));
+    ]);
     
 Now let's set up the more complex many-to-many relationship between posts and
 tags.
 
     <?php
     // posts have many tags, as mapped through posts_tags
-    $manager->setRelation('posts', 'tags', array(
+    $manager->setRelation('posts', 'tags', [
         
         // the kind of relationship
         'relationship' => 'has_many_through',
@@ -244,10 +234,10 @@ tags.
         // the tags field that should map to the "tags" side of the
         // association mapping type
         'foreign_field' => 'id',
-    ));
+    ]);
     
     // tags have many posts, as mapped through posts_tags
-    $manager->setRelation('tags', 'posts', array(
+    $manager->setRelation('tags', 'posts', [
         
         // the kind of relationship
         'relationship' => 'has_many_through',
@@ -268,7 +258,7 @@ tags.
         // the posts field that should map to the "posts" side of the
         // association mapping
         'foreign_field' => 'id',
-    ));
+    ]);
 
 
 Loading Data
@@ -288,12 +278,12 @@ problem easily.
 
     <?php
     // instantiate a Zend_Db connection
-    $db = new Zend_Db_Adapter_Pdo_Mysql(array(
+    $db = new Zend_Db_Adapter_Pdo_Mysql([
         'host'     => '127.0.0.1',
         'username' => 'webuser',
         'password' => 'xxxxxxxx',
         'dbname'   => 'test'
-    ));
+    ]);
     
     // query for the first 10 posts in the system
     $result = $db->fetchAll('SELECT * FROM posts LIMIT 10');
@@ -305,7 +295,7 @@ problem easily.
     // query for and load all the comments on all the posts at once.
     $result = $db->fetchAll(
         'SELECT * FROM comments WHERE post_id IN (?)',
-        array($post_ids)
+        [$post_ids]
     );
     $manager->comments->load($result);
     
@@ -316,21 +306,21 @@ problem easily.
     // ... then we can query and load.
     $result = $db->fetchAll(
         'SELECT * FROM authors WHERE id IN (?)',
-        array($author_ids)
+        [$author_ids]
     );
     $manager->comments->load($result);
     
     // query and load post summaries.
     $result = $db->fetchAll(
         'SELECT * FROM summaries WHERE post_id IN (?)',
-        array($post_ids)
+        [$post_ids]
     );
     $manager->summaries->load($result);
     
     // query and load the association mapping type linking posts and tags
     $result = $db->fetchAll(
         'SELECT * FROM posts_tags WHERE post_id IN (?)',
-        array($post_ids)
+        [$post_ids]
     );
     $manager->posts_tags->load($result);
     
@@ -363,7 +353,7 @@ record objects, with related data wired up for us automatically.
             echo "It has no tags.";
         } else {
             echo "It has these tags: ";
-            $tags = array();
+            $tags = [];
             foreach ($post->tags as $tag) {
                 $tags[] = $tag->name;
             }
@@ -388,7 +378,7 @@ the record builder will generate a particular class of object; this lets the
 type object know when the loaded data has been converted to a record object.
 
     <?php
-    $manager->setType('posts', array(
+    $manager->setType('posts', [
         // the field with the unique identifying value
         'identity_field' => 'id',
         
@@ -403,7 +393,7 @@ type object know when the loaded data has been converted to a record object.
         // an object to build collections; default is a new instance of
         // Aura\Marshal\Collection\Builder
         'collection_builder' => new \Vendor\Package\Posts\CollectionBuilder,
-    ));
+    ]);
     
 The builders should implement `Aura\Marshal\Record\BuilderInterface` and
 `Aura\Marshal\Collection\CollectionInterface`, respectively.
@@ -413,15 +403,15 @@ Indexing
 --------
 
 By default, the `Type` objects do not index the values when loading records.
-You are likely to see a performance improvement when Aura.Marshal wires up
+You are likely to see a performance improvement when Aura Marshal wires up
 related collections if you add indexes for native fields used in
 relationships. For example, you could tell the `posts_tags` assocation mapping
 type to index on `post_id` and `tag_id` for faster lookups:
 
-    $manager->setType('posts_tags', array(
+    $manager->setType('posts_tags', [
         'identity_field' => 'id',
-        'index_fields'   => array('post_id', 'tag_id'),
-    ));
+        'index_fields'   => ['post_id', 'tag_id'],
+    ]);
 
 We suggest adding an index for all `native_field` fields in the relationships
 for a `Type` (except the `identity_field`, which is a special case and does
@@ -444,107 +434,107 @@ relationships:
     use Aura\Marshal\Manager;
     use Aura\Marshal\Type\Builder as TypeBuilder;
     use Aura\Marshal\Relation\Builder as RelationBuilder;
-    $manager = new Manager(new TypeBuilder, new RelationBuilder, array(
+    $manager = new Manager(new TypeBuilder, new RelationBuilder, [
         
-        'authors' => array(
+        'authors' => [
             'identity_field'                => 'id',
-            'relation_names'                => array(
-                'posts'                     => array(
+            'relation_names'                => [
+                'posts'                     => [
                     'relationship'          => 'has_many',
                     'native_field'          => 'id',
                     'foreign_field'         => 'author_id',
-                ),
-            ),
-        ),
+                ],
+            ],
+        ],
         
-        'posts' => array(
+        'posts' => [
             'identity_field'                => 'id',
-            'index_fields'                  => array('author_id'),
-            'relation_names'                => array(
-                'meta'                      => array(
+            'index_fields'                  => ['author_id'],
+            'relation_names'                => [
+                'meta'                      => [
                     'relationship'          => 'has_one',
                     'foreign_type'          => 'metas',
                     'native_field'          => 'id',
                     'foreign_field'         => 'post_id',
-                ),
-                'comments'                  => array(
+                ],
+                'comments'                  => [
                     'relationship'          => 'has_many',
                     'native_field'          => 'id',
                     'foreign_field'         => 'post_id'
-                ),
-                'author'                    => array(
+                ],
+                'author'                    => [
                     'relationship'          => 'belongs_to',
                     'foreign_type'          => 'authors',
                     'native_field'          => 'author_id',
                     'foreign_field'         => 'id',
-                ),
-                'tags'                      => array(
+                ],
+                'tags'                      => [
                     'relationship'          => 'has_many_through',
                     'through_type'          => 'posts_tags',
                     'native_field'          => 'id',
                     'through_native_field'  => 'post_id',
                     'through_foreign_field' => 'tag_id',
                     'foreign_field'         => 'id'
-                ),
-            ),
-        ),
+                ],
+            ],
+        ],
         
-        'metas' => array(
+        'metas' => [
             'identity_field'                => 'id',
-            'index_fields'                  => array('post_id'),
-            'relation_names'                => array(
-                'post'                      => array(
+            'index_fields'                  => ['post_id'],
+            'relation_names'                => [
+                'post'                      => [
                     'relationship'          => 'belongs_to',
                     'foreign_type'          => 'posts',
                     'native_field'          => 'post_id',
                     'foreign_field'         => 'id',
-                ),
-            ),
-        ),
+                ],
+            ],
+        ],
         
-        'comments' => array(
+        'comments' => [
             'identity_field'                => 'id',
-            'index_fields'                  => array('post_id'),
-            'relation_names'                => array(
-                'post'                      => array(
+            'index_fields'                  => ['post_id'],
+            'relation_names'                => [
+                'post'                      => [
                     'relationship'          => 'belongs_to',
                     'foreign_type'          => 'posts',
                     'native_field'          => 'post_id',
                     'foreign_field'         => 'id',
-                ),
-            ),
-        ),
+                ],
+            ],
+        ],
         
-        'posts_tags' => array(
+        'posts_tags' => [
             'identity_field'                => 'id',
-            'index_fields'                  => array('post_id', 'tag_id'),
-            'relation_names'                => array(
-                'post'                      => array(
+            'index_fields'                  => ['post_id', 'tag_id'],
+            'relation_names'                => [
+                'post'                      => [
                     'relationship'          => 'belongs_to',
                     'foreign_type'          => 'posts',
                     'native_field'          => 'post_id',
                     'foreign_field'         => 'id',
-                ),
-                'tag'                       => array(
+                ],
+                'tag'                       => [
                     'relationship'          => 'belongs_to',
                     'foreign_type'          => 'tags',
                     'native_field'          => 'tag_id',
                     'foreign_field'         => 'id',
-                ),
-            )
-        ),
+                ],
+            ],
+        ],
         
-        'tags' => array(
+        'tags' => [
             'identity_field'                => 'id',
-            'relation_names'                => array(
-                'posts'                     => array(
+            'relation_names'                => [
+                'posts'                     => [
                     'relationship'          => 'has_many_through',
                     'native_field'          => 'id',
                     'through_type'          => 'posts_tags',
                     'through_native_field'  => 'tag_id',
                     'through_foreign_field' => 'post_id',
                     'foreign_field'         => 'id'
-                ),
-            ),
-        ),
-    ));
+                ],
+            ],
+        ],
+    ]);

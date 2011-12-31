@@ -26,12 +26,12 @@ class Builder
      * @var array
      * 
      */
-    protected $relationship_class = array(
+    protected $relationship_class = [
         'belongs_to'       => 'Aura\Marshal\Relation\BelongsTo',
         'has_one'          => 'Aura\Marshal\Relation\HasOne',
         'has_many'         => 'Aura\Marshal\Relation\HasMany',
         'has_many_through' => 'Aura\Marshal\Relation\HasManyThrough',
-    );
+    ];
     
     /**
      * 
@@ -49,7 +49,7 @@ class Builder
      */
     public function newInstance($type, $name, $info, Manager $manager)
     {
-        $base = array(
+        $base = [
             'foreign_type'          => $name,
             'relationship'          => null,
             'native_field'          => null,
@@ -57,7 +57,7 @@ class Builder
             'through_type'          => null,
             'through_native_field'  => null,
             'through_foreign_field' => null,
-        );
+        ];
         
         $info = array_merge($base, $info);
         

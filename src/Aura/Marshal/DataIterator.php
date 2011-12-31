@@ -53,7 +53,7 @@ class DataIterator implements \Iterator
      * @param array $keys The keys in the Data object.
      * 
      */
-    public function __construct(Data $data, array $keys = array())
+    public function __construct(Data $data, array $keys = [])
     {
         $this->data = $data;
         $this->keys = $keys;

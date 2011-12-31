@@ -64,7 +64,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testSetAndGetIndexFields()
     {
-        $expect = array('foobar', 'bazdib');
+        $expect = ['foobar', 'bazdib'];
         $this->type->setIndexFields($expect);
         $actual = $this->type->getIndexFields();
         $this->assertSame($expect, $actual);
@@ -103,7 +103,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     public function testGetIdentityValues()
     {
         $data = $this->loadTypeWithPosts();
-        $expect = array(1, 2, 3, 4, 5);
+        $expect = [1, 2, 3, 4, 5];
         $actual = $this->type->getIdentityValues();
         $this->assertSame($expect, $actual);
     }
@@ -111,7 +111,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     public function testGetFieldValues()
     {
         $data = $this->loadTypeWithPosts();
-        $expect = array(1 => '1', 2 => '1', 3 => '1', 4 => '2', 5 => '2');
+        $expect = [1 => '1', 2 => '1', 3 => '1', 4 => '2', 5 => '2'];
         $actual = $this->type->getFieldValues('author_id');
         $this->assertSame($expect, $actual);
     }
@@ -189,12 +189,12 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     public function getCollection()
     {
         $data = $this->loadTypeWithPosts();
-        $collection = $this->type->getCollection(array(1, 2, 3));
-        $expect = array(
+        $collection = $this->type->getCollection([1, 2, 3]);
+        $expect = [
             (object) $data[0],
             (object) $data[1],
             (object) $data[2],
-        );
+        ];
         
         foreach ($collection as $offset => $actual) {
             $this->assertSame($expect[$offset]->id, $actual->id);
@@ -207,10 +207,10 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     {
         $data = $this->loadTypeWithPosts();
         $collection = $this->type->getCollectionByField('fake_field', 88);
-        $expect = array(
+        $expect = [
             (object) $data[3],
             (object) $data[4],
-        );
+        ];
         
         foreach ($collection as $offset => $actual) {
             $this->assertSame($expect[$offset]->id, $actual->id);
@@ -223,14 +223,14 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     public function testGetCollectionByField_many()
     {
         $data = $this->loadTypeWithPosts();
-        $collection = $this->type->getCollectionByField('fake_field', array(88, 69));
-        $expect = array(
+        $collection = $this->type->getCollectionByField('fake_field', [88, 69]);
+        $expect = [
             (object) $data[0],
             (object) $data[1],
             (object) $data[2],
             (object) $data[3],
             (object) $data[4],
-        );
+        ];
         
         foreach ($collection as $offset => $actual) {
             $this->assertSame($expect[$offset]->id, $actual->id);
@@ -243,11 +243,11 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     public function testGetCollectionByField_identity()
     {
         $data = $this->loadTypeWithPosts();
-        $collection = $this->type->getCollectionByField('id', array(4, 5));
-        $expect = array(
+        $collection = $this->type->getCollectionByField('id', [4, 5]);
+        $expect = [
             (object) $data[3],
             (object) $data[4],
-        );
+        ];
         
         foreach ($collection as $offset => $actual) {
             $this->assertSame($expect[$offset]->id, $actual->id);
@@ -260,14 +260,14 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     public function getCollectionByField_index()
     {
         $data = $this->loadTypeWithPosts();
-        $collection = $this->type->getCollectionByField('author_id', array(2, 1));
-        $expect = array(
+        $collection = $this->type->getCollectionByField('author_id', [2, 1]);
+        $expect = [
             (object) $data[3],
             (object) $data[4],
             (object) $data[0],
             (object) $data[1],
             (object) $data[2],
-        );
+        ];
         
         foreach ($collection as $offset => $actual) {
             $this->assertSame($expect[$offset]->id, $actual->id);
@@ -302,7 +302,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     {
         $type_builder = new TypeBuilder;
         $this->setExpectedException('Aura\Marshal\Exception');
-        $type = $type_builder->newInstance(array());
+        $type = $type_builder->newInstance([]);
     }
     
     public function testNewRecord()
@@ -336,10 +336,10 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $record_2->fake_field = $fake_field;
         
         // now check for changes
-        $expect = array(
+        $expect = [
             $record_1->id => $record_1,
             $record_3->id => $record_3,
-        );
+        ];
         
         $actual = $this->type->getChangedRecords();
         $this->assertSame($expect, $actual);
@@ -348,11 +348,11 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     public function testGetNewRecords()
     {
         $data = $this->loadTypeWithPosts();
-        $expect = array(
-            $this->type->newRecord(array('fake_field' => 101)),
-            $this->type->newRecord(array('fake_field' => 102)),
-            $this->type->newRecord(array('fake_field' => 105)),
-        );
+        $expect = [
+            $this->type->newRecord(['fake_field' => 101]),
+            $this->type->newRecord(['fake_field' => 102]),
+            $this->type->newRecord(['fake_field' => 105]),
+        ];
         $actual = $this->type->getNewRecords();
         $this->assertSame($expect, $actual);
     }
