@@ -309,7 +309,7 @@ problem easily.
         'SELECT * FROM authors WHERE id IN (?)',
         [$author_ids]
     );
-    $manager->comments->load($result);
+    $manager->authors->load($result);
     
     // query and load post summaries.
     $result = $db->fetchAll(
