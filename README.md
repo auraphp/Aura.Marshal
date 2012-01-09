@@ -116,6 +116,7 @@ source.
     <?php
     $manager->setType('authors',    ['identity_field' => 'id']);
     $manager->setType('posts',      ['identity_field' => 'id']);
+    $manager->setType('comments',   ['identity_field' => 'id']);
     $manager->setType('summaries',  ['identity_field' => 'id']);
     $manager->setType('tags',       ['identity_field' => 'id']);
     $manager->setType('posts_tags', ['identity_field' => 'id']);
@@ -326,6 +327,7 @@ problem easily.
     
     // finally, query and load all tags regardless of posts
     $result = $db->fetchAll('SELECT * FROM tags');
+    $manager->tags->load($result);
 
 
 Reading Data
@@ -344,7 +346,7 @@ record objects, with related data wired up for us automatically.
         
         // address the native and foreign fields
         echo "The post titled {$post->title} "
-           . "was written by {$post->author->display_name}. "
+           . "was written by {$post->author->name}. "
            . "It has been read {$post->summary->read_sum} times "
            . "and has " . count($post->comments) . " comments. ";
         
