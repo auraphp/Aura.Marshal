@@ -2,8 +2,8 @@ Aura Marshal
 ============
 
 > marshal (verb): to arrange in proper order; set out in an orderly manner;
-arrange clearly: to marshal facts; to marshal one's arguments. --
-[dictionary.com](http://dictionary.reference.com/browse/marshal)
+> arrange clearly: to marshal facts; to marshal one's arguments. --
+> [dictionary.com](http://dictionary.reference.com/browse/marshal)
 
 The Aura Marshal package is a data-object marshalling tool. It takes results
 from data sources and marshals those result sets into domain model objects of
