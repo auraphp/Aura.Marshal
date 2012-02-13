@@ -13,7 +13,7 @@ You can use any database access layer you like with Aura Marshal, such as ...
 
 - [`mysql`](http://php.net/mysql) or the other PHP database function sets
 - [`PDO`](http://php.net/PDO)
-- [`Aura Sql`](https://github.com/auraphp/Aura.Sql)
+- [`Aura SQL`](https://github.com/auraphp/Aura.Sql)
 - [`Solar_Sql_Adapter`](http://solarphp.com/class/Solar_Sql_Adapter)
 - [`Zend_Db_Adapter`](http://framework.zend.com/manual/en/zend.db.adapter.html)
 - [`Doctrine2 DBAL`](http://www.doctrine-project.org/docs/dbal/2.1/en)
@@ -267,66 +267,81 @@ Loading Data
 
 Now that we have defined the `Type` objects and their relationships to each
 other in the `Manager`, we can load data into the `Type` objects. In the
-following example, we load data using `Zend_Db`, but any database access tool
-can be used.
-
-Note that we are able to select, for example, all the comments for all the
-posts at once. This means that instead of issuing 10 queries to get comments
-(one for each blog post), we can issue a single query to get all comments at
-one time; the `Type` objects will wire up the related collections for us
-automatically as defined by the relationships. This helps us avoid the N+1
-problem easily.
+following example, we load data using [Aura SQL](https://github.com/auraphp/Aura.Sql),
+but any database access tool can be used.
 
     <?php
-    // instantiate a Zend_Db connection
-    $db = new Zend_Db_Adapter_Pdo_Mysql([
-        'host'     => '127.0.0.1',
-        'username' => 'webuser',
-        'password' => 'xxxxxxxx',
-        'dbname'   => 'test'
-    ]);
+    /**
+     * @var Aura\Sql\AdapterFactory $adapter_factory 
+     */
+    // instantiate a database adapter for MySQL
+    $sql = $adapter_factory->newInstance(
+        'mysql',
+        [
+            'host'   => '127.0.0.1',
+            'dbname' => 'database_name',
+        ]
+        'user_name',
+        'pass_word'
+    );
     
-    // query for the first 10 posts in the system
-    $result = $db->fetchAll('SELECT * FROM posts LIMIT 10');
+    // select the first 10 posts in the system
+    $result = $sql->fetchAll('SELECT * FROM posts LIMIT 10');
     
     // load the results into the posts type object, and get back the
     // identity (primary key) values for the loaded results.
     $post_ids = $manager->posts->load($result);
     
-    // query for and load all the comments on all the posts at once.
-    $result = $db->fetchAll(
-        'SELECT * FROM comments WHERE post_id IN (?)',
-        [$post_ids]
+    // select and load all the comments on all the posts at once.
+    $result = $sql->fetchAll(
+        'SELECT * FROM comments WHERE post_id IN (:post_ids)',
+        [
+            'post_ids' => $post_ids,
+        ]
     );
     $manager->comments->load($result);
     
+Note that we are able to select all the comments for all the posts at once.
+This means that instead of issuing 10 queries to get comments (one for each
+blog post), we can issue a single query to get all comments at one time; the
+`Type` objects will wire up the related collections for us automatically as
+defined by the relationships. This helps us avoid the N+1 problem easily.
+Let's continue:
+
+    <?php
     // add the authors for the posts.  first, we need to know
     // the author_id values for all the posts so far ...
     $author_ids = $manager->posts->getFieldValues('author_id');
     
     // ... then we can query and load.
-    $result = $db->fetchAll(
-        'SELECT * FROM authors WHERE id IN (?)',
-        [$author_ids]
+    $result = $sql->fetchAll(
+        'SELECT * FROM authors WHERE id IN (:author_ids)',
+        [
+            'author_ids' => $author_ids,
+        ]
     );
     $manager->authors->load($result);
     
     // query and load post summaries.
-    $result = $db->fetchAll(
-        'SELECT * FROM summaries WHERE post_id IN (?)',
-        [$post_ids]
+    $result = $sql->fetchAll(
+        'SELECT * FROM summaries WHERE post_id IN (:post_ids)',
+        [
+            'post_ids' => $post_ids,
+        ]
     );
     $manager->summaries->load($result);
     
     // query and load the association mapping type linking posts and tags
-    $result = $db->fetchAll(
-        'SELECT * FROM posts_tags WHERE post_id IN (?)',
-        [$post_ids]
+    $result = $sql->fetchAll(
+        'SELECT * FROM posts_tags WHERE post_id IN (:post_ids)',
+        [
+            'post_ids' => $post_ids,
+        ]
     );
     $manager->posts_tags->load($result);
     
     // finally, query and load all tags regardless of posts
-    $result = $db->fetchAll('SELECT * FROM tags');
+    $result = $sql->fetchAll('SELECT * FROM tags');
     $manager->tags->load($result);
 
 
