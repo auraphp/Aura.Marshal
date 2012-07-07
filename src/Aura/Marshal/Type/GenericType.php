@@ -3,6 +3,8 @@
  * 
  * This file is part of the Aura project for PHP.
  * 
+ * @package Aura.Marshal
+ * 
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
@@ -604,6 +606,9 @@ class GenericType extends Data
     /**
      * 
      * Returns a relationship definition object by name.
+     * 
+     * @param string $name The field name to use for the related record
+     * or collection.
      * 
      * @return AbstractRelation
      * 

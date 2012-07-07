@@ -3,6 +3,8 @@
  * 
  * This file is part of the Aura project for PHP.
  * 
+ * @package Aura.Marshal
+ * 
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
@@ -56,9 +58,15 @@ abstract class AbstractRelation
      */
     protected $foreign_field;
     
+    // FIXME $type of type
     /**
      * 
      * Constructor.
+     * 
+     * @param type $type
+     * 
+     * @param string $name The name of the record field where the related
+     * data will be placed.
      * 
      * @param array $info An array of relationship definition information.
      * 
