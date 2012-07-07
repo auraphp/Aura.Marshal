@@ -3,6 +3,8 @@
  * 
  * This file is part of the Aura project for PHP.
  * 
+ * @package Aura.Marshal
+ * 
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
@@ -33,9 +35,12 @@ class Builder
         'has_many_through' => 'Aura\Marshal\Relation\HasManyThrough',
     ];
     
+    // FIXME $type of type
     /**
      * 
      * Builds and returns a relation object.
+     * 
+     * @param type $type
      * 
      * @param string $name The name of the record field where the related
      * data will be placed.
