@@ -3,6 +3,8 @@
  * 
  * This file is part of the Aura project for PHP.
  * 
+ * @package Aura.Marshal
+ * 
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
@@ -72,8 +74,6 @@ class GenericCollection extends Data
      * Returns an array of all the identity values for the collection.
      * 
      * This will not convert the collection elements to record objects.
-     * 
-     * @param string $field The field name to retrieve values for.
      *
      * @return array
      * 
