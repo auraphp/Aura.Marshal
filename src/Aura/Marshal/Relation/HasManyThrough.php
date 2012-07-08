@@ -9,6 +9,7 @@
  * 
  */
 namespace Aura\Marshal\Relation;
+
 use Aura\Marshal\Exception;
 use Aura\Marshal\Manager;
 use Aura\Marshal\Type\GenericType;
@@ -32,7 +33,7 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
      * 
      */
     protected $through_type;
-    
+
     /**
      * 
      * The field name for the native side of the association mapping in the
@@ -42,7 +43,7 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
      * 
      */
     protected $through_native_field;
-    
+
     /**
      * 
      * The field name for the foreign side of the association mapping in the
@@ -52,7 +53,7 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
      * 
      */
     protected $through_foreign_field;
-    
+
     // FIXME $type of type
     /**
      * 
@@ -70,24 +71,24 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
     public function __construct($type, $name, $info, Manager $manager)
     {
         parent::__construct($type, $name, $info, $manager);
-        
+
         if (! $info['through_type']) {
             throw new Exception("No 'through_type' specified for relation '$name' in type '$type'.");
         }
-        
+
         if (! $info['through_native_field']) {
             throw new Exception("No 'through_native_field' specified for relation '$name' in type '$type'.");
         }
-        
+
         if (! $info['through_foreign_field']) {
             throw new Exception("No 'through_foreign_field' specified for relation '$name' in type '$type'.");
         }
-        
+
         $this->through_type          = $this->manager->{$info['through_type']};
         $this->through_native_field  = $info['through_native_field'];
         $this->through_foreign_field = $info['through_foreign_field'];
     }
-    
+
     /**
      * 
      * Returns the related foreign collection for a native record.
@@ -106,12 +107,12 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
             $this->through_native_field,
             $native_value
         );
-        
+
         // now find the foreign values from the through collection
         $foreign_values = $through_coll->getFieldValues(
             $this->through_foreign_field
         );
-        
+
         // finally, return a foreign collection based on the foreign values
         return $this->foreign_type->getCollectionByField(
             $this->foreign_field,
@@ -119,3 +120,4 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
         );
     }
 }
+ 

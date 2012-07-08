@@ -9,6 +9,7 @@
  * 
  */
 namespace Aura\Marshal\Type;
+
 use Aura\Marshal\Collection\BuilderInterface as CollectionBuilderInterface;
 use Aura\Marshal\Data;
 use Aura\Marshal\Exception;
@@ -33,7 +34,7 @@ class GenericType extends Data
      * 
      */
     protected $collection_builder;
-    
+
     /**
      * 
      * The record field representing its unique identifier value. The
@@ -43,7 +44,7 @@ class GenericType extends Data
      * 
      */
     protected $identity_field;
-    
+
     /**
      * 
      * An index of records on the identity field. The format is:
@@ -56,7 +57,7 @@ class GenericType extends Data
      * 
      */
     protected $index_identity;
-    
+
     /**
      * 
      * An index of all records added via newRecord(). The format is:
@@ -69,7 +70,7 @@ class GenericType extends Data
      * 
      */
     protected $index_new;
-    
+
     /**
      * 
      * An array of fields to index on for quicker lookups. The array format
@@ -84,7 +85,7 @@ class GenericType extends Data
      * 
      */
     protected $index_fields = [];
-    
+
     /**
      * 
      * A builder to create record objects for this type.
@@ -93,7 +94,7 @@ class GenericType extends Data
      * 
      */
     protected $record_builder;
-    
+
     /**
      * 
      * The class expected from the record builder. This is used to determine
@@ -103,7 +104,7 @@ class GenericType extends Data
      * 
      */
     protected $record_class;
-    
+
     /**
      * 
      * An array of relationship descriptions, where the key is a
@@ -113,7 +114,7 @@ class GenericType extends Data
      * 
      */
     protected $relation = [];
-    
+
     /**
      * 
      * Sets the name of the field that uniquely identifies each record for
@@ -128,7 +129,7 @@ class GenericType extends Data
     {
         $this->identity_field = $identity_field;
     }
-    
+
     /**
      * 
      * Returns the name of the field that uniquely identifies each record of
@@ -141,7 +142,7 @@ class GenericType extends Data
     {
         return $this->identity_field;
     }
-    
+
     /**
      * 
      * Sets the fields that should be indexed at load() time; removes all
@@ -159,7 +160,7 @@ class GenericType extends Data
             $this->index_fields[$field] = [];
         }
     }
-    
+
     /**
      * 
      * Returns the list of indexed field names.
@@ -171,7 +172,7 @@ class GenericType extends Data
     {
         return array_keys($this->index_fields);
     }
-    
+
     /**
      * 
      * Sets the name of the expected record class; this is used to determine
@@ -186,7 +187,7 @@ class GenericType extends Data
     {
         $this->record_class = $record_class;
     }
-    
+
     /**
      * 
      * Returns the name of the expected record class.
@@ -198,7 +199,7 @@ class GenericType extends Data
     {
         return $this->record_class;
     }
-    
+
     /**
      * 
      * Sets the builder object to create record objects.
@@ -212,7 +213,7 @@ class GenericType extends Data
     {
         $this->record_builder = $record_builder;
     }
-    
+
     /**
      * 
      * Returns the builder that creates record objects.
@@ -224,7 +225,7 @@ class GenericType extends Data
     {
         return $this->record_builder;
     }
-    
+
     /**
      * 
      * Sets the builder object to create collection objects.
@@ -238,7 +239,7 @@ class GenericType extends Data
     {
         $this->collection_builder = $collection_builder;
     }
-    
+
     /**
      * 
      * Returns the builder that creates collection objects.
@@ -250,7 +251,7 @@ class GenericType extends Data
     {
         return $this->collection_builder;
     }
-    
+
     /**
      * 
      * Loads the IdentityMap for this type with data for record objects. 
@@ -281,50 +282,50 @@ class GenericType extends Data
     {
         // what indexes do we need to track?
         $index_fields = array_keys($this->index_fields);
-        
+
         // return a list of the identity values in $data
         $identity_values = [];
-        
+
         // what is the identity field for the type?
         $identity_field  = $this->getIdentityField();
-        
+
         // what's the last data offset?
         $offset = count($this->data);
-        
+
         // load each data element as a record
         foreach ($data as $record) {
-            
+
             // cast the element to an object for consistent addressing
             $record = (object) $record;
-            
+
             // retain the identity value on the record
             $identity_value    = $record->$identity_field;
             $identity_values[] = $identity_value;
-            
+
             // does the identity already exist in the map?
             if (isset($this->index_identity[$identity_value])) {
                 // yes, skip it and go on
                 continue;
             }
-            
+
             // no, retain it in the identity map and identity index ...
             $this->data[$offset] = $record;
             $this->index_identity[$identity_value] = $offset;
-            
+
             // ... put the offset value into the indexes ...
             foreach ($index_fields as $field) {
                 $value = $record->$field;
                 $this->index_fields[$field][$value][] = $offset;
             }
-            
+
             // ... and increment the offset for the next record.
             $offset ++;
         }
-        
+
         // return the list of identity values in $data, and done
         return $identity_values;
     }
-    
+
     /**
      * 
      * Returns the array keys for the for the records in the IdentityMap;
@@ -337,7 +338,7 @@ class GenericType extends Data
     {
         return array_keys($this->index_identity);
     }
-    
+
     /**
      * 
      * Returns the values for a particular field for all the records in the
@@ -359,7 +360,7 @@ class GenericType extends Data
         }
         return $values;
     }
-    
+
     /**
      * 
      * Retrieves a single record from the IdentityMap by the value of its
@@ -377,12 +378,12 @@ class GenericType extends Data
         if (! isset($this->index_identity[$identity_value])) {
             return null;
         }
-        
+
         // look up the sequential offset for the identity value
         $offset = $this->index_identity[$identity_value];
         return $this->getRecordByOffset($offset);
     }
-    
+
     /**
      * 
      * Retrieves the first record from the IdentityMap that matches the value
@@ -405,23 +406,23 @@ class GenericType extends Data
         if ($field == $this->identity_field) {
             return $this->getRecord($value);
         }
-        
+
         // pre-emptively look for an indexed field for that value
         if (isset($this->index_fields[$field])) {
             return $this->getRecordByIndex($field, $value);
         }
-        
+
         // long slow loop through all the records to find a match.
         foreach ($this->data as $offset => $record) {
             if ($record->$field == $value) {
                 return $this->getRecordByOffset($offset);
             }
         }
-        
+
         // no match!
         return null;
     }
-    
+
     /**
      * 
      * Retrieves a single record from the IdentityMap by its offset,
@@ -438,16 +439,16 @@ class GenericType extends Data
         if ($this->data[$offset] instanceof $this->record_class) {
             return $this->data[$offset];
         }
-        
+
         // convert to a record of the proper type ...
         $data = $this->data[$offset];
         $record = $this->record_builder->newInstance($this, $data);
-        
+
         // ... then retain and return it.
         $this->data[$offset] = $record;
         return $this->data[$offset];
     }
-    
+
     /**
      * 
      * Retrieves the first record from the IdentityMap matching an index 
@@ -468,7 +469,7 @@ class GenericType extends Data
         $offset = $this->index_fields[$field][$value][0];
         return $this->getRecordByOffset($offset);
     }
-    
+
     /**
      * 
      * Retrieves a collection of elements from the IdentityMap by the values
@@ -492,7 +493,7 @@ class GenericType extends Data
         }
         return $this->collection_builder->newInstance($this, $list);
     }
-    
+
     /**
      * 
      * Retrieves a collection of objects from the IdentityMap matching the 
@@ -522,17 +523,17 @@ class GenericType extends Data
     public function getCollectionByField($field, $values)
     {
         $values = (array) $values;
-        
+
         // pre-emptively look for an identity field
         if ($field == $this->identity_field) {
             return $this->getCollection($values);
         }
-        
+
         // pre-emptively look for an indexed field
         if (isset($this->index_fields[$field])) {
             return $this->getCollectionByIndex($field, $values);
         }
-        
+
         // long slow loop through all the records to find a match
         $list = [];
         foreach ($this->data as $identity_value => $record) {
@@ -544,7 +545,7 @@ class GenericType extends Data
         }
         return $this->collection_builder->newInstance($this, $list);
     }
-    
+
     /**
      * 
      * Looks through the index for a field to retrieve a collection of
@@ -581,7 +582,7 @@ class GenericType extends Data
         }
         return $this->collection_builder->newInstance($this, $list);
     }
-    
+
     /**
      * 
      * Sets a relationship to another type, assigning it to a field
@@ -602,7 +603,7 @@ class GenericType extends Data
         }
         $this->relation[$name] = $relation;
     }
-    
+
     /**
      * 
      * Returns a relationship definition object by name.
@@ -617,7 +618,7 @@ class GenericType extends Data
     {
         return $this->relation[$name];
     }
-    
+
     /**
      * 
      * Returns all the names of the relationship definition objects.
@@ -629,7 +630,7 @@ class GenericType extends Data
     {
         return array_keys($this->relation);
     }
-    
+
     /**
      * 
      * Adds a new record to the IdentityMap.
@@ -651,7 +652,7 @@ class GenericType extends Data
         $this->data[] = $record;
         return $record;
     }
-    
+
     /**
      * 
      * Returns an array of all records in the IdentityMap that have been 
@@ -674,7 +675,7 @@ class GenericType extends Data
         }
         return $list;
     }
-    
+
     /**
      * 
      * Returns an array of all records in the IdentityMap that were created
@@ -692,3 +693,4 @@ class GenericType extends Data
         return $list;
     }
 }
+ 

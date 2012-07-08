@@ -9,6 +9,7 @@
  * 
  */
 namespace Aura\Marshal\Record;
+
 use Aura\Marshal\Data;
 use Aura\Marshal\Type\GenericType;
 
@@ -29,7 +30,7 @@ class GenericRecord extends Data
      * 
      */
     protected $type;
-    
+
     /**
      * 
      * An array of the data as initially constructed.
@@ -38,7 +39,7 @@ class GenericRecord extends Data
      * 
      */
     protected $initial_data = [];
-    
+
     /**
      * 
      * Constructor.
@@ -54,7 +55,7 @@ class GenericRecord extends Data
         $this->initial_data = $data;
         $this->type = $type;
     }
-    
+
     /**
      * 
      * Gets the value of a field by name.
@@ -68,7 +69,7 @@ class GenericRecord extends Data
     {
         return $this->offsetGet($field);
     }
-    
+
     /**
      * 
      * Sets a the value of a field by name.
@@ -84,7 +85,7 @@ class GenericRecord extends Data
     {
         return $this->offsetSet($field, $value);
     }
-    
+
     /**
      * 
      * Does a certain field exist in the record?
@@ -98,7 +99,7 @@ class GenericRecord extends Data
     {
         return $this->offsetExists($field);
     }
-    
+
     /**
      * 
      * Unsets a field in the record.
@@ -112,7 +113,7 @@ class GenericRecord extends Data
     {
         $this->offsetUnset($field);
     }
-    
+
     /**
      * 
      * ArrayAccess: Gets a field value by name; if the field is based on a 
@@ -130,16 +131,16 @@ class GenericRecord extends Data
         // fill it with related data
         $fill_related = ! $this->offsetExists($field)
                       && in_array($field, $this->type->getRelationNames());
-        
+
         if ($fill_related) {
             $relation = $this->type->getRelation($field);
             $value    = $relation->getForRecord($this);
             $this->offsetSet($field, $value);
         }
-        
+
         return parent::offsetGet($field);
     }
-    
+
     /**
      * 
      * ArrayAccess: Unsets a field in the record; this leaves the array key 
@@ -154,7 +155,7 @@ class GenericRecord extends Data
     {
         $this->data[$field] = null;
     }
-    
+
     /**
      * 
      * Returns the fields that have been changed, and their new values.
@@ -181,46 +182,47 @@ class GenericRecord extends Data
     {
         // the eventual list of changed fields and values
         $changed = [];
-        
+
         // the list of relations
         $related = $this->type->getRelationNames();
-        
+
         // go through all the data elements and their presumed new values
         foreach ($this->data as $field => $new) {
-            
+
             // if the field is a related record or collection, skip it.
             // technically, we should ask it if it has changed at all.
             if (in_array($field, $related)) {
                 continue;
             }
-            
+
             // if the field is not part of the initial data ...
             if (! array_key_exists($field, $this->initial_data)) {
                 // ... then it's a change from the initial data.
                 $changed[$field] = $new;
                 continue;
             }
-            
+
             // what was the old (initial) value?
             $old = $this->initial_data[$field];
-            
+
             // are both old and new values numeric?
             $numeric = is_numeric($old) && is_numeric($new);
-            
+
             // if both old and new are numeric, compare loosely.
             if ($numeric && $old != $new) {
                 // loosely different, retain the new value
                 $changed[$field] = $new;
             }
-            
+
             // if one or the other is not numeric, compare strictly
             if (! $numeric && $old !== $new) {
                 // strictly different, retain the new value
                 $changed[$field] = $new;
             }
         }
-        
+
         // done!
         return $changed;
     }
 }
+ 

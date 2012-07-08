@@ -38,3 +38,4 @@ class BelongsTo extends AbstractRelation implements RelationInterface
         );
     }
 }
+ 
