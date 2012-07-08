@@ -9,6 +9,7 @@
  * 
  */
 namespace Aura\Marshal\Relation;
+
 use Aura\Marshal\Exception;
 use Aura\Marshal\Manager;
 
@@ -34,7 +35,7 @@ class Builder
         'has_many'         => 'Aura\Marshal\Relation\HasMany',
         'has_many_through' => 'Aura\Marshal\Relation\HasManyThrough',
     ];
-    
+
     // FIXME $type of type
     /**
      * 
@@ -63,19 +64,20 @@ class Builder
             'through_native_field'  => null,
             'through_foreign_field' => null,
         ];
-        
+
         $info = array_merge($base, $info);
-        
+
         $relationship = $info['relationship'];
         unset($info['relationship']);
-        
+
         if (! $relationship) {
             throw new Exception("No 'relationship' specified for relation '$name' in type '$type'.");
         }
-        
+
         $class = $this->relationship_class[$relationship];
         $relation = new $class($type, $name, $info, $manager);
-        
+
         return $relation;
     }
 }
+ 

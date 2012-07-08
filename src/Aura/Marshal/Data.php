@@ -36,7 +36,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      * 
      */
     protected $data = [];
-    
+
     /**
      * 
      * Constructor.
@@ -48,7 +48,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         $this->data = $data;
     }
-    
+
     /**
      * 
      * ArrayAccess: does the requested key exist?
@@ -62,7 +62,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         return array_key_exists($key, $this->data);
     }
-    
+
     /**
      * 
      * ArrayAccess: get a key value.
@@ -76,7 +76,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         return $this->data[$key];
     }
-    
+
     /**
      * 
      * ArrayAccess: set a key value.
@@ -92,7 +92,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         $this->data[$key] = $val;
     }
-    
+
     /**
      * 
      * ArrayAccess: unset a key.
@@ -106,7 +106,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         unset($this->data[$key]);
     }
-    
+
     /**
      * 
      * Countable: how many keys are there?
@@ -118,7 +118,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         return count($this->data);
     }
-    
+
     /**
      * 
      * IteratorAggregate: returns an external iterator for this struct.
@@ -131,3 +131,4 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
         return new DataIterator($this, array_keys($this->data));
     }
 }
+ 

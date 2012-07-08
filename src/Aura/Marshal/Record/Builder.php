@@ -9,6 +9,7 @@
  * 
  */
 namespace Aura\Marshal\Record;
+
 use Aura\Marshal\Type\GenericType;
 
 /**
@@ -36,3 +37,4 @@ class Builder implements BuilderInterface
         return new GenericRecord((array) $data, $type);
     }
 }
+ 

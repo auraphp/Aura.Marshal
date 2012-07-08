@@ -17,4 +17,7 @@ namespace Aura\Marshal;
  * @package Aura.Marshal
  * 
  */
-class Exception extends \Exception {}
+class Exception extends \Exception
+{
+}
+ 
