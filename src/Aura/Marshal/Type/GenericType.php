@@ -230,7 +230,7 @@ class GenericType extends Data
      * 
      * Sets the builder object to create collection objects.
      * 
-     * @param CollectionBuilderInterface $collectionBuilder The builder object.
+     * @param CollectionBuilderInterface $collection_builder The builder object.
      * 
      * @return void
      * 
