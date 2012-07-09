@@ -36,3 +36,4 @@ class Builder implements BuilderInterface
         return new GenericCollection($data, $type);
     }
 }
+ 

@@ -31,3 +31,4 @@ interface RelationInterface
      */
     public function getForRecord($record);
 }
+ 

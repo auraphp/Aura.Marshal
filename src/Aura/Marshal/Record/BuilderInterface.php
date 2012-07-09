@@ -9,6 +9,7 @@
  * 
  */
 namespace Aura\Marshal\Record;
+
 use Aura\Marshal\Type\GenericType;
 
 /**
@@ -32,3 +33,4 @@ interface BuilderInterface
      */
     public function newInstance(GenericType $type, $data);
 }
+ 

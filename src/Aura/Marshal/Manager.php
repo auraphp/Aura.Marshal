@@ -9,6 +9,7 @@
  * 
  */
 namespace Aura\Marshal;
+
 use Aura\Marshal\Type\Builder as TypeBuilder;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Aura\Marshal\Type\GenericType;
@@ -30,7 +31,7 @@ class Manager
      * 
      */
     protected $type_builder;
-    
+
     /**
      * 
      * A builder for relation objects.
@@ -39,7 +40,7 @@ class Manager
      * 
      */
     protected $relation_builder;
-    
+
     /**
      * 
      * An array of type definition arrays, which are converted to type
@@ -49,7 +50,7 @@ class Manager
      * 
      */
     protected $types;
-    
+
     /**
      * 
      * Constructor.
@@ -153,7 +154,7 @@ class Manager
         $this->relation_builder = $relation_builder;
         $this->types            = $types;
     }
-    
+
     /**
      * 
      * Sets one type in the manager.
@@ -170,10 +171,10 @@ class Manager
         if (isset($this->types[$name])) {
             throw new Exception("Type '$name' is already in the manager.");
         }
-        
+
         $this->types[$name] = $info;
     }
-    
+
     /**
      * 
      * Sets a one relation for a type in the manager.
@@ -192,7 +193,7 @@ class Manager
         if (! isset($this->types[$type])) {
             throw new Exception("Type '$type' is not in the manager.");
         }
-        
+
         if ($this->types[$type] instanceof GenericType) {
             // set on a type instance
             $relation = $this->relation_builder->newInstance(
@@ -207,7 +208,7 @@ class Manager
             $this->types[$type]['relation_names'][$name] = $info;
         }
     }
-    
+
     /**
      * 
      * Gets a type by name, creating a type object for it as needed.
@@ -222,14 +223,14 @@ class Manager
         if (! isset($this->types[$name])) {
             throw new Exception("Type '$name' not in the manager.");
         }
-        
+
         if (! $this->types[$name] instanceof GenericType) {
             $this->buildType($name);
         }
-        
+
         return $this->types[$name];
     }
-    
+
     /**
      * 
      * Builds a type object from a type definition.
@@ -255,7 +256,7 @@ class Manager
         // building related fields, then we enter a race condition.
         $info = $this->types[$name];
         $this->types[$name] = $this->type_builder->newInstance($info);
-        
+
         // add the related fields to the type
         if (isset($info['relation_names'])) {
             foreach ($info['relation_names'] as $relname => $relinfo) {
@@ -263,7 +264,7 @@ class Manager
             }
         }
     }
-    
+
     /**
      * 
      * Returns the names of all types in the manager.
@@ -276,3 +277,4 @@ class Manager
         return array_keys($this->types);
     }
 }
+ 
