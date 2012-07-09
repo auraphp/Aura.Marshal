@@ -1,1 +1,1 @@
-- no logic or API changes, just update metadata for release
+- PSR-1 and 2 compliance
