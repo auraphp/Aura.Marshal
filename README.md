@@ -9,6 +9,16 @@ The Aura Marshal package is a data-object marshalling tool. It takes results
 from data sources and marshals those result sets into domain model objects of
 your own design, preserving data relationships along the way.
 
+This package is compliant with [PSR-0][], [PSR-1][], and [PSR-2][]. If you
+notice compliance oversights, please send a patch via pull request.
+
+[PSR-0]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
+[PSR-1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
+[PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
+
+Overview
+--------
+
 You can use any database access layer you like with Aura Marshal, such as ...
 
 - [`mysql`](http://php.net/mysql) or the other PHP database function sets
