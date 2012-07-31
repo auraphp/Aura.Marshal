@@ -3,6 +3,8 @@
  * 
  * This file is part of the Aura project for PHP.
  * 
+ * @package Aura.Marshal
+ * 
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
@@ -36,3 +38,4 @@ class HasOne extends AbstractRelation implements RelationInterface
         );
     }
 }
+ 

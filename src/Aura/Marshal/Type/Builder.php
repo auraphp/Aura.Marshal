@@ -3,10 +3,13 @@
  * 
  * This file is part of the Aura project for PHP.
  * 
+ * @package Aura.Marshal
+ * 
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
 namespace Aura\Marshal\Type;
+
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Exception;
 use Aura\Marshal\Record\Builder as RecordBuilder;
@@ -55,28 +58,29 @@ class Builder
             'record_builder'        => null,
             'collection_builder'    => null,
         ];
-        
+
         $info = array_merge($base, $info);
-        
+
         if (! $info['identity_field']) {
             throw new Exception('No identity field specified.');
         }
-        
+
         if (! $info['record_builder']) {
             $info['record_builder'] = new RecordBuilder;
         }
-        
+
         if (! $info['collection_builder']) {
             $info['collection_builder'] = new CollectionBuilder;
         }
-        
+
         $type = new GenericType;
         $type->setIdentityField($info['identity_field']);
         $type->setIndexFields($info['index_fields']);
         $type->setRecordClass($info['record_class']);
         $type->setRecordBuilder($info['record_builder']);
         $type->setCollectionBuilder($info['collection_builder']);
-        
+
         return $type;
     }
 }
+ 

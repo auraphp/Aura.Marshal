@@ -3,6 +3,8 @@
  * 
  * This file is part of the Aura project for PHP.
  * 
+ * @package Aura.Marshal
+ * 
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
@@ -25,7 +27,7 @@ class DataIterator implements \Iterator
      * 
      */
     protected $data;
-    
+
     /**
      * 
      * The keys to iterate over in the Data object.
@@ -34,7 +36,7 @@ class DataIterator implements \Iterator
      * 
      */
     protected $keys;
-    
+
     /**
      * 
      * Is the current iterator position valid?
@@ -43,7 +45,7 @@ class DataIterator implements \Iterator
      * 
      */
     protected $valid;
-    
+
     /**
      * 
      * Constructor.
@@ -58,7 +60,7 @@ class DataIterator implements \Iterator
         $this->data = $data;
         $this->keys = $keys;
     }
-    
+
     /**
      * 
      * Returns the value at the current iterator position.
@@ -70,7 +72,7 @@ class DataIterator implements \Iterator
     {
         return $this->data->offsetGet($this->key());
     }
-    
+
     /**
      * 
      * Returns the current iterator position.
@@ -82,7 +84,7 @@ class DataIterator implements \Iterator
     {
         return current($this->keys);
     }
-    
+
     /**
      * 
      * Moves the iterator to the next position.
@@ -94,7 +96,7 @@ class DataIterator implements \Iterator
     {
         $this->valid = (next($this->keys) !== false);
     }
-    
+
     /**
      * 
      * Moves the iterator to the first position.
@@ -106,7 +108,7 @@ class DataIterator implements \Iterator
     {
         $this->valid = (reset($this->keys) !== false);
     }
-    
+
     /**
      * 
      * Is the current iterator position valid?
@@ -119,3 +121,4 @@ class DataIterator implements \Iterator
         return $this->valid;
     }
 }
+ 

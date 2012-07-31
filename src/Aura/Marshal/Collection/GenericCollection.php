@@ -3,10 +3,13 @@
  * 
  * This file is part of the Aura project for PHP.
  * 
+ * @package Aura.Marshal
+ * 
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
 namespace Aura\Marshal\Collection;
+
 use Aura\Marshal\Data;
 use Aura\Marshal\Type\GenericType;
 
@@ -27,7 +30,7 @@ class GenericCollection extends Data
      * 
      */
     protected $type;
-    
+
     /**
      * 
      * Constructor.
@@ -42,7 +45,7 @@ class GenericCollection extends Data
         parent::__construct($data);
         $this->type = $type;
     }
-    
+
     /**
      * 
      * ArrayAccess: Get a key value.
@@ -63,17 +66,15 @@ class GenericCollection extends Data
             $identity_value = $this->data[$key]->$identity_field;
             $this->data[$key] = $this->type->getRecord($identity_value);
         }
-        
+
         return $this->data[$key];
     }
-    
+
     /**
      * 
      * Returns an array of all the identity values for the collection.
      * 
      * This will not convert the collection elements to record objects.
-     * 
-     * @param string $field The field name to retrieve values for.
      *
      * @return array
      * 
@@ -83,7 +84,7 @@ class GenericCollection extends Data
         $identity_field = $this->type->getIdentityField();
         return $this->getFieldValues($identity_field);
     }
-    
+
     /**
      * 
      * Returns an array of all values for a single field in the collection.
@@ -103,7 +104,7 @@ class GenericCollection extends Data
         }
         return $values;
     }
-    
+
     /**
      * 
      * Is the collection empty?
@@ -116,7 +117,6 @@ class GenericCollection extends Data
         return empty($this->data);
     }
 
-    
     /**
      * 
      * Adds a new record to the collection (and to the IdentityMap for the
@@ -134,3 +134,4 @@ class GenericCollection extends Data
         return $record;
     }
 }
+ 
