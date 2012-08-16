@@ -1,5 +1,5 @@
 {
-    "name": "Aura/Marshal",
+    "name": "aura/marshal",
     "type": "aura-package",
     "description": "The Aura Marshal package is a data-object marshalling tool; it takes results from data sources and marshals those result sets into domain model objects of your own design, preserving data relationships along the way.",
     "keywords": [
@@ -19,6 +19,7 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "aura/default-installer": "*"
     }
 }
