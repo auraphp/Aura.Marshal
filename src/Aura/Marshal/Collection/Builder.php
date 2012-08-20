@@ -9,6 +9,7 @@
  * 
  */
 namespace Aura\Marshal\Collection;
+
 use Aura\Marshal\Type\GenericType;
 
 /**
@@ -36,4 +37,4 @@ class Builder implements BuilderInterface
         return new GenericCollection($data, $type);
     }
 }
- 
+
