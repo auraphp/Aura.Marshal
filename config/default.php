@@ -4,9 +4,13 @@
  */
 $loader->add('Aura\Marshal\\', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src');
 
-$di->set('marshal_manager', function() use ($di) {
-    return $di->newInstance('Aura\Marhal\Manager', [
-        'type_builder'     => $di->newInstance('Aura\Marshal\Type\Builder'),
-        'relation_builder' => $di->newInstance('Aura\Marshal\Relation\Builder'),
-    ]);
-});
+/**
+ * Instance params and setter values.
+ */
+$di->params['Aura\Marshal\Manager']['type_builder'] = $di->lazyNew('Aura\Marshal\Type\Builder');
+$di->params['Aura\Marshal\Manager']['relation_builder'] = $di->lazyNew('Aura\Marshal\Relation\Builder');
+
+/**
+ * Dependency services.
+ */
+$di->set('marshal_manager', $di->lazyNew('Aura\Marshal\Manager'));
