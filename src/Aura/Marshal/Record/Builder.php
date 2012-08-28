@@ -37,4 +37,3 @@ class Builder implements BuilderInterface
         return new GenericRecord((array) $data, $type);
     }
 }
- 

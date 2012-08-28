@@ -131,4 +131,3 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
         return new DataIterator($this, array_keys($this->data));
     }
 }
- 

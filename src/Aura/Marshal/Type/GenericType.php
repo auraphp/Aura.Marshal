@@ -693,4 +693,3 @@ class GenericType extends Data
         return $list;
     }
 }
- 

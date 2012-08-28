@@ -134,4 +134,3 @@ class GenericCollection extends Data
         return $record;
     }
 }
- 

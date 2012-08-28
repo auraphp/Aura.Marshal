@@ -120,4 +120,3 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
         );
     }
 }
- 

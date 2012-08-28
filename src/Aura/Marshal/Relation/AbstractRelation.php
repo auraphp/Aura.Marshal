@@ -94,4 +94,3 @@ abstract class AbstractRelation
         $this->foreign_field = $info['foreign_field'];
     }
 }
- 

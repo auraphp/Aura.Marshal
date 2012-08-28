@@ -38,4 +38,3 @@ class HasOne extends AbstractRelation implements RelationInterface
         );
     }
 }
- 

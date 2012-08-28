@@ -225,4 +225,3 @@ class GenericRecord extends Data
         return $changed;
     }
 }
- 

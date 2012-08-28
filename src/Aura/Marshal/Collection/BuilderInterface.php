@@ -32,4 +32,3 @@ interface BuilderInterface
      */
     public function newInstance(GenericType $type, array $data);
 }
- 

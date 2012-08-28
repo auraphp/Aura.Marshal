@@ -277,4 +277,3 @@ class Manager
         return array_keys($this->types);
     }
 }
- 

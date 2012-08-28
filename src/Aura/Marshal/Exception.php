@@ -20,4 +20,3 @@ namespace Aura\Marshal;
 class Exception extends \Exception
 {
 }
- 

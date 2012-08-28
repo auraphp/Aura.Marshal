@@ -39,4 +39,3 @@ class HasMany extends AbstractRelation implements RelationInterface
         );
     }
 }
- 
