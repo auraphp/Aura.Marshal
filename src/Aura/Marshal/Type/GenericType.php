@@ -274,21 +274,29 @@ class GenericType extends Data
      * 
      * @param array $data Record data to load into the IdentityMap.
      * 
-     * @return array The identity values from the data elements, regardless
+     * @param string $return_field Return values from this field; if empty,
+     * return values from the identity field (the default).
+     * 
+     * @return array The return values from the data elements, regardless
      * of whether they were loaded or not.
      * 
      */
-    public function load($data)
+    public function load($data, $return_field = null)
     {
         // what indexes do we need to track?
         $index_fields = array_keys($this->index_fields);
 
-        // return a list of the identity values in $data
-        $identity_values = [];
+        // return a list of field values in $data
+        $return_values = [];
 
         // what is the identity field for the type?
         $identity_field  = $this->getIdentityField();
 
+        // what should the return field be?
+        if (! $return_field) {
+            $return_field = $identity_field;
+        }
+        
         // what's the last data offset?
         $offset = count($this->data);
 
@@ -298,9 +306,12 @@ class GenericType extends Data
             // cast the element to an object for consistent addressing
             $record = (object) $record;
 
+            // retain the return value on the record
+            $return_value    = $record->$return_field;
+            $return_values[] = $return_value;
+
             // retain the identity value on the record
-            $identity_value    = $record->$identity_field;
-            $identity_values[] = $identity_value;
+            $identity_value = $record->$identity_field;
 
             // does the identity already exist in the map?
             if (isset($this->index_identity[$identity_value])) {
@@ -322,8 +333,8 @@ class GenericType extends Data
             $offset ++;
         }
 
-        // return the list of identity values in $data, and done
-        return $identity_values;
+        // return the list of field values in $data, and done
+        return $return_values;
     }
 
     /**
