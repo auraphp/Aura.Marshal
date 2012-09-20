@@ -108,6 +108,7 @@ manually:
 use Aura\Marshal\Manager;
 use Aura\Marshal\Type\Builder as TypeBuilder;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
+
 $manager = new \Aura\Marshal\Manager(
     new TypeBuilder,
     new RelationBuilder
