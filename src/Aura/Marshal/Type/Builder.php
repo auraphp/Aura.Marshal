@@ -32,10 +32,6 @@ class Builder
      * - `'identity_field'` (string): The name of the identity field for 
      *   records of this type. This key is required.
      * 
-     * - `record_class` (string): The name of the record class returned by the
-     *   record Builder. This key is optional, and defaults to 
-     *   `Aura\Marshal\Record`.
-     * 
      * - `record_builder` (Record\BuilderInterface): A builder to create
      *   record objects for the type. This key is optional, and defaults to a
      *   new Record\Builder object.
@@ -54,7 +50,6 @@ class Builder
         $base = [
             'identity_field'        => null,
             'index_fields'          => [],
-            'record_class'          => 'Aura\Marshal\Record\GenericRecord',
             'record_builder'        => null,
             'collection_builder'    => null,
         ];
@@ -76,7 +71,6 @@ class Builder
         $type = new GenericType;
         $type->setIdentityField($info['identity_field']);
         $type->setIndexFields($info['index_fields']);
-        $type->setRecordClass($info['record_class']);
         $type->setRecordBuilder($info['record_builder']);
         $type->setCollectionBuilder($info['collection_builder']);
 

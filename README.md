@@ -429,10 +429,6 @@ $manager->setType('posts', [
     // Aura\Marshal\Record\Builder
     'record_builder' => new \Vendor\Package\Posts\RecordBuilder,
     
-    // the kind of objects expected from the builder; default is
-    // 'Aura\Marshal\Record\GenericRecord'
-    'record_class' => 'Vendor\Package\Posts\Record',
-    
     // an object to build collections; default is a new instance of
     // Aura\Marshal\Collection\Builder
     'collection_builder' => new \Vendor\Package\Posts\CollectionBuilder,

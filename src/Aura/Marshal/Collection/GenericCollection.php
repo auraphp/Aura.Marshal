@@ -48,30 +48,6 @@ class GenericCollection extends Data
 
     /**
      * 
-     * ArrayAccess: Get a key value.
-     * 
-     * This override from the parent::offsetGet() lets us convert records
-     * lazily using the IdentityMap for the type.
-     * 
-     * @param string $key The requested key.
-     * 
-     * @return mixed
-     * 
-     */
-    public function offsetGet($key)
-    {
-        $record_class = $this->type->getRecordClass();
-        if (! $this->data[$key] instanceof $record_class) {
-            $identity_field = $this->type->getIdentityField();
-            $identity_value = $this->data[$key]->$identity_field;
-            $this->data[$key] = $this->type->getRecord($identity_value);
-        }
-
-        return $this->data[$key];
-    }
-
-    /**
-     * 
      * Returns an array of all the identity values for the collection.
      * 
      * This will not convert the collection elements to record objects.

@@ -97,16 +97,6 @@ class GenericType extends Data
 
     /**
      * 
-     * The class expected from the record builder. This is used to determine
-     * if elements in the IdentityMap have been converted to record objects.
-     * 
-     * @var string
-     * 
-     */
-    protected $record_class;
-
-    /**
-     * 
      * An array of relationship descriptions, where the key is a
      * field name for the record and the value is a relation object.
      * 
@@ -171,33 +161,6 @@ class GenericType extends Data
     public function getIndexFields()
     {
         return array_keys($this->index_fields);
-    }
-
-    /**
-     * 
-     * Sets the name of the expected record class; this is used to determine
-     * if elements in the IdentityMap have been converted to record objects.
-     * 
-     * @param string $record_class The identity field name.
-     * 
-     * @return void
-     * 
-     */
-    public function setRecordClass($record_class)
-    {
-        $this->record_class = $record_class;
-    }
-
-    /**
-     * 
-     * Returns the name of the expected record class.
-     * 
-     * @return string
-     * 
-     */
-    public function getRecordClass()
-    {
-        return $this->record_class;
     }
 
     /**
@@ -320,6 +283,7 @@ class GenericType extends Data
             }
 
             // no, retain it in the identity map and identity index ...
+            $record = $this->record_builder->newInstance($this, $record);
             $this->data[$offset] = $record;
             $this->index_identity[$identity_value] = $offset;
 
@@ -375,7 +339,7 @@ class GenericType extends Data
     /**
      * 
      * Retrieves a single record from the IdentityMap by the value of its
-     * identity field, converting it to a $record_class object if needed.
+     * identity field.
      * 
      * @param int $identity_value The identity value of the record to be
      * retrieved.
@@ -392,7 +356,7 @@ class GenericType extends Data
 
         // look up the sequential offset for the identity value
         $offset = $this->index_identity[$identity_value];
-        return $this->getRecordByOffset($offset);
+        return $this->offsetGet($offset);
     }
 
     /**
@@ -426,7 +390,7 @@ class GenericType extends Data
         // long slow loop through all the records to find a match.
         foreach ($this->data as $offset => $record) {
             if ($record->$field == $value) {
-                return $this->getRecordByOffset($offset);
+                return $this->offsetGet($offset);
             }
         }
 
@@ -436,34 +400,8 @@ class GenericType extends Data
 
     /**
      * 
-     * Retrieves a single record from the IdentityMap by its offset,
-     * converting it to a $record_class object if needed.
-     * 
-     * @param int $offset The record offset in the $data array.
-     * 
-     * @return object A record object via the record builder.
-     * 
-     */
-    protected function getRecordByOffset($offset)
-    {
-        // if it is already a record of the proper type, exit early
-        if ($this->data[$offset] instanceof $this->record_class) {
-            return $this->data[$offset];
-        }
-
-        // convert to a record of the proper type ...
-        $data = $this->data[$offset];
-        $record = $this->record_builder->newInstance($this, $data);
-
-        // ... then retain and return it.
-        $this->data[$offset] = $record;
-        return $this->data[$offset];
-    }
-
-    /**
-     * 
      * Retrieves the first record from the IdentityMap matching an index 
-     * lookup, converting it to a $record_class object if needed.
+     * lookup.
      * 
      * @param string $field The indexed field name.
      * 
@@ -478,7 +416,7 @@ class GenericType extends Data
             return null;
         }
         $offset = $this->index_fields[$field][$value][0];
-        return $this->getRecordByOffset($offset);
+        return $this->offsetGet($offset);
     }
 
     /**
@@ -677,9 +615,6 @@ class GenericType extends Data
         $list = [];
         foreach ($this->index_identity as $identity_value => $offset) {
             $record = $this->data[$offset];
-            if (! $record instanceof $this->record_class) {
-                continue;
-            }
             if ($record->getChangedFields()) {
                 $list[$identity_value] = $record;
             }

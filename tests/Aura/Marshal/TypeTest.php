@@ -33,7 +33,6 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new GenericType;
         $this->type->setIdentityField($info['identity_field']);
         $this->type->setIndexFields($info['index_fields']);
-        $this->type->setRecordClass('Aura\Marshal\Record\GenericRecord');
         $this->type->setRecordBuilder(new RecordBuilder);
         $this->type->setCollectionBuilder(new CollectionBuilder);
     }

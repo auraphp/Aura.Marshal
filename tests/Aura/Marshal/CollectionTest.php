@@ -67,7 +67,6 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $type = new GenericType;
         $type->setIdentityField('id');
-        $type->setRecordClass('Aura\Marshal\Record\GenericRecord');
         $type->setRecordBuilder(new RecordBuilder);
         $type->setCollectionBuilder(new CollectionBuilder);
         
