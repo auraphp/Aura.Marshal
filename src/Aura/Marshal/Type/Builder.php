@@ -13,6 +13,7 @@ namespace Aura\Marshal\Type;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Exception;
 use Aura\Marshal\Record\Builder as RecordBuilder;
+use Aura\Marshal\ProxyBuilder;
 
 /**
  * 
@@ -61,7 +62,7 @@ class Builder
         }
 
         if (! $info['record_builder']) {
-            $info['record_builder'] = new RecordBuilder;
+            $info['record_builder'] = new RecordBuilder(new ProxyBuilder);
         }
 
         if (! $info['collection_builder']) {

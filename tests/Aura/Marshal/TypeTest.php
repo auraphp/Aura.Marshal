@@ -1,5 +1,6 @@
 <?php
 namespace Aura\Marshal;
+
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Record\Builder as RecordBuilder;
 use Aura\Marshal\Record\GenericCollection;
@@ -7,6 +8,7 @@ use Aura\Marshal\Record\GenericRecord;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Aura\Marshal\Type\Builder as TypeBuilder;
 use Aura\Marshal\Type\GenericType;
+use Aura\Marshal\ProxyBuilder;
 
 /**
  * Test class for Type.
@@ -33,7 +35,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new GenericType;
         $this->type->setIdentityField($info['identity_field']);
         $this->type->setIndexFields($info['index_fields']);
-        $this->type->setRecordBuilder(new RecordBuilder);
+        $this->type->setRecordBuilder(new RecordBuilder(new ProxyBuilder));
         $this->type->setCollectionBuilder(new CollectionBuilder);
     }
     
@@ -71,7 +73,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     }
     public function testSetAndGetRecordBuilder()
     {
-        $builder = new RecordBuilder;
+        $builder = new RecordBuilder(new ProxyBuilder);
         $this->type->setRecordBuilder($builder);
         $actual = $this->type->getRecordBuilder();
         $this->assertSame($builder, $actual);

@@ -4,6 +4,7 @@ use Aura\Marshal\Collection\GenericCollection;
 use Aura\Marshal\Type\GenericType;
 use Aura\Marshal\Record\Builder as RecordBuilder;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
+use Aura\Marshal\ProxyBuilder;
 
 /**
  * Test class for Collection.
@@ -63,7 +64,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $type = new GenericType;
         $type->setIdentityField('id');
-        $type->setRecordBuilder(new RecordBuilder);
+        $type->setRecordBuilder(new RecordBuilder(new ProxyBuilder));
         $type->setCollectionBuilder(new CollectionBuilder);
         
         $ids = [1, 2, 3, 5, 7, 11, 13];
