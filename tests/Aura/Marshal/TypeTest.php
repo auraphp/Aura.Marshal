@@ -323,7 +323,6 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetChangedRecords()
     {
-        $this->markTestSkipped('moving this functionality');
         $data = $this->loadTypeWithPosts();
         
         // change record id 1 and 3
@@ -361,68 +360,77 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetChangedFields_newField()
     {
-        $this->markTestSkipped('moving this functionality');
-        $this->record->newfield = 'something';
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        
+        $record->newfield = 'something';
         $expect = ['newfield' => 'something'];
-        $actual = $this->record->getChangedFields();
+        $actual = $this->type->getChangedFields($record);
         $this->assertSame($expect, $actual);
     }
     
     public function testGetChangedFields_numeric()
     {
-        $this->markTestSkipped('moving this functionality');
-        // change from string '123' to int 123;
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        
+        // change from string '69' to int 69;
         // it should not be marked as a change
-        $this->record->numeric = 123;
+        $record->fake_field = 69;
         $expect = [];
-        $actual = $this->record->getChangedFields();
+        $actual = $this->type->getChangedFields($record);
         $this->assertSame($expect, $actual);
         
-        $this->record->numeric = 4.56;
-        $expect = ['numeric' => 4.56];
-        $actual = $this->record->getChangedFields();
+        $record->fake_field = 4.56;
+        $expect = ['fake_field' => 4.56];
+        $actual = $this->type->getChangedFields($record);
         $this->assertSame($expect, $actual);
         
-        $this->record->zero = '';
-        $expect = ['numeric' => 4.56, 'zero' => ''];
-        $actual = $this->record->getChangedFields();
+        $record->zero = '';
+        $expect = ['fake_field' => 4.56, 'zero' => ''];
+        $actual = $this->type->getChangedFields($record);
         $this->assertSame($expect, $actual);
     }
     
     public function testGetChangedFields_toNull()
     {
-        $this->markTestSkipped('moving this functionality');
-        $this->record->zero = null;
-        $this->record->falsy = null;
-        $expect = ['zero' => null, 'falsy' => null];
-        $actual = $this->record->getChangedFields();
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        
+        $record->fake_field = null;
+        $expect = ['fake_field' => null];
+        $actual = $this->type->getChangedFields($record);
         $this->assertSame($expect, $actual);
     }
     
     public function testGetChangedFields_fromNull()
     {
-        $this->markTestSkipped('moving this functionality');
-        $this->record->nully = 0;
-        $expect = ['nully' => 0];
-        $actual = $this->record->getChangedFields();
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        
+        $record->null_field = 0;
+        $expect = ['null_field' => 0];
+        $actual = $this->type->getChangedFields($record);
         $this->assertSame($expect, $actual);
     }
     
     public function testGetChangedFields_other()
     {
-        $this->markTestSkipped('moving this functionality');
-        $this->record->foo = 'changed';
-        $expect = ['foo' => 'changed'];
-        $actual = $this->record->getChangedFields();
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        
+        $record->name = 'changed';
+        $expect = ['name' => 'changed'];
+        $actual = $this->type->getChangedFields($record);
         $this->assertSame($expect, $actual);
     }
     
     public function testGetChangedFields_related()
     {
         $this->markTestSkipped('moving this functionality');
-        $this->record->related = 'change related record';
+        $record->related = 'change related record';
         $expect = [];
-        $actual = $this->record->getChangedFields();
+        $actual = $this->type->getChangedFields($record);
         $this->assertSame($expect, $actual);
     }
 }

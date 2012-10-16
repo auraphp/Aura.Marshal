@@ -632,7 +632,7 @@ class GenericType extends Data
         $list = [];
         foreach ($this->index_identity as $identity_value => $offset) {
             $record = $this->data[$offset];
-            if ($record->getChangedFields()) {
+            if ($this->getChangedFields($record)) {
                 $list[$identity_value] = $record;
             }
         }
@@ -661,5 +661,57 @@ class GenericType extends Data
         if ($this->initial_data->contains($record)) {
             return $this->initial_data[$record];
         }
+    }
+    
+    // this depends on the record implementing Iterator, which for POPOs
+    // is unlikely
+    public function getChangedFields($record)
+    {
+        // the eventual list of changed fields and values
+        $changed = [];
+
+        // the list of relations
+        $related = $this->getRelationNames();
+
+        // initial data for this record
+        $initial_data = (array) $this->getInitialData($record);
+        
+        // go through all the data elements and their presumed new values
+        foreach ($record as $field => $new) {
+
+            // if the field is a related record or collection, skip it.
+            // technically, we should ask it if it has changed at all.
+            if (in_array($field, $related)) {
+                continue;
+            }
+
+            // if the field is not part of the initial data ...
+            if (! array_key_exists($field, $initial_data)) {
+                // ... then it's a change from the initial data.
+                $changed[$field] = $new;
+                continue;
+            }
+
+            // what was the old (initial) value?
+            $old = $initial_data[$field];
+
+            // are both old and new values numeric?
+            $numeric = is_numeric($old) && is_numeric($new);
+
+            // if both old and new are numeric, compare loosely.
+            if ($numeric && $old != $new) {
+                // loosely different, retain the new value
+                $changed[$field] = $new;
+            }
+
+            // if one or the other is not numeric, compare strictly
+            if (! $numeric && $old !== $new) {
+                // strictly different, retain the new value
+                $changed[$field] = $new;
+            }
+        }
+
+        // done!
+        return $changed;
     }
 }
