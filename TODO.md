@@ -1,10 +1,3 @@
-Overall
--------
-
-- Create RecordTrait and CollectionTrait, and make the Record and Collection
-  classes use them. Then users don't have to extend the Record and Collection;
-  they can apply the trait to their own domain objects.
-
 GenericType
 -----------
 
@@ -31,15 +24,3 @@ GenericCollection
 
     - removeRecord() to remove from the collection without marking for
       deletion (and without removing from the IdentityMap).
-
-
-GenericRecord
--------------
-
-- Add methods ...
-
-    - getIdentityValue() to return the identity value for the record
-    
-    - getIdentityField() to return the identity field for the record
-    
-    
