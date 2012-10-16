@@ -10,8 +10,8 @@ class Proxy
         $this->relation = $relation;
     }
     
-    public function get($entity)
+    public function get($record)
     {
-        return $this->relation->getForEntity($entity);
+        return $this->relation->getForRecord($record);
     }
 }

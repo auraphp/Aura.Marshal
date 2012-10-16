@@ -59,7 +59,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertTrue(isset($this->record->foo));
         unset($this->record->foo);
-        $this->assertTrue(isset($this->record->foo));
+        $this->assertFalse(isset($this->record->foo));
         
         $this->assertFalse(isset($this->record->newfield));
         
@@ -67,7 +67,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($this->record->newfield));
         
         unset($this->record->newfield);
-        $this->assertTrue(isset($this->record->newfield));
+        $this->assertFalse(isset($this->record->newfield));
     }
     
     public function testGetChangedFields_newField()

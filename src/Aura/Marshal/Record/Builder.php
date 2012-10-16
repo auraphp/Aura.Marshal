@@ -45,10 +45,20 @@ class Builder implements BuilderInterface
     public function newInstance(GenericType $type, $data)
     {
         $class = $this->class;
-        $record = new $class([], $type);
+        $record = new $class;
+        
+        // set fields
         foreach ((array) $data as $field => $value) {
             $record->$field = $value;
         }
+        
+        // set relateds
+        foreach ($type->getRelationNames() as $relation_name) {
+            $relation = $type->getRelation($relation_name);
+            $proxy = $this->proxy_builder->newInstance($relation);
+            $record->$relation_name = $proxy;
+        }
+        
         return $record;
     }
 }
