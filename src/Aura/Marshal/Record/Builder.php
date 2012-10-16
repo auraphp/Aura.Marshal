@@ -21,6 +21,8 @@ use Aura\Marshal\Type\GenericType;
  */
 class Builder implements BuilderInterface
 {
+    protected $class = 'Aura\Marshal\Record\GenericRecord';
+    
     /**
      * 
      * Creates a new record object.
@@ -34,7 +36,8 @@ class Builder implements BuilderInterface
      */
     public function newInstance(GenericType $type, $data)
     {
-        $record = new GenericRecord([], $type);
+        $class = $this->class;
+        $record = new $class([], $type);
         foreach ((array) $data as $field => $value) {
             $record->$field = $value;
         }
