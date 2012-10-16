@@ -440,7 +440,7 @@ class GenericType extends Data
             // when the element is converted to a record
             $list[] =& $this->data[$offset];
         }
-        return $this->collection_builder->newInstance($this, $list);
+        return $this->collection_builder->newInstance($list);
     }
 
     /**
@@ -492,7 +492,7 @@ class GenericType extends Data
                 $list[] =& $this->data[$identity_value];
             }
         }
-        return $this->collection_builder->newInstance($this, $list);
+        return $this->collection_builder->newInstance($list);
     }
 
     /**
@@ -529,7 +529,7 @@ class GenericType extends Data
                 }
             }
         }
-        return $this->collection_builder->newInstance($this, $list);
+        return $this->collection_builder->newInstance($list);
     }
 
     /**
