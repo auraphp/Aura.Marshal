@@ -321,6 +321,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     
     public function testGetChangedRecords()
     {
+        $this->markTestSkipped('moving this functionality');
         $data = $this->loadTypeWithPosts();
         
         // change record id 1 and 3

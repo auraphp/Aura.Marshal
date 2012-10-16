@@ -15,6 +15,7 @@ use Aura\Marshal\Data;
 use Aura\Marshal\Exception;
 use Aura\Marshal\Record\BuilderInterface as RecordBuilderInterface;
 use Aura\Marshal\Relation\RelationInterface;
+use SplObjectStorage;
 
 /**
  * 
@@ -88,6 +89,15 @@ class GenericType extends Data
 
     /**
      * 
+     * An object store of the initial data for record in the IdentityMap.
+     * 
+     * @var SplObjectStorage
+     * 
+     */
+    protected $initial_data;
+    
+    /**
+     * 
      * A builder to create record objects for this type.
      * 
      * @var object
@@ -105,6 +115,12 @@ class GenericType extends Data
      */
     protected $relation = [];
 
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+        $this->initial_data = new SplObjectStorage;
+    }
+    
     /**
      * 
      * Sets the name of the field that uniquely identifies each record for
@@ -264,10 +280,10 @@ class GenericType extends Data
         $offset = count($this->data);
 
         // load each data element as a record
-        foreach ($data as $record) {
+        foreach ($data as $initial) {
 
             // cast the element to an object for consistent addressing
-            $record = (object) $record;
+            $record = (object) $initial;
 
             // retain the return value on the record
             $return_value    = $record->$return_field;
@@ -286,7 +302,8 @@ class GenericType extends Data
             $record = $this->record_builder->newInstance($this, $record);
             $this->data[$offset] = $record;
             $this->index_identity[$identity_value] = $offset;
-
+            $this->initial_data->attach($record, (array) $initial);
+            
             // ... put the offset value into the indexes ...
             foreach ($index_fields as $field) {
                 $value = $record->$field;
@@ -637,5 +654,12 @@ class GenericType extends Data
             $list[] = $this->data[$offset];
         }
         return $list;
+    }
+    
+    public function getInitialData($record)
+    {
+        if ($this->initial_data->contains($record)) {
+            return $this->initial_data[$record];
+        }
     }
 }
