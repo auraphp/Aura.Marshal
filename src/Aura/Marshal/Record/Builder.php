@@ -34,6 +34,10 @@ class Builder implements BuilderInterface
      */
     public function newInstance(GenericType $type, $data)
     {
-        return new GenericRecord((array) $data, $type);
+        $record = new GenericRecord([], $type);
+        foreach ((array) $data as $field => $value) {
+            $record->$field = $value;
+        }
+        return $record;
     }
 }
