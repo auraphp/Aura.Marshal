@@ -70,8 +70,8 @@ class Builder
             $info['collection_builder'] = new CollectionBuilder;
         }
 
-        if (! $info['collection_builder']) {
-            $info['collection_builder'] = new ProxyBuilder;
+        if (! $info['proxy_builder']) {
+            $info['proxy_builder'] = new ProxyBuilder;
         }
 
         $type = new GenericType;
@@ -79,7 +79,8 @@ class Builder
         $type->setIndexFields($info['index_fields']);
         $type->setRecordBuilder($info['record_builder']);
         $type->setCollectionBuilder($info['collection_builder']);
-
+        $type->setProxyBuilder($info['proxy_builder']);
+        
         return $type;
     }
 }

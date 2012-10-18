@@ -13,6 +13,7 @@ namespace Aura\Marshal\Type;
 use Aura\Marshal\Collection\BuilderInterface as CollectionBuilderInterface;
 use Aura\Marshal\Data;
 use Aura\Marshal\Exception;
+use Aura\Marshal\Proxy\BuilderInterface as ProxyBuilderInterface;
 use Aura\Marshal\Record\BuilderInterface as RecordBuilderInterface;
 use Aura\Marshal\Relation\RelationInterface;
 use SplObjectStorage;
@@ -365,21 +366,26 @@ class GenericType extends Data
             $initial_data
         );
         
-        // get the record, then index its identity value by offset
+        // get the record and retain initial data
         $record = end($this->data);
+        $this->initial_data->attach($record, $initial_data);
+        
+        // build indexes by offset
         $offset = key($this->data);
         $this->index_identity[$identity_value] = $offset;
-        
-        // index other fields by offset
         foreach ($index_fields as $field) {
             $value = $record->$field;
             $this->index_fields[$field][$value][] = $offset;
         }
         
-        // retain initial data
-        $this->initial_data->attach($record, $initial_data);
+        // set relateds
+        foreach ($this->getRelationNames() as $relation_name) {
+            $relation = $this->getRelation($relation_name);
+            $proxy = $this->proxy_builder->newInstance($relation);
+            $record->$relation_name = $proxy;
+        }
         
-        // done! return the new offset number
+        // done! return the new offset number.
         return $offset;
     }
     

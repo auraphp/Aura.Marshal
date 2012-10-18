@@ -52,13 +52,6 @@ class Builder implements BuilderInterface
             $record->$field = $value;
         }
         
-        // set relateds
-        foreach ($type->getRelationNames() as $relation_name) {
-            $relation = $type->getRelation($relation_name);
-            $proxy = $this->proxy_builder->newInstance($relation);
-            $record->$relation_name = $proxy;
-        }
-        
         return $record;
     }
 }
