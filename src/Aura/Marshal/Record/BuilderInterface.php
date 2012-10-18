@@ -31,5 +31,5 @@ interface BuilderInterface
      * interface doesn't care what the data looks like.
      * 
      */
-    public function newInstance(GenericType $type, $data);
+    public function newInstance(GenericType $type, array $data);
 }
