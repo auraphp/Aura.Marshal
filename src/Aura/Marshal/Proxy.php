@@ -1,11 +1,13 @@
 <?php
 namespace Aura\Marshal;
 
+use Aura\Marshal\Relation\RelationInterface;
+
 class Proxy
 {
     protected $relation;
     
-    public function __construct($relation)
+    public function __construct(RelationInterface $relation)
     {
         $this->relation = $relation;
     }

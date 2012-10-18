@@ -14,7 +14,7 @@ trait MagicPropertyTrait
         if ($value instanceof Proxy) {
             // replace the proxy value with the real value
             $value = $value->get($this);
-            $this->$field = $value->get($this);
+            $this->$field = $value;
         }
         
         // done!
@@ -28,7 +28,7 @@ trait MagicPropertyTrait
     
     public function __isset($field)
     {
-        return isset($field);
+        return isset($this->$field);
     }
     
     public function __unset($field)

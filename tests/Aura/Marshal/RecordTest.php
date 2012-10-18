@@ -1,7 +1,11 @@
 <?php
 namespace Aura\Marshal;
+
 use Aura\Marshal\Record\GenericRecord;
-use Aura\Marshal\MockType;
+use Aura\Marshal\MockRecord;
+use Aura\Marshal\Record\Builder;
+use Aura\Marshal\MockRecordBuilder;
+use Aura\Marshal\ProxyBuilder;
 
 /**
  * Test class for Record.
@@ -9,64 +13,81 @@ use Aura\Marshal\MockType;
  */
 class RecordTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var GenericRecord
-     */
-    protected $record;
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
+    protected function getData()
     {
-        parent::setUp();
-        $data = [
+        return [
             'foo' => 'bar',
             'baz' => 'dim',
             'zim' => 'gir',
-            'numeric' => '123',
-            'zero' => 0,
-            'falsy' => false,
-            'nully' => null,
-            'related' => 'related_record',
+            'related' => new Proxy(new MockRelation),
         ];
-        
+    }
+    
+    protected function newGenericRecord()
+    {
         $type = new MockType;
-        
-        // add a fake relation so we can check changes on relationships
-        $type->addFakeRelation('related');
-        
-        $this->record = new GenericRecord($data, $type);
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
+        $builder = new Builder(new ProxyBuilder);
+        return $builder->newInstance($type, $this->getData());
     }
     
-    public function testSetAndGet()
+    protected function newMockRecord()
     {
-        $this->record->irk = 'doom';
-        $this->assertSame('doom', $this->record->irk);
+        $type = new MockType;
+        $builder = new MockRecordBuilder(new ProxyBuilder);
+        return $builder->newInstance($type, $this->getData());
     }
     
-    public function testIssetAndUnset()
+    public function testMagicArrayAccess()
     {
-        $this->assertTrue(isset($this->record->foo));
-        unset($this->record->foo);
-        $this->assertFalse(isset($this->record->foo));
+        $record = $this->newGenericRecord();
         
-        $this->assertFalse(isset($this->record->newfield));
+        // check set/get
+        $record->irk = 'doom';
+        $this->assertSame('doom', $record->irk);
         
-        $this->record->newfield = 'something';
-        $this->assertTrue(isset($this->record->newfield));
+        // check isset/unset
+        $this->assertTrue(isset($record->foo));
+        unset($record->foo);
+        $this->assertFalse(isset($record->foo));
         
-        unset($this->record->newfield);
-        $this->assertFalse(isset($this->record->newfield));
+        $this->assertFalse(isset($record->newfield));
+        
+        $record->newfield = 'something';
+        $this->assertTrue(isset($record->newfield));
+        
+        unset($record->newfield);
+        $this->assertFalse(isset($record->newfield));
+        
+        // check relateds
+        $actual = $record->related;
+        $expect = (object) ['foreign_field' => 'foreign_value'];
+        $this->assertEquals($expect, $actual);
+    }
+    
+    public function testMagicPropertyAccess()
+    {
+        $record = $this->newMockRecord();
+        
+        // check set/get
+        $record->irk = 'doom';
+        $this->assertSame('doom', $record->irk);
+        
+        // check isset/unset
+        $this->assertTrue(isset($record->foo));
+        unset($record->foo);
+        $this->assertFalse(isset($record->foo));
+        
+        $this->assertFalse(isset($record->newfield));
+        
+        $record->newfield = 'something';
+        $this->assertTrue(isset($record->newfield));
+        
+        unset($record->newfield);
+        $this->assertFalse(isset($record->newfield));
+        
+        // check relateds
+        $actual = $record->related;
+        $expect = (object) ['foreign_field' => 'foreign_value'];
+        $this->assertEquals($expect, $actual);
     }
 }
