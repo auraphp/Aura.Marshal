@@ -36,12 +36,11 @@ class Builder
         'has_many_through' => 'Aura\Marshal\Relation\HasManyThrough',
     ];
 
-    // FIXME $type of type
     /**
      * 
      * Builds and returns a relation object.
      * 
-     * @param type $type
+     * @param string $type The name of the native type.
      * 
      * @param string $name The name of the record field where the related
      * data will be placed.

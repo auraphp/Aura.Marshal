@@ -59,7 +59,7 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
      * 
      * Constructor.
      * 
-     * @param type $type
+     * @param string $type The name of the native type.
      * 
      * @param string $name The name of the record field where the related
      * data will be placed.
@@ -84,7 +84,7 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
             throw new Exception("No 'through_foreign_field' specified for relation '$name' in type '$type'.");
         }
 
-        $this->through_type          = $this->manager->{$info['through_type']};
+        $this->through               = $this->manager->{$info['through_type']};
         $this->through_native_field  = $info['through_native_field'];
         $this->through_foreign_field = $info['through_foreign_field'];
     }
@@ -103,7 +103,7 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
         // first, find the native values in the through type
         $native_field = $this->native_field;
         $native_value = $record->$native_field;
-        $through_coll = $this->through_type->getCollectionByField(
+        $through_coll = $this->through->getCollectionByField(
             $this->through_native_field,
             $native_value
         );
@@ -114,7 +114,7 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
         );
 
         // finally, return a foreign collection based on the foreign values
-        return $this->foreign_type->getCollectionByField(
+        return $this->foreign->getCollectionByField(
             $this->foreign_field,
             $foreign_values
         );

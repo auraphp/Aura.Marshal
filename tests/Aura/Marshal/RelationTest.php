@@ -43,7 +43,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoRelationship()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -57,7 +56,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoForeignType()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -71,7 +69,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoNativeField()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -85,7 +82,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoForeignField()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -99,7 +95,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoThroughType()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -113,7 +108,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoThroughNativeField()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -127,7 +121,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoThroughForeignField()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -137,6 +130,13 @@ class RelationTest extends \PHPUnit_Framework_TestCase
         $this->manager = new Manager($type_builder, $relation_builder, $types);
         $this->setExpectedException('Aura\Marshal\Exception');
         $this->manager->posts;
+    }
+    
+    public function testGetForeignType()
+    {
+        $relation = $this->manager->posts->getRelation('author');
+        $actual = $relation->getForeignType();
+        $this->assertSame('authors', $actual);
     }
     
     public function testBelongsTo()

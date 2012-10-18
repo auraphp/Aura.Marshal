@@ -32,7 +32,7 @@ class BelongsTo extends AbstractRelation implements RelationInterface
     public function getForRecord($record)
     {
         $native_field = $this->native_field;
-        return $this->foreign_type->getRecordByField(
+        return $this->foreign->getRecordByField(
             $this->foreign_field,
             $record->$native_field
         );

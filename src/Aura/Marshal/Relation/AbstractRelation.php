@@ -36,7 +36,16 @@ abstract class AbstractRelation
      * 
      * The foreign type object.
      * 
-     * @var GenericType
+     * @var string
+     * 
+     */
+    protected $foreign;
+    
+    /**
+     * 
+     * The name of the foreign type.
+     * 
+     * @var string
      * 
      */
     protected $foreign_type;
@@ -59,12 +68,11 @@ abstract class AbstractRelation
      */
     protected $foreign_field;
 
-    // FIXME $type of type
     /**
      * 
      * Constructor.
      * 
-     * @param type $type
+     * @param string $type The name of the native type.
      * 
      * @param string $name The name of the record field where the related
      * data will be placed.
@@ -88,9 +96,15 @@ abstract class AbstractRelation
             throw new Exception("No 'foreign_field' specified for relation '$name' in type '$type'.");
         }
 
-        $this->manager = $manager;
-        $this->foreign_type  = $this->manager->__get($info['foreign_type']);
+        $this->manager       = $manager;
+        $this->foreign       = $this->manager->__get($info['foreign_type']);
+        $this->foreign_type  = $info['foreign_type'];
         $this->native_field  = $info['native_field'];
         $this->foreign_field = $info['foreign_field'];
+    }
+    
+    public function getForeignType()
+    {
+        return $this->foreign_type;
     }
 }
