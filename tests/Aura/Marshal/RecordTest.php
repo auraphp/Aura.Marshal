@@ -26,16 +26,14 @@ class RecordTest extends \PHPUnit_Framework_TestCase
     
     protected function newGenericRecord()
     {
-        $type = new MockType;
-        $builder = new Builder(new ProxyBuilder);
-        return $builder->newInstance($type, $this->getData());
+        $builder = new Builder;
+        return $builder->newInstance($this->getData());
     }
     
     protected function newMockRecord()
     {
-        $type = new MockType;
-        $builder = new MockRecordBuilder(new ProxyBuilder);
-        return $builder->newInstance($type, $this->getData());
+        $builder = new MockRecordBuilder;
+        return $builder->newInstance($this->getData());
     }
     
     public function testMagicArrayAccess()

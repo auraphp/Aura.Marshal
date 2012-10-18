@@ -73,7 +73,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     }
     public function testSetAndGetRecordBuilder()
     {
-        $builder = new RecordBuilder(new ProxyBuilder);
+        $builder = new RecordBuilder;
         $this->type->setRecordBuilder($builder);
         $actual = $this->type->getRecordBuilder();
         $this->assertSame($builder, $actual);

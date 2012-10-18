@@ -64,7 +64,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $type = new GenericType;
         $type->setIdentityField('id');
-        $type->setRecordBuilder(new RecordBuilder(new ProxyBuilder));
+        $type->setRecordBuilder(new RecordBuilder);
         $type->setCollectionBuilder(new CollectionBuilder);
         
         $ids = [1, 2, 3, 5, 7, 11, 13];

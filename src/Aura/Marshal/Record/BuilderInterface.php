@@ -25,11 +25,8 @@ interface BuilderInterface
      * 
      * Creates a new record object.
      * 
-     * @param GenericType $type The type for this record.
-     * 
-     * @param mixed $data Data to load into the record. Note that the
-     * interface doesn't care what the data looks like.
+     * @param mixed $data Data to load into the record.
      * 
      */
-    public function newInstance(GenericType $type, array $data);
+    public function newInstance(array $data);
 }

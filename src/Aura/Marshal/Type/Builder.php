@@ -63,7 +63,7 @@ class Builder
         }
 
         if (! $info['record_builder']) {
-            $info['record_builder'] = new RecordBuilder(new ProxyBuilder);
+            $info['record_builder'] = new RecordBuilder;
         }
 
         if (! $info['collection_builder']) {

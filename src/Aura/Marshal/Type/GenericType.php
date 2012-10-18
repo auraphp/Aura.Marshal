@@ -361,10 +361,7 @@ class GenericType extends Data
         }
         
         // convert the initial data to a real record
-        $this->data[] = $this->record_builder->newInstance(
-            $this,
-            $initial_data
-        );
+        $this->data[] = $this->record_builder->newInstance($initial_data);
         
         // get the record and retain initial data
         $record = end($this->data);
@@ -684,7 +681,7 @@ class GenericType extends Data
      */
     public function newRecord(array $data = [])
     {
-        $record = $this->record_builder->newInstance($this, $data);
+        $record = $this->record_builder->newInstance($data);
         $this->index_new[] = count($this->data);
         $this->data[] = $record;
         return $record;

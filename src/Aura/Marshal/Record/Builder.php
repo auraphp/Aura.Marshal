@@ -24,25 +24,16 @@ class Builder implements BuilderInterface
 {
     protected $class = 'Aura\Marshal\Record\GenericRecord';
     
-    protected $proxy_builder;
-    
-    public function __construct(ProxyBuilderInterface $proxy_builder)
-    {
-        $this->proxy_builder = $proxy_builder;
-    }
-    
     /**
      * 
      * Creates a new record object.
-     * 
-     * @param GenericType $type The type for this record.
      * 
      * @param array|object $data Data to load into the record.
      * 
      * @return GenericRecord
      * 
      */
-    public function newInstance(GenericType $type, array $data)
+    public function newInstance(array $data)
     {
         $class = $this->class;
         $record = new $class;
