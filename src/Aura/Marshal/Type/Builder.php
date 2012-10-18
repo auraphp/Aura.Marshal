@@ -13,7 +13,7 @@ namespace Aura\Marshal\Type;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Exception;
 use Aura\Marshal\Record\Builder as RecordBuilder;
-use Aura\Marshal\ProxyBuilder;
+use Aura\Marshal\Proxy\Builder as ProxyBuilder;
 
 /**
  * 

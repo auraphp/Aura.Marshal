@@ -5,7 +5,8 @@ use Aura\Marshal\Record\GenericRecord;
 use Aura\Marshal\MockRecord;
 use Aura\Marshal\Record\Builder;
 use Aura\Marshal\MockRecordBuilder;
-use Aura\Marshal\ProxyBuilder;
+use Aura\Marshal\Proxy\Builder as ProxyBuilder;
+use Aura\Marshal\Proxy\GenericProxy;
 
 /**
  * Test class for Record.
@@ -19,7 +20,7 @@ class RecordTest extends \PHPUnit_Framework_TestCase
             'foo' => 'bar',
             'baz' => 'dim',
             'zim' => 'gir',
-            'related' => new Proxy(new MockRelation),
+            'related' => new GenericProxy(new MockRelation),
         ];
     }
     

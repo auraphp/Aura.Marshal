@@ -49,7 +49,7 @@ class Builder
      * 
      * @param Manager $manager An type manager.
      * 
-     * @return AbstractRelation
+     * @return RelationInterface
      * 
      */
     public function newInstance($type, $name, $info, Manager $manager)

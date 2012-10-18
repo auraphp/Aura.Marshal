@@ -1,7 +1,7 @@
 <?php
 namespace Aura\Marshal\Record;
 
-use Aura\Marshal\Proxy;
+use Aura\Marshal\Proxy\ProxyInterface;
 
 trait MagicPropertyTrait
 {
@@ -11,7 +11,7 @@ trait MagicPropertyTrait
         $value = $this->$field;
         
         // is it a proxy for a related?
-        if ($value instanceof Proxy) {
+        if ($value instanceof ProxyInterface) {
             // replace the proxy value with the real value
             $value = $value->get($this);
             $this->$field = $value;

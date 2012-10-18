@@ -11,7 +11,7 @@
 namespace Aura\Marshal\Record;
 
 use Aura\Marshal\Type\GenericType;
-use Aura\Marshal\ProxyBuilder;
+use Aura\Marshal\Proxy\BuilderInterface as ProxyBuilderInterface;
 
 /**
  * 
@@ -26,7 +26,7 @@ class Builder implements BuilderInterface
     
     protected $proxy_builder;
     
-    public function __construct(ProxyBuilder $proxy_builder)
+    public function __construct(ProxyBuilderInterface $proxy_builder)
     {
         $this->proxy_builder = $proxy_builder;
     }

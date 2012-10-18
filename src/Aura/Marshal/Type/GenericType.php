@@ -630,7 +630,7 @@ class GenericType extends Data
      * @param string $name The field name to use for the related record
      * or collection.
      * 
-     * @return AbstractRelation
+     * @return RelationInterface
      * 
      */
     public function getRelation($name)

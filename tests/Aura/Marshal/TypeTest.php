@@ -8,7 +8,7 @@ use Aura\Marshal\Record\GenericRecord;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Aura\Marshal\Type\Builder as TypeBuilder;
 use Aura\Marshal\Type\GenericType;
-use Aura\Marshal\ProxyBuilder;
+use Aura\Marshal\Proxy\Builder as ProxyBuilder;
 
 /**
  * Test class for Type.

@@ -1,9 +1,9 @@
 <?php
-namespace Aura\Marshal;
+namespace Aura\Marshal\Proxy;
 
 use Aura\Marshal\Relation\RelationInterface;
 
-class Proxy
+class GenericProxy implements ProxyInterface
 {
     protected $relation;
     
