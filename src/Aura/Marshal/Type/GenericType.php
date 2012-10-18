@@ -260,64 +260,117 @@ class GenericType extends Data
      * of whether they were loaded or not.
      * 
      */
-    public function load($data, $return_field = null)
+    public function load(array $data, $return_field = null)
     {
+        // what is the identity field for the type?
+        $identity_field = $this->getIdentityField();
+
         // what indexes do we need to track?
         $index_fields = array_keys($this->index_fields);
 
         // return a list of field values in $data
         $return_values = [];
 
-        // what is the identity field for the type?
-        $identity_field  = $this->getIdentityField();
-
         // what should the return field be?
         if (! $return_field) {
             $return_field = $identity_field;
         }
         
-        // what's the last data offset?
-        $offset = count($this->data);
-
         // load each data element as a record
-        foreach ($data as $initial) {
-
+        foreach ($data as $initial_data) {
             // cast the element to an object for consistent addressing
-            $record = (object) $initial;
-
+            $initial_data = $initial_data;
             // retain the return value on the record
-            $return_value    = $record->$return_field;
-            $return_values[] = $return_value;
-
-            // retain the identity value on the record
-            $identity_value = $record->$identity_field;
-
-            // does the identity already exist in the map?
-            if (isset($this->index_identity[$identity_value])) {
-                // yes, skip it and go on
-                continue;
-            }
-
-            // no, retain it in the identity map and identity index ...
-            $record = $this->record_builder->newInstance($this, $record);
-            $this->data[$offset] = $record;
-            $this->index_identity[$identity_value] = $offset;
-            $this->initial_data->attach($record, (array) $initial);
-            
-            // ... put the offset value into the indexes ...
-            foreach ($index_fields as $field) {
-                $value = $record->$field;
-                $this->index_fields[$field][$value][] = $offset;
-            }
-
-            // ... and increment the offset for the next record.
-            $offset ++;
+            $return_values[] = $initial_data[$return_field];
+            // load into the map
+            $this->loadData($initial_data, $identity_field, $index_fields);
         }
 
         // return the list of field values in $data, and done
         return $return_values;
     }
 
+    public function loadRecord(array $initial_data)
+    {
+        // what is the identity field for the type?
+        $identity_field = $this->getIdentityField();
+
+        // what indexes do we need to track?
+        $index_fields = array_keys($this->index_fields);
+
+        // load the data and get the offset
+        $offset = $this->loadData(
+            $initial_data,
+            $identity_field,
+            $index_fields
+        );
+        
+        // return the record at the offset
+        return $this->offsetGet($offset);
+    }
+    
+    public function loadCollection(array $data)
+    {
+        // what is the identity field for the type?
+        $identity_field = $this->getIdentityField();
+
+        // what indexes do we need to track?
+        $index_fields = array_keys($this->index_fields);
+
+        // the records for the collection
+        $records = [];
+        
+        // load each new record
+        foreach ($data as $initial_data) {
+            $offset = $this->loadData(
+                $initial_data,
+                $identity_field,
+                $index_fields
+            );
+            $record = $this->offsetGet($offset);
+            $records[] =& $record;
+        }
+        
+        // return a collection of the loaded records
+        return $this->collection_builder->newInstance($records);
+    }
+    
+    protected function loadData(
+        array $initial_data,
+        $identity_field,
+        $index_fields
+    ) {
+        // does the identity already exist in the map?
+        $identity_value = $initial_data[$identity_field];
+        if (isset($this->index_identity[$identity_value])) {
+            // yes; we're done, return the offset number
+            return $this->index_identity[$identity_value];
+        }
+        
+        // convert the initial data to a real record
+        $this->data[] = $this->record_builder->newInstance(
+            $this,
+            $initial_data
+        );
+        
+        // get the record, then index its identity value by offset
+        $record = end($this->data);
+        $offset = key($this->data);
+        $this->index_identity[$identity_value] = $offset;
+        
+        // index other fields by offset
+        foreach ($index_fields as $field) {
+            $value = $record->$field;
+            $this->index_fields[$field][$value][] = $offset;
+        }
+        
+        // retain initial data
+        $this->initial_data->attach($record, $initial_data);
+        
+        // done! return the new offset number
+        return $offset;
+    }
+    
     /**
      * 
      * Returns the array keys for the for the records in the IdentityMap;
@@ -663,8 +716,6 @@ class GenericType extends Data
         }
     }
     
-    // this depends on the record implementing Iterator, which for POPOs
-    // is unlikely
     public function getChangedFields($record)
     {
         // the eventual list of changed fields and values
@@ -674,26 +725,13 @@ class GenericType extends Data
         $related = $this->getRelationNames();
 
         // initial data for this record
-        $initial_data = (array) $this->getInitialData($record);
+        $initial_data = $this->getInitialData($record);
         
-        // go through all the data elements and their presumed new values
-        foreach ($record as $field => $new) {
+        // go through all the initial data values
+        foreach ($initial_data as $field => $old) {
 
-            // if the field is a related record or collection, skip it.
-            // technically, we should ask it if it has changed at all.
-            if (in_array($field, $related)) {
-                continue;
-            }
-
-            // if the field is not part of the initial data ...
-            if (! array_key_exists($field, $initial_data)) {
-                // ... then it's a change from the initial data.
-                $changed[$field] = $new;
-                continue;
-            }
-
-            // what was the old (initial) value?
-            $old = $initial_data[$field];
+            // what is the new value on the record?
+            $new = $record->$field;
 
             // are both old and new values numeric?
             $numeric = is_numeric($old) && is_numeric($new);

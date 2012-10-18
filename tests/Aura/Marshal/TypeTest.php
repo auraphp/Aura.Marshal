@@ -358,15 +358,10 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expect, $actual);
     }
     
-    public function testGetChangedFields_newField()
+    public function testGetInitialData_noRecord()
     {
-        $this->loadTypeWithPosts();
-        $record = $this->type->getRecord(1);
-        
-        $record->newfield = 'something';
-        $expect = ['newfield' => 'something'];
-        $actual = $this->type->getChangedFields($record);
-        $this->assertSame($expect, $actual);
+        $record = new \StdClass;
+        $this->assertNull($this->type->getInitialData($record));
     }
     
     public function testGetChangedFields_numeric()
@@ -383,11 +378,6 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         
         $record->fake_field = 4.56;
         $expect = ['fake_field' => 4.56];
-        $actual = $this->type->getChangedFields($record);
-        $this->assertSame($expect, $actual);
-        
-        $record->zero = '';
-        $expect = ['fake_field' => 4.56, 'zero' => ''];
         $actual = $this->type->getChangedFields($record);
         $this->assertSame($expect, $actual);
     }
@@ -419,18 +409,36 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->loadTypeWithPosts();
         $record = $this->type->getRecord(1);
         
-        $record->name = 'changed';
-        $expect = ['name' => 'changed'];
+        $record->fake_field = 'changed';
+        $expect = ['fake_field' => 'changed'];
         $actual = $this->type->getChangedFields($record);
         $this->assertSame($expect, $actual);
     }
     
-    public function testGetChangedFields_related()
+    public function testLoadRecord()
     {
-        $this->markTestSkipped('moving this functionality');
-        $record->related = 'change related record';
-        $expect = [];
-        $actual = $this->type->getChangedFields($record);
-        $this->assertSame($expect, $actual);
+        $initial_data = [
+            'id'  => 88,
+            'author_id' => 69,
+            'foo' => 'bar',
+            'baz' => 'dib',
+            'zim' => 'gir',
+        ];
+        
+        $record = $this->type->loadRecord($initial_data);
+        foreach ($initial_data as $field => $value) {
+            $this->assertSame($value, $record->$field);
+        }
+    }
+    
+    public function testLoadCollection()
+    {
+        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
+        $collection = $this->type->loadCollection($data['posts']);
+        $this->assertInstanceOf(
+            'Aura\Marshal\Collection\GenericCollection',
+            $collection
+        );
+        
     }
 }

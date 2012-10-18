@@ -42,13 +42,13 @@ class Builder implements BuilderInterface
      * @return GenericRecord
      * 
      */
-    public function newInstance(GenericType $type, $data)
+    public function newInstance(GenericType $type, array $data)
     {
         $class = $this->class;
         $record = new $class;
         
         // set fields
-        foreach ((array) $data as $field => $value) {
+        foreach ($data as $field => $value) {
             $record->$field = $value;
         }
         
