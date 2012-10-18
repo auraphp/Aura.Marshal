@@ -116,7 +116,7 @@ class GenericType extends Data
      * @var array
      * 
      */
-    protected $relation = [];
+    protected $relations = [];
 
     public function __construct(array $data = [])
     {
@@ -360,7 +360,7 @@ class GenericType extends Data
             return $this->index_identity[$identity_value];
         }
         
-        // convert the initial data to a real record
+        // convert the initial data to a real record in the identity map
         $this->data[] = $this->record_builder->newInstance($initial_data);
         
         // get the record and retain initial data
@@ -375,11 +375,9 @@ class GenericType extends Data
             $this->index_fields[$field][$value][] = $offset;
         }
         
-        // set relateds
-        foreach ($this->getRelationNames() as $relation_name) {
-            $relation = $this->getRelation($relation_name);
-            $proxy = $this->proxy_builder->newInstance($relation);
-            $record->$relation_name = $proxy;
+        // set related fields
+        foreach ($this->getRelations() as $field => $relation) {
+            $record->$field = $this->proxy_builder->newInstance($relation);
         }
         
         // done! return the new offset number.
@@ -632,10 +630,10 @@ class GenericType extends Data
      */
     public function setRelation($name, RelationInterface $relation)
     {
-        if (isset($this->relation[$name])) {
+        if (isset($this->relations[$name])) {
             throw new Exception("Relation '$name' already exists.");
         }
-        $this->relation[$name] = $relation;
+        $this->relations[$name] = $relation;
     }
 
     /**
@@ -650,21 +648,14 @@ class GenericType extends Data
      */
     public function getRelation($name)
     {
-        return $this->relation[$name];
+        return $this->relations[$name];
     }
 
-    /**
-     * 
-     * Returns all the names of the relationship definition objects.
-     * 
-     * @return array
-     * 
-     */
-    public function getRelationNames()
+    public function getRelations()
     {
-        return array_keys($this->relation);
+        return $this->relations;
     }
-
+    
     /**
      * 
      * Adds a new record to the IdentityMap.
@@ -735,9 +726,6 @@ class GenericType extends Data
     {
         // the eventual list of changed fields and values
         $changed = [];
-
-        // the list of relations
-        $related = $this->getRelationNames();
 
         // initial data for this record
         $initial_data = $this->getInitialData($record);

@@ -108,7 +108,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf($expect, $actual);
         
         // ... and make sure we have a posts relation.
-        $actual = $this->manager->authors->getRelationNames();
+        $actual = array_keys($this->manager->authors->getRelations());
         $expect = ['posts'];
         $this->assertSame($expect, $actual);
     }
