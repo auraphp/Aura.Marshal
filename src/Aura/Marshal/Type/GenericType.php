@@ -96,6 +96,8 @@ class GenericType extends Data
      */
     protected $initial_data;
     
+    protected $proxy_builder;
+    
     /**
      * 
      * A builder to create record objects for this type.
@@ -231,6 +233,16 @@ class GenericType extends Data
         return $this->collection_builder;
     }
 
+    public function setProxyBuilder(ProxyBuilderInterface $proxy_builder)
+    {
+        $this->proxy_builder = $proxy_builder;
+    }
+    
+    public function getProxyBuilder()
+    {
+        return $this->proxy_builder;
+    }
+    
     /**
      * 
      * Loads the IdentityMap for this type with data for record objects. 

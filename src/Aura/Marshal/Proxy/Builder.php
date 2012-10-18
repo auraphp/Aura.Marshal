@@ -5,8 +5,11 @@ use Aura\Marshal\Relation\RelationInterface;
 
 class Builder implements BuilderInterface
 {
+    protected $class = 'Aura\Marshal\Proxy\GenericProxy';
+    
     public function newInstance(RelationInterface $relation)
     {
-        return new GenericProxy($relation);
+        $class = $this->class;
+        return new $class($relation);
     }
 }

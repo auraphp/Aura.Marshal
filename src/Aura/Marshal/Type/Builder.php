@@ -53,6 +53,7 @@ class Builder
             'index_fields'          => [],
             'record_builder'        => null,
             'collection_builder'    => null,
+            'proxy_builder'         => null,
         ];
 
         $info = array_merge($base, $info);
@@ -67,6 +68,10 @@ class Builder
 
         if (! $info['collection_builder']) {
             $info['collection_builder'] = new CollectionBuilder;
+        }
+
+        if (! $info['collection_builder']) {
+            $info['collection_builder'] = new ProxyBuilder;
         }
 
         $type = new GenericType;
