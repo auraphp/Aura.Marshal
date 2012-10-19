@@ -1,26 +1,24 @@
-GenericType
------------
+- Do we need a "detach record" method that also removes it from indexes?
 
-- Add methods ...
+- How can we make IDs update? Is that something for the UnitOfWork to do
+  as it goes?  Would make rolling back more complex.
 
-    - deleteRecord() capability; note that this only marks it for deletion,
-      and does not actually do anyting in a data store. Should this also
-      cascade through subordinate relationships?
-    
-    - removeRecord() to remove from the IdentityMap without marking for
-      deletion.
-    
-    - getDeletedRecords() to get a collection of records that were deleted
-      using deleteRecord()
+- rename Record to Entity?  Or, in SQL, rename Entity to Record?
 
+- can we remove Manager from the relation proper, and leave it only for the
+  relation builder? would inject the actual type object dependencies, not the
+  manager as a service locator. The *builder* should do all the checking. It's
+  OK if the builder uses the manager, as long as the relations themselves get
+  only the objects. Does the builder even need the related-field name?
+  Info keys:
 
-GenericCollection
------------------
-
-- Add methods ...
-
-    - deleteRecord() to remove from the collection and mark for deletion.
-      Should this cascade through subordinate relationships?
-
-    - removeRecord() to remove from the collection without marking for
-      deletion (and without removing from the IdentityMap).
+    - native
+    - native_type
+    - native_field
+    - foreign
+    - foreign_type
+    - foreign_field
+    - through
+    - through_type
+    - through_native_field
+    - through_foreign_field
