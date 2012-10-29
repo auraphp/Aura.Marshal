@@ -1,5 +1,6 @@
 <?php
 namespace Aura\Marshal;
+
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Record\Builder as RecordBuilder;
 use Aura\Marshal\Record\GenericCollection;
@@ -7,6 +8,7 @@ use Aura\Marshal\Record\GenericRecord;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Aura\Marshal\Type\Builder as TypeBuilder;
 use Aura\Marshal\Type\GenericType;
+use Aura\Marshal\Proxy\Builder as ProxyBuilder;
 
 /**
  * Test class for Type.
@@ -33,8 +35,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new GenericType;
         $this->type->setIdentityField($info['identity_field']);
         $this->type->setIndexFields($info['index_fields']);
-        $this->type->setRecordClass('Aura\Marshal\Record\GenericRecord');
-        $this->type->setRecordBuilder(new RecordBuilder);
+        $this->type->setRecordBuilder(new RecordBuilder(new ProxyBuilder));
         $this->type->setCollectionBuilder(new CollectionBuilder);
     }
     
@@ -355,5 +356,89 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         ];
         $actual = $this->type->getNewRecords();
         $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetInitialData_noRecord()
+    {
+        $record = new \StdClass;
+        $this->assertNull($this->type->getInitialData($record));
+    }
+    
+    public function testGetChangedFields_numeric()
+    {
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        
+        // change from string '69' to int 69;
+        // it should not be marked as a change
+        $record->fake_field = 69;
+        $expect = [];
+        $actual = $this->type->getChangedFields($record);
+        $this->assertSame($expect, $actual);
+        
+        $record->fake_field = 4.56;
+        $expect = ['fake_field' => 4.56];
+        $actual = $this->type->getChangedFields($record);
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_toNull()
+    {
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        
+        $record->fake_field = null;
+        $expect = ['fake_field' => null];
+        $actual = $this->type->getChangedFields($record);
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_fromNull()
+    {
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        
+        $record->null_field = 0;
+        $expect = ['null_field' => 0];
+        $actual = $this->type->getChangedFields($record);
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_other()
+    {
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        
+        $record->fake_field = 'changed';
+        $expect = ['fake_field' => 'changed'];
+        $actual = $this->type->getChangedFields($record);
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testLoadRecord()
+    {
+        $initial_data = [
+            'id'  => 88,
+            'author_id' => 69,
+            'foo' => 'bar',
+            'baz' => 'dib',
+            'zim' => 'gir',
+        ];
+        
+        $record = $this->type->loadRecord($initial_data);
+        foreach ($initial_data as $field => $value) {
+            $this->assertSame($value, $record->$field);
+        }
+    }
+    
+    public function testLoadCollection()
+    {
+        $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
+        $collection = $this->type->loadCollection($data['posts']);
+        $this->assertInstanceOf(
+            'Aura\Marshal\Collection\GenericCollection',
+            $collection
+        );
+        
     }
 }

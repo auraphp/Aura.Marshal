@@ -30,4 +30,6 @@ interface RelationInterface
      * 
      */
     public function getForRecord($record);
+    
+    public function getForeignType();
 }

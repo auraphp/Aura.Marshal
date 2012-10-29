@@ -25,10 +25,8 @@ interface BuilderInterface
      * 
      * Creates a new collection object.
      * 
-     * @param GenericType $type The type for this collection.
-     * 
      * @param array $data Data to load into the collection.
      * 
      */
-    public function newInstance(GenericType $type, array $data);
+    public function newInstance(array $data);
 }

@@ -13,8 +13,10 @@ namespace Aura\Marshal\Type;
 use Aura\Marshal\Collection\BuilderInterface as CollectionBuilderInterface;
 use Aura\Marshal\Data;
 use Aura\Marshal\Exception;
+use Aura\Marshal\Proxy\BuilderInterface as ProxyBuilderInterface;
 use Aura\Marshal\Record\BuilderInterface as RecordBuilderInterface;
 use Aura\Marshal\Relation\RelationInterface;
+use SplObjectStorage;
 
 /**
  * 
@@ -88,6 +90,17 @@ class GenericType extends Data
 
     /**
      * 
+     * An object store of the initial data for record in the IdentityMap.
+     * 
+     * @var SplObjectStorage
+     * 
+     */
+    protected $initial_data;
+    
+    protected $proxy_builder;
+    
+    /**
+     * 
      * A builder to create record objects for this type.
      * 
      * @var object
@@ -97,24 +110,20 @@ class GenericType extends Data
 
     /**
      * 
-     * The class expected from the record builder. This is used to determine
-     * if elements in the IdentityMap have been converted to record objects.
-     * 
-     * @var string
-     * 
-     */
-    protected $record_class;
-
-    /**
-     * 
      * An array of relationship descriptions, where the key is a
      * field name for the record and the value is a relation object.
      * 
      * @var array
      * 
      */
-    protected $relation = [];
+    protected $relations = [];
 
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+        $this->initial_data = new SplObjectStorage;
+    }
+    
     /**
      * 
      * Sets the name of the field that uniquely identifies each record for
@@ -175,33 +184,6 @@ class GenericType extends Data
 
     /**
      * 
-     * Sets the name of the expected record class; this is used to determine
-     * if elements in the IdentityMap have been converted to record objects.
-     * 
-     * @param string $record_class The identity field name.
-     * 
-     * @return void
-     * 
-     */
-    public function setRecordClass($record_class)
-    {
-        $this->record_class = $record_class;
-    }
-
-    /**
-     * 
-     * Returns the name of the expected record class.
-     * 
-     * @return string
-     * 
-     */
-    public function getRecordClass()
-    {
-        return $this->record_class;
-    }
-
-    /**
-     * 
      * Sets the builder object to create record objects.
      * 
      * @param RecordBuilderInterface $record_builder The builder object.
@@ -252,6 +234,16 @@ class GenericType extends Data
         return $this->collection_builder;
     }
 
+    public function setProxyBuilder(ProxyBuilderInterface $proxy_builder)
+    {
+        $this->proxy_builder = $proxy_builder;
+    }
+    
+    public function getProxyBuilder()
+    {
+        return $this->proxy_builder;
+    }
+    
     /**
      * 
      * Loads the IdentityMap for this type with data for record objects. 
@@ -281,62 +273,117 @@ class GenericType extends Data
      * of whether they were loaded or not.
      * 
      */
-    public function load($data, $return_field = null)
+    public function load(array $data, $return_field = null)
     {
+        // what is the identity field for the type?
+        $identity_field = $this->getIdentityField();
+
         // what indexes do we need to track?
         $index_fields = array_keys($this->index_fields);
 
         // return a list of field values in $data
         $return_values = [];
 
-        // what is the identity field for the type?
-        $identity_field  = $this->getIdentityField();
-
         // what should the return field be?
         if (! $return_field) {
             $return_field = $identity_field;
         }
         
-        // what's the last data offset?
-        $offset = count($this->data);
-
         // load each data element as a record
-        foreach ($data as $record) {
-
+        foreach ($data as $initial_data) {
             // cast the element to an object for consistent addressing
-            $record = (object) $record;
-
+            $initial_data = $initial_data;
             // retain the return value on the record
-            $return_value    = $record->$return_field;
-            $return_values[] = $return_value;
-
-            // retain the identity value on the record
-            $identity_value = $record->$identity_field;
-
-            // does the identity already exist in the map?
-            if (isset($this->index_identity[$identity_value])) {
-                // yes, skip it and go on
-                continue;
-            }
-
-            // no, retain it in the identity map and identity index ...
-            $this->data[$offset] = $record;
-            $this->index_identity[$identity_value] = $offset;
-
-            // ... put the offset value into the indexes ...
-            foreach ($index_fields as $field) {
-                $value = $record->$field;
-                $this->index_fields[$field][$value][] = $offset;
-            }
-
-            // ... and increment the offset for the next record.
-            $offset ++;
+            $return_values[] = $initial_data[$return_field];
+            // load into the map
+            $this->loadData($initial_data, $identity_field, $index_fields);
         }
 
         // return the list of field values in $data, and done
         return $return_values;
     }
 
+    public function loadRecord(array $initial_data)
+    {
+        // what is the identity field for the type?
+        $identity_field = $this->getIdentityField();
+
+        // what indexes do we need to track?
+        $index_fields = array_keys($this->index_fields);
+
+        // load the data and get the offset
+        $offset = $this->loadData(
+            $initial_data,
+            $identity_field,
+            $index_fields
+        );
+        
+        // return the record at the offset
+        return $this->offsetGet($offset);
+    }
+    
+    public function loadCollection(array $data)
+    {
+        // what is the identity field for the type?
+        $identity_field = $this->getIdentityField();
+
+        // what indexes do we need to track?
+        $index_fields = array_keys($this->index_fields);
+
+        // the records for the collection
+        $records = [];
+        
+        // load each new record
+        foreach ($data as $initial_data) {
+            $offset = $this->loadData(
+                $initial_data,
+                $identity_field,
+                $index_fields
+            );
+            $record = $this->offsetGet($offset);
+            $records[] =& $record;
+        }
+        
+        // return a collection of the loaded records
+        return $this->collection_builder->newInstance($records);
+    }
+    
+    protected function loadData(
+        array $initial_data,
+        $identity_field,
+        $index_fields
+    ) {
+        // does the identity already exist in the map?
+        $identity_value = $initial_data[$identity_field];
+        if (isset($this->index_identity[$identity_value])) {
+            // yes; we're done, return the offset number
+            return $this->index_identity[$identity_value];
+        }
+        
+        // convert the initial data to a real record in the identity map
+        $this->data[] = $this->record_builder->newInstance($initial_data);
+        
+        // get the record and retain initial data
+        $record = end($this->data);
+        $this->initial_data->attach($record, $initial_data);
+        
+        // build indexes by offset
+        $offset = key($this->data);
+        $this->index_identity[$identity_value] = $offset;
+        foreach ($index_fields as $field) {
+            $value = $record->$field;
+            $this->index_fields[$field][$value][] = $offset;
+        }
+        
+        // set related fields
+        foreach ($this->getRelations() as $field => $relation) {
+            $record->$field = $this->proxy_builder->newInstance($relation);
+        }
+        
+        // done! return the new offset number.
+        return $offset;
+    }
+    
     /**
      * 
      * Returns the array keys for the for the records in the IdentityMap;
@@ -375,7 +422,7 @@ class GenericType extends Data
     /**
      * 
      * Retrieves a single record from the IdentityMap by the value of its
-     * identity field, converting it to a $record_class object if needed.
+     * identity field.
      * 
      * @param int $identity_value The identity value of the record to be
      * retrieved.
@@ -392,7 +439,7 @@ class GenericType extends Data
 
         // look up the sequential offset for the identity value
         $offset = $this->index_identity[$identity_value];
-        return $this->getRecordByOffset($offset);
+        return $this->offsetGet($offset);
     }
 
     /**
@@ -426,7 +473,7 @@ class GenericType extends Data
         // long slow loop through all the records to find a match.
         foreach ($this->data as $offset => $record) {
             if ($record->$field == $value) {
-                return $this->getRecordByOffset($offset);
+                return $this->offsetGet($offset);
             }
         }
 
@@ -436,34 +483,8 @@ class GenericType extends Data
 
     /**
      * 
-     * Retrieves a single record from the IdentityMap by its offset,
-     * converting it to a $record_class object if needed.
-     * 
-     * @param int $offset The record offset in the $data array.
-     * 
-     * @return object A record object via the record builder.
-     * 
-     */
-    protected function getRecordByOffset($offset)
-    {
-        // if it is already a record of the proper type, exit early
-        if ($this->data[$offset] instanceof $this->record_class) {
-            return $this->data[$offset];
-        }
-
-        // convert to a record of the proper type ...
-        $data = $this->data[$offset];
-        $record = $this->record_builder->newInstance($this, $data);
-
-        // ... then retain and return it.
-        $this->data[$offset] = $record;
-        return $this->data[$offset];
-    }
-
-    /**
-     * 
      * Retrieves the first record from the IdentityMap matching an index 
-     * lookup, converting it to a $record_class object if needed.
+     * lookup.
      * 
      * @param string $field The indexed field name.
      * 
@@ -478,7 +499,7 @@ class GenericType extends Data
             return null;
         }
         $offset = $this->index_fields[$field][$value][0];
-        return $this->getRecordByOffset($offset);
+        return $this->offsetGet($offset);
     }
 
     /**
@@ -502,7 +523,7 @@ class GenericType extends Data
             // when the element is converted to a record
             $list[] =& $this->data[$offset];
         }
-        return $this->collection_builder->newInstance($this, $list);
+        return $this->collection_builder->newInstance($list);
     }
 
     /**
@@ -554,7 +575,7 @@ class GenericType extends Data
                 $list[] =& $this->data[$identity_value];
             }
         }
-        return $this->collection_builder->newInstance($this, $list);
+        return $this->collection_builder->newInstance($list);
     }
 
     /**
@@ -591,7 +612,7 @@ class GenericType extends Data
                 }
             }
         }
-        return $this->collection_builder->newInstance($this, $list);
+        return $this->collection_builder->newInstance($list);
     }
 
     /**
@@ -609,10 +630,10 @@ class GenericType extends Data
      */
     public function setRelation($name, RelationInterface $relation)
     {
-        if (isset($this->relation[$name])) {
+        if (isset($this->relations[$name])) {
             throw new Exception("Relation '$name' already exists.");
         }
-        $this->relation[$name] = $relation;
+        $this->relations[$name] = $relation;
     }
 
     /**
@@ -622,26 +643,19 @@ class GenericType extends Data
      * @param string $name The field name to use for the related record
      * or collection.
      * 
-     * @return AbstractRelation
+     * @return RelationInterface
      * 
      */
     public function getRelation($name)
     {
-        return $this->relation[$name];
+        return $this->relations[$name];
     }
 
-    /**
-     * 
-     * Returns all the names of the relationship definition objects.
-     * 
-     * @return array
-     * 
-     */
-    public function getRelationNames()
+    public function getRelations()
     {
-        return array_keys($this->relation);
+        return $this->relations;
     }
-
+    
     /**
      * 
      * Adds a new record to the IdentityMap.
@@ -658,7 +672,7 @@ class GenericType extends Data
      */
     public function newRecord(array $data = [])
     {
-        $record = $this->record_builder->newInstance($this, $data);
+        $record = $this->record_builder->newInstance($data);
         $this->index_new[] = count($this->data);
         $this->data[] = $record;
         return $record;
@@ -677,10 +691,7 @@ class GenericType extends Data
         $list = [];
         foreach ($this->index_identity as $identity_value => $offset) {
             $record = $this->data[$offset];
-            if (! $record instanceof $this->record_class) {
-                continue;
-            }
-            if ($record->getChangedFields()) {
+            if ($this->getChangedFields($record)) {
                 $list[$identity_value] = $record;
             }
         }
@@ -702,5 +713,46 @@ class GenericType extends Data
             $list[] = $this->data[$offset];
         }
         return $list;
+    }
+    
+    public function getInitialData($record)
+    {
+        if ($this->initial_data->contains($record)) {
+            return $this->initial_data[$record];
+        }
+    }
+    
+    public function getChangedFields($record)
+    {
+        // the eventual list of changed fields and values
+        $changed = [];
+
+        // initial data for this record
+        $initial_data = $this->getInitialData($record);
+        
+        // go through all the initial data values
+        foreach ($initial_data as $field => $old) {
+
+            // what is the new value on the record?
+            $new = $record->$field;
+
+            // are both old and new values numeric?
+            $numeric = is_numeric($old) && is_numeric($new);
+
+            // if both old and new are numeric, compare loosely.
+            if ($numeric && $old != $new) {
+                // loosely different, retain the new value
+                $changed[$field] = $new;
+            }
+
+            // if one or the other is not numeric, compare strictly
+            if (! $numeric && $old !== $new) {
+                // strictly different, retain the new value
+                $changed[$field] = $new;
+            }
+        }
+
+        // done!
+        return $changed;
     }
 }

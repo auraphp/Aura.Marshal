@@ -13,6 +13,7 @@ namespace Aura\Marshal\Type;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Exception;
 use Aura\Marshal\Record\Builder as RecordBuilder;
+use Aura\Marshal\Proxy\Builder as ProxyBuilder;
 
 /**
  * 
@@ -32,10 +33,6 @@ class Builder
      * - `'identity_field'` (string): The name of the identity field for 
      *   records of this type. This key is required.
      * 
-     * - `record_class` (string): The name of the record class returned by the
-     *   record Builder. This key is optional, and defaults to 
-     *   `Aura\Marshal\Record`.
-     * 
      * - `record_builder` (Record\BuilderInterface): A builder to create
      *   record objects for the type. This key is optional, and defaults to a
      *   new Record\Builder object.
@@ -54,9 +51,9 @@ class Builder
         $base = [
             'identity_field'        => null,
             'index_fields'          => [],
-            'record_class'          => 'Aura\Marshal\Record\GenericRecord',
             'record_builder'        => null,
             'collection_builder'    => null,
+            'proxy_builder'         => null,
         ];
 
         $info = array_merge($base, $info);
@@ -73,13 +70,17 @@ class Builder
             $info['collection_builder'] = new CollectionBuilder;
         }
 
+        if (! $info['proxy_builder']) {
+            $info['proxy_builder'] = new ProxyBuilder;
+        }
+
         $type = new GenericType;
         $type->setIdentityField($info['identity_field']);
         $type->setIndexFields($info['index_fields']);
-        $type->setRecordClass($info['record_class']);
         $type->setRecordBuilder($info['record_builder']);
         $type->setCollectionBuilder($info['collection_builder']);
-
+        $type->setProxyBuilder($info['proxy_builder']);
+        
         return $type;
     }
 }

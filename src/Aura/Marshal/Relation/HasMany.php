@@ -33,7 +33,7 @@ class HasMany extends AbstractRelation implements RelationInterface
     public function getForRecord($record)
     {
         $native_field = $this->native_field;
-        return $this->foreign_type->getCollectionByField(
+        return $this->foreign->getCollectionByField(
             $this->foreign_field,
             $record->$native_field
         );

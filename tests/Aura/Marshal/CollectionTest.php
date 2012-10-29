@@ -4,6 +4,7 @@ use Aura\Marshal\Collection\GenericCollection;
 use Aura\Marshal\Type\GenericType;
 use Aura\Marshal\Record\Builder as RecordBuilder;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
+use Aura\Marshal\Proxy\Builder as ProxyBuilder;
 
 /**
  * Test class for Collection.
@@ -23,10 +24,6 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->type = new GenericType;
-        $this->type->setIdentityField('id');
-        $this->type->setRecordBuilder(new RecordBuilder);
-        
         $ids = [1, 2, 3, 5, 7, 11, 13];
         $names = ['foo', 'bar', 'baz', 'dib', 'zim', 'gir', 'irk'];
         $data = [];
@@ -37,8 +34,8 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
             ];
         }
         
-        $this->collection = new GenericCollection($data, $this->type);
-        $this->empty_collection = new GenericCollection([], $this->type);
+        $this->collection = new GenericCollection($data);
+        $this->empty_collection = new GenericCollection([]);
     }
     
     /**
@@ -50,10 +47,10 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
-    public function testGetIdentityValues()
+    public function testGetFieldValues()
     {
         $expect = [1, 2, 3, 5, 7, 11, 13];
-        $actual = $this->collection->getIdentityValues();
+        $actual = $this->collection->getFieldValues('id');
         $this->assertSame($expect, $actual);
     }
 
@@ -67,7 +64,6 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $type = new GenericType;
         $type->setIdentityField('id');
-        $type->setRecordClass('Aura\Marshal\Record\GenericRecord');
         $type->setRecordBuilder(new RecordBuilder);
         $type->setCollectionBuilder(new CollectionBuilder);
         
@@ -97,21 +93,5 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         // note that collection is by offset, not identity value.
         $actual = $collection[0];
         $this->assertSame($expect->name, $actual->name);
-    }
-    
-    public function testAppendNewRecord()
-    {
-        $before = count($this->collection);
-        
-        $record = $this->collection->appendNewRecord();
-        $this->assertInstanceOf('Aura\Marshal\Record\GenericRecord', $record);
-        
-        $expect = $before + 1;
-        $actual = count($this->collection);
-        $this->assertSame($expect, $actual);
-        
-        $expect = [$record];
-        $actual = $this->type->getNewRecords();
-        $this->assertSame($expect, $actual);
     }
 }

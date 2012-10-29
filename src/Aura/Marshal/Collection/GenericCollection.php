@@ -24,72 +24,7 @@ class GenericCollection extends Data
 {
     /**
      * 
-     * The type for this collection.
-     * 
-     * @var GenericType
-     * 
-     */
-    protected $type;
-
-    /**
-     * 
-     * Constructor.
-     * 
-     * @param array $data An array of records for this collection.
-     * 
-     * @param GenericType $type The type for this collection.
-     * 
-     */
-    public function __construct(array $data, GenericType $type)
-    {
-        parent::__construct($data);
-        $this->type = $type;
-    }
-
-    /**
-     * 
-     * ArrayAccess: Get a key value.
-     * 
-     * This override from the parent::offsetGet() lets us convert records
-     * lazily using the IdentityMap for the type.
-     * 
-     * @param string $key The requested key.
-     * 
-     * @return mixed
-     * 
-     */
-    public function offsetGet($key)
-    {
-        $record_class = $this->type->getRecordClass();
-        if (! $this->data[$key] instanceof $record_class) {
-            $identity_field = $this->type->getIdentityField();
-            $identity_value = $this->data[$key]->$identity_field;
-            $this->data[$key] = $this->type->getRecord($identity_value);
-        }
-
-        return $this->data[$key];
-    }
-
-    /**
-     * 
-     * Returns an array of all the identity values for the collection.
-     * 
-     * This will not convert the collection elements to record objects.
-     *
-     * @return array
-     * 
-     */
-    public function getIdentityValues()
-    {
-        $identity_field = $this->type->getIdentityField();
-        return $this->getFieldValues($identity_field);
-    }
-
-    /**
-     * 
      * Returns an array of all values for a single field in the collection.
-     * 
-     * This will not convert the collection elements to record objects.
      * 
      * @param string $field The field name to retrieve values for.
      *
@@ -115,22 +50,5 @@ class GenericCollection extends Data
     public function isEmpty()
     {
         return empty($this->data);
-    }
-
-    /**
-     * 
-     * Adds a new record to the collection (and to the IdentityMap for the
-     * type).
-     * 
-     * @param array $data Data for the new record.
-     * 
-     * @return object
-     * 
-     */
-    public function appendNewRecord(array $data = [])
-    {
-        $record = $this->type->newRecord($data);
-        $this->data[] = $record;
-        return $record;
     }
 }

@@ -36,29 +36,28 @@ class Builder
         'has_many_through' => 'Aura\Marshal\Relation\HasManyThrough',
     ];
 
-    // FIXME $type of type
     /**
      * 
      * Builds and returns a relation object.
      * 
-     * @param type $type
+     * @param string $type The name of the native type in the manager.
      * 
-     * @param string $name The name of the record field where the related
-     * data will be placed.
+     * @param string $name The name of the native field for the related
+     * record or collection.
      * 
      * @param array $info An array of relationship definition information.
      * 
-     * @param Manager $manager An type manager.
+     * @param Manager $manager A type manager.
      * 
-     * @return AbstractRelation
+     * @return RelationInterface
      * 
      */
     public function newInstance($type, $name, $info, Manager $manager)
     {
         $base = [
-            'foreign_type'          => $name,
             'relationship'          => null,
             'native_field'          => null,
+            'foreign_type'          => $name,
             'foreign_field'         => null,
             'through_type'          => null,
             'through_native_field'  => null,
@@ -66,17 +65,75 @@ class Builder
         ];
 
         $info = array_merge($base, $info);
-
+        $info['type'] = $type;
+        $info['name'] = $name;
+        
+        $this->prepRelationship($info, $manager);
+        $this->prepNative($info, $manager);
+        $this->prepForeign($info, $manager);
+        $this->prepThrough($info, $manager);
+        
         $relationship = $info['relationship'];
-        unset($info['relationship']);
-
-        if (! $relationship) {
-            throw new Exception("No 'relationship' specified for relation '$name' in type '$type'.");
+        $class = $this->relationship_class[$relationship];
+        
+        return new $class(
+            $info['native_field'],
+            $info['foreign'],
+            $info['foreign_type'],
+            $info['foreign_field'],
+            $info['through'],
+            $info['through_type'],
+            $info['through_native_field'],
+            $info['through_foreign_field']
+        );
+    }
+    
+    protected function prepRelationship(&$info, $manager)
+    {
+        if (! $info['relationship']) {
+            throw new Exception("No 'relationship' specified for relation '{$info['name']}' on type '{$info['type']}'.");
+        }
+    }
+    
+    protected function prepNative(&$info, $manager)
+    {
+        if (! $info['native_field']) {
+            throw new Exception("No 'native_field' specified for relation '{$info['name']}' on type '{$info['type']}'.");
+        }
+    }
+    
+    protected function prepForeign(&$info, $manager)
+    {
+        if (! $info['foreign_type']) {
+            throw new Exception("No 'foreign_type' specified for relation '{$info['name']}' on type '{$info['type']}'.");
         }
 
-        $class = $this->relationship_class[$relationship];
-        $relation = new $class($type, $name, $info, $manager);
+        if (! $info['foreign_field']) {
+            throw new Exception("No 'foreign_field' specified for relation '{$info['name']}' on type '{$info['type']}'.");
+        }
 
-        return $relation;
+        $info['foreign'] = $manager->__get($info['foreign_type']);
+    }
+    
+    protected function prepThrough(&$info, $manager)
+    {
+        if ($info['relationship'] != 'has_many_through') {
+            $info['through'] = null;
+            return;
+        }
+            
+        if (! $info['through_type']) {
+            throw new Exception("No 'through_type' specified for relation '{$info['name']}' on type '{$info['type']}'.");
+        }
+
+        if (! $info['through_native_field']) {
+            throw new Exception("No 'through_native_field' specified for relation '{$info['name']}' on type '{$info['type']}'.");
+        }
+
+        if (! $info['through_foreign_field']) {
+            throw new Exception("No 'through_foreign_field' specified for relation '{$info['name']}' on type '{$info['type']}'.");
+        }
+
+        $info['through'] = $manager->__get($info['through_type']);
     }
 }

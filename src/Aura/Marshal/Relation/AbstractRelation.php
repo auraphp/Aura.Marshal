@@ -25,12 +25,12 @@ abstract class AbstractRelation
 {
     /**
      * 
-     * The type manager object.
+     * The field in the native record to match against.
      * 
-     * @var Manager
+     * @var string
      * 
      */
-    protected $manager;
+    protected $native_field;
 
     /**
      * 
@@ -39,16 +39,16 @@ abstract class AbstractRelation
      * @var GenericType
      * 
      */
-    protected $foreign_type;
-
+    protected $foreign;
+    
     /**
      * 
-     * The field in the native record to match against.
+     * The name of the foreign type.
      * 
      * @var string
      * 
      */
-    protected $native_field;
+    protected $foreign_type;
 
     /**
      * 
@@ -59,38 +59,79 @@ abstract class AbstractRelation
      */
     protected $foreign_field;
 
-    // FIXME $type of type
+    /**
+     * 
+     * The through type object.
+     * 
+     * @var GenericType
+     * 
+     */
+    protected $through;
+    
+    /**
+     * 
+     * Native and foreign records are mapped to each other through this
+     * association type.
+     * 
+     * @var string
+     * 
+     */
+    protected $through_type;
+
+    /**
+     * 
+     * The field name for the native side of the association mapping in the
+     * "through" type.
+     * 
+     * @var string
+     * 
+     */
+    protected $through_native_field;
+
+    /**
+     * 
+     * The field name for the foreign side of the association mapping in the
+     * "through" type.
+     * 
+     * @var string
+     * 
+     */
+    protected $through_foreign_field;
+
     /**
      * 
      * Constructor.
      * 
-     * @param type $type
+     * @param string $type The name of the native type.
      * 
      * @param string $name The name of the record field where the related
      * data will be placed.
      * 
      * @param array $info An array of relationship definition information.
      * 
-     * @param Manager $manager The type manager.
-     * 
      */
-    public function __construct($type, $name, $info, Manager $manager)
+    public function __construct(
+        $native_field,
+        GenericType $foreign,
+        $foreign_type,
+        $foreign_field,
+        GenericType $through = null,
+        $through_type = null,
+        $through_native_field = null,
+        $through_foreign_field = null
+    ) {
+        $this->native_field          = $native_field;
+        $this->foreign               = $foreign;
+        $this->foreign_type          = $foreign_type;
+        $this->foreign_field         = $foreign_field;
+        $this->through               = $through;
+        $this->through_type          = $through_type;
+        $this->through_native_field  = $through_native_field;
+        $this->through_foreign_field = $through_foreign_field;
+    }
+    
+    public function getForeignType()
     {
-        if (! $info['foreign_type']) {
-            throw new Exception("No 'foreign_type' specified for relation '$name' in type '$type'.");
-        }
-
-        if (! $info['native_field']) {
-            throw new Exception("No 'native_field' specified for relation '$name' in type '$type'.");
-        }
-
-        if (! $info['foreign_field']) {
-            throw new Exception("No 'foreign_field' specified for relation '$name' in type '$type'.");
-        }
-
-        $this->manager = $manager;
-        $this->foreign_type  = $this->manager->__get($info['foreign_type']);
-        $this->native_field  = $info['native_field'];
-        $this->foreign_field = $info['foreign_field'];
+        return $this->foreign_type;
     }
 }

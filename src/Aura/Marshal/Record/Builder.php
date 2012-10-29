@@ -11,6 +11,7 @@
 namespace Aura\Marshal\Record;
 
 use Aura\Marshal\Type\GenericType;
+use Aura\Marshal\Proxy\BuilderInterface as ProxyBuilderInterface;
 
 /**
  * 
@@ -21,19 +22,27 @@ use Aura\Marshal\Type\GenericType;
  */
 class Builder implements BuilderInterface
 {
+    protected $class = 'Aura\Marshal\Record\GenericRecord';
+    
     /**
      * 
      * Creates a new record object.
-     * 
-     * @param GenericType $type The type for this record.
      * 
      * @param array|object $data Data to load into the record.
      * 
      * @return GenericRecord
      * 
      */
-    public function newInstance(GenericType $type, $data)
+    public function newInstance(array $data)
     {
-        return new GenericRecord((array) $data, $type);
+        $class = $this->class;
+        $record = new $class;
+        
+        // set fields
+        foreach ($data as $field => $value) {
+            $record->$field = $value;
+        }
+        
+        return $record;
     }
 }
