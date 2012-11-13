@@ -12,8 +12,8 @@ namespace Aura\Marshal\Relation;
 
 /**
  * 
- * Represents a relationship where a native record has many foreign records
- * (i.e., a foreign collection); the foreign records are subordinate to the
+ * Represents a relationship where a native entity has many foreign entities
+ * (i.e., a foreign collection); the foreign entities are subordinate to the
  * native one.
  * 
  * @package Aura.Marshal
@@ -23,19 +23,19 @@ class HasMany extends AbstractRelation implements RelationInterface
 {
     /**
      * 
-     * Returns the related foreign collection for a native record.
+     * Returns the related foreign collection for a native entity.
      * 
-     * @param mixed $record The native record.
+     * @param mixed $entity The native entity.
      * 
      * @return GenericCollection
      * 
      */
-    public function getForRecord($record)
+    public function getForEntity($entity)
     {
         $native_field = $this->native_field;
         return $this->foreign->getCollectionByField(
             $this->foreign_field,
-            $record->$native_field
+            $entity->$native_field
         );
     }
 }

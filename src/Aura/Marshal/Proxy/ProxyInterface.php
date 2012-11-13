@@ -3,5 +3,5 @@ namespace Aura\Marshal\Proxy;
 
 interface ProxyInterface
 {
-    public function get($record);
+    public function get($entity);
 }

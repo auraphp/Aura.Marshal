@@ -12,8 +12,8 @@ class GenericProxy implements ProxyInterface
         $this->relation = $relation;
     }
     
-    public function get($record)
+    public function get($entity)
     {
-        return $this->relation->getForRecord($record);
+        return $this->relation->getForEntity($entity);
     }
 }

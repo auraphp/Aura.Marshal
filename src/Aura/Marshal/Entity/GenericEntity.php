@@ -8,18 +8,18 @@
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
-namespace Aura\Marshal\Record;
+namespace Aura\Marshal\Entity;
 
 use Aura\Marshal\Data;
 
 /**
  * 
- * Represents a single record.
+ * Represents a single entity.
  * 
  * @package Aura.Marshal
  * 
  */
-class GenericRecord extends Data
+class GenericEntity extends Data
 {
     use MagicArrayAccessTrait;
 }

@@ -8,41 +8,41 @@
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
-namespace Aura\Marshal\Record;
+namespace Aura\Marshal\Entity;
 
 use Aura\Marshal\Type\GenericType;
 use Aura\Marshal\Proxy\BuilderInterface as ProxyBuilderInterface;
 
 /**
  * 
- * Creates a new record object for a type.
+ * Creates a new entity object for a type.
  * 
  * @package Aura.Marshal
  * 
  */
 class Builder implements BuilderInterface
 {
-    protected $class = 'Aura\Marshal\Record\GenericRecord';
+    protected $class = 'Aura\Marshal\Entity\GenericEntity';
     
     /**
      * 
-     * Creates a new record object.
+     * Creates a new entity object.
      * 
-     * @param array|object $data Data to load into the record.
+     * @param array|object $data Data to load into the entity.
      * 
-     * @return GenericRecord
+     * @return GenericEntity
      * 
      */
     public function newInstance(array $data)
     {
         $class = $this->class;
-        $record = new $class;
+        $entity = new $class;
         
         // set fields
         foreach ($data as $field => $value) {
-            $record->$field = $value;
+            $entity->$field = $value;
         }
         
-        return $record;
+        return $entity;
     }
 }

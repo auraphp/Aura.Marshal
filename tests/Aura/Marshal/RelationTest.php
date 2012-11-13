@@ -142,14 +142,14 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testBelongsTo()
     {
-        $post = $this->manager->posts->getRecord(1);
+        $post = $this->manager->posts->getEntity(1);
         $this->assertSame('1', $post->author->id);
         $this->assertSame('Anna', $post->author->name);
     }
     
     public function testHasOne()
     {
-        $post = $this->manager->posts->getRecord(1);
+        $post = $this->manager->posts->getEntity(1);
         $this->assertSame('1', $post->meta->id);
         $this->assertSame('1', $post->meta->post_id);
         $this->assertSame('meta 1', $post->meta->data);
@@ -157,7 +157,7 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testHasMany()
     {
-        $post = $this->manager->posts->getRecord(5);
+        $post = $this->manager->posts->getEntity(5);
         $this->assertSame(3, count($post->comments));
         
         $data  = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
@@ -176,7 +176,7 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testHasManyThrough()
     {
-        $post = $this->manager->posts->getRecord(3);
+        $post = $this->manager->posts->getEntity(3);
         $this->assertSame(2, count($post->tags));
         
         $data  = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';

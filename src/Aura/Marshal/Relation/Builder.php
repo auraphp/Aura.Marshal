@@ -43,7 +43,7 @@ class Builder
      * @param string $type The name of the native type in the manager.
      * 
      * @param string $name The name of the native field for the related
-     * record or collection.
+     * entity or collection.
      * 
      * @param array $info An array of relationship definition information.
      * 

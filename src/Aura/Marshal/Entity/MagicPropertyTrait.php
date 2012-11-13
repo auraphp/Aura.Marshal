@@ -1,20 +1,20 @@
 <?php
-namespace Aura\Marshal\Record;
+namespace Aura\Marshal\Entity;
 
 use Aura\Marshal\Proxy\ProxyInterface;
 
-trait MagicArrayAccessTrait
+trait MagicPropertyTrait
 {
     public function __get($field)
     {
-        // get the field value
-        $value = $this->offsetGet($field);
+        // get the property value
+        $value = $this->$field;
         
         // is it a proxy for a related?
         if ($value instanceof ProxyInterface) {
             // replace the proxy value with the real value
             $value = $value->get($this);
-            $this->offsetSet($field, $value);
+            $this->$field = $value;
         }
         
         // done!
@@ -23,16 +23,16 @@ trait MagicArrayAccessTrait
     
     public function __set($field, $value)
     {
-        $this->offsetSet($field, $value);
+        $this->$field = $value;
     }
     
     public function __isset($field)
     {
-        return $this->offsetExists($field);
+        return isset($this->$field);
     }
     
     public function __unset($field)
     {
-        $this->offsetUnset($field);
+        unset($this->$field);
     }
 }

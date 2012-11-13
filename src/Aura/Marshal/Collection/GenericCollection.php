@@ -15,7 +15,7 @@ use Aura\Marshal\Type\GenericType;
 
 /**
  * 
- * Represents a generic collection of records.
+ * Represents a generic collection of entities.
  * 
  * @package Aura.Marshal
  * 
@@ -34,8 +34,8 @@ class GenericCollection extends Data
     public function getFieldValues($field)
     {
         $values = [];
-        foreach ($this->data as $offset => $record) {
-            $values[$offset] = $record->$field;
+        foreach ($this->data as $offset => $entity) {
+            $values[$offset] = $entity->$field;
         }
         return $values;
     }

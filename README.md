@@ -33,7 +33,7 @@ XML, CSV, Mongo, or anything else, and load it into Aura Marshal.)
 
 With Aura Marshal, you use the data retrieval tools of your choice and write
 your own queries to retrieve data from a data source. You then load that
-result data into an entity type object, and it creates record and collection
+result data into an entity type object, and it creates entity and collection
 objects for you based on a mapping scheme you define for it.
 
 Aura Marshal makes it easy to avoid the N+1 problem when working with a domain
@@ -56,9 +56,9 @@ model, especially in legacy codebases.
 
 Aura Marshal works by using `Type` objects (which define the entity types in
 the domain model). Each `Type` has a definition indicating its identity field,
-how to build records and collections, and the relationships to other `Type`
+how to build entities and collections, and the relationships to other `Type`
 objects. The `Type` objects are accessed through a type `Manager`. You load
-data into each `Type` in the `Manager`, then you retrieve records and
+data into each `Type` in the `Manager`, then you retrieve entities and
 collections from each `Type`.
 
 Example Schema
@@ -144,20 +144,20 @@ Defining Relationships
 
 Aura Marshal recognizes four kinds of relationships between types:
 
-- `has_one`: A one-to-one relationship where the native record is the owner of
-  one foreign record.
+- `has_one`: A one-to-one relationship where the native entity is the owner of
+  one foreign entity.
 
-- `belongs_to`: A many-to-one relationship where the native record is owned by
-  one foreign record. (The foreign record might be the owner of many other
-  records.)
+- `belongs_to`: A many-to-one relationship where the native entity is owned by
+  one foreign entity. (The foreign entity might be the owner of many other
+  entities.)
 
-- `has_many`: A one-to-many relationship where the native record is the owner
-  of many foreign records.
+- `has_many`: A one-to-many relationship where the native entity is the owner
+  of many foreign entities.
 
-- `has_many_through`: A many-to-many relationship where each native record is
-  linked to many foreign records; at the same time, each foreign record is
-  linked to many native records. This kind of relationship requires an
-  association mapping type through which the native and foreign records are
+- `has_many_through`: A many-to-many relationship where each native entity is
+  linked to many foreign entities; at the same time, each foreign entity is
+  linked to many native entities. This kind of relationship requires an
+  association mapping type through which the native and foreign entities are
   linked to each other.
 
 Let's add the simpler relationships to our `Manager` using the `setRelation()`
@@ -373,14 +373,14 @@ Reading Data
 ------------
 
 Now that the domain model has been loaded with data, we can read out the
-record objects, with related data wired up for us automatically.
+entity objects, with related data wired up for us automatically.
 
 ```php
 <?php
 // get a collection of the post IDs we just loaded
 $posts = $manager->posts->getCollection($post_ids);
 
-// loop through posts collection, getting a post record each time
+// loop through posts collection, getting a post entity each time
 foreach ($posts as $post) {
     
     // address the native and foreign fields
@@ -408,16 +408,16 @@ foreach ($posts as $post) {
 Advanced Usage
 ==============
 
-Record and Collection Builders
+Entity and Collection Builders
 ------------------------------
 
-We have a good amount of control over how the type objects create records and
+We have a good amount of control over how the type objects create entities and
 collections. The instantiation responsibilities are delegated to builder
-objects. We can tell the type object what builders to use for record and
-collection objects by specifying `'record_builder'` and `'collection_builder'`
+objects. We can tell the type object what builders to use for entity and
+collection objects by specifying `'entity_builder'` and `'collection_builder'`
 values when defining the type. Similarly, we can tell the type object that
-the record builder will generate a particular class of object; this lets the
-type object know when the loaded data has been converted to a record object.
+the entity builder will generate a particular class of object; this lets the
+type object know when the loaded data has been converted to a entity object.
 
 ```php
 <?php
@@ -425,9 +425,9 @@ $manager->setType('posts', [
     // the field with the unique identifying value
     'identity_field' => 'id',
     
-    // an object to build records; default is a new instance of
-    // Aura\Marshal\Record\Builder
-    'record_builder' => new \Vendor\Package\Posts\RecordBuilder,
+    // an object to build entities; default is a new instance of
+    // Aura\Marshal\Entity\Builder
+    'entity_builder' => new \Vendor\Package\Posts\EntityBuilder,
     
     // an object to build collections; default is a new instance of
     // Aura\Marshal\Collection\Builder
@@ -435,14 +435,14 @@ $manager->setType('posts', [
 ]);
 ```
     
-The builders should implement `Aura\Marshal\Record\BuilderInterface` and
+The builders should implement `Aura\Marshal\Entity\BuilderInterface` and
 `Aura\Marshal\Collection\CollectionInterface`, respectively.
 
 
 Indexing
 --------
 
-By default, the `Type` objects do not index the values when loading records.
+By default, the `Type` objects do not index the values when loading entities.
 You are likely to see a performance improvement when Aura Marshal wires up
 related collections if you add indexes for native fields used in
 relationships. For example, you could tell the `posts_tags` assocation mapping
@@ -462,7 +462,7 @@ not need indexing). Typically this is needed only on a type that `belongs_to`
 another type.
 
 Indexes are created *only at `load()` time*. They are not updated when the
-record object is modified.
+entity object is modified.
 
 
 All-At-Once Definition

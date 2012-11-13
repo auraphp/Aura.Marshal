@@ -1,9 +1,9 @@
-- Do we need a "detach record" method that also removes it from indexes?
+- Do we need a "detach entity" method that also removes it from indexes?
 
 - How can we make IDs update? Is that something for the UnitOfWork to do
   as it goes?  Would make rolling back more complex.
 
-- rename Record to Entity?  Or, in SQL, rename Entity to Record?
+- rename Entity to Entity?  Or, in SQL, rename Entity to Entity?
 
 - can we remove Manager from the relation proper, and leave it only for the
   relation builder? would inject the actual type object dependencies, not the

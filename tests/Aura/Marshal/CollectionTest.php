@@ -2,7 +2,7 @@
 namespace Aura\Marshal;
 use Aura\Marshal\Collection\GenericCollection;
 use Aura\Marshal\Type\GenericType;
-use Aura\Marshal\Record\Builder as RecordBuilder;
+use Aura\Marshal\Entity\Builder as EntityBuilder;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Proxy\Builder as ProxyBuilder;
 
@@ -64,7 +64,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $type = new GenericType;
         $type->setIdentityField('id');
-        $type->setRecordBuilder(new RecordBuilder);
+        $type->setEntityBuilder(new EntityBuilder);
         $type->setCollectionBuilder(new CollectionBuilder);
         
         $ids = [1, 2, 3, 5, 7, 11, 13];
@@ -80,15 +80,15 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $type->load($data);
         
         // get a collection of all the IDs from the type *before* creating
-        // any record objects.
+        // any entity objects.
         $collection = $type->getCollection($ids);
         
-        // get a record by ID from the type and change it.
-        // note that getRecord() is by identity value, not offset.
-        $expect = $type->getRecord(1);
+        // get a entity by ID from the type and change it.
+        // note that getEntity() is by identity value, not offset.
+        $expect = $type->getEntity(1);
         $expect->name = 'changed';
         
-        // now get what should be the same record from the collection.
+        // now get what should be the same entity from the collection.
         // it should be changed as well.
         // note that collection is by offset, not identity value.
         $actual = $collection[0];

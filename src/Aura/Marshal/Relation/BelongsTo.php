@@ -12,8 +12,8 @@ namespace Aura\Marshal\Relation;
 
 /**
  * 
- * Represents a relationship where the native record belongs to a foreign 
- * record; the native record is subordinate to the foreign one.
+ * Represents a relationship where the native entity belongs to a foreign 
+ * entity; the native entity is subordinate to the foreign one.
  * 
  * @package Aura.Marshal
  * 
@@ -22,19 +22,19 @@ class BelongsTo extends AbstractRelation implements RelationInterface
 {
     /**
      * 
-     * Returns the related foreign record for a native record.
+     * Returns the related foreign entity for a native entity.
      * 
-     * @param mixed $record The native record.
+     * @param mixed $entity The native entity.
      * 
-     * @return GenericRecord
+     * @return GenericEntity
      * 
      */
-    public function getForRecord($record)
+    public function getForEntity($entity)
     {
         $native_field = $this->native_field;
-        return $this->foreign->getRecordByField(
+        return $this->foreign->getEntityByField(
             $this->foreign_field,
-            $record->$native_field
+            $entity->$native_field
         );
     }
 }

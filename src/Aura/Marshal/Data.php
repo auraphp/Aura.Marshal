@@ -18,10 +18,10 @@ namespace Aura\Marshal;
  * 
  * - the generic type object, where $data represents an IdentityMap;
  * 
- * - the generic record object, where $data represents the record fields; and
+ * - the generic entity object, where $data represents the entity fields; and
  * 
  * - the generic collection object, where $data represents an array of 
- *   records.
+ *   entities.
  * 
  * @package Aura.Marshal
  * 

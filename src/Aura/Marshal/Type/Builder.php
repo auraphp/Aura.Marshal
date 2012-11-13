@@ -12,7 +12,7 @@ namespace Aura\Marshal\Type;
 
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Exception;
-use Aura\Marshal\Record\Builder as RecordBuilder;
+use Aura\Marshal\Entity\Builder as EntityBuilder;
 use Aura\Marshal\Proxy\Builder as ProxyBuilder;
 
 /**
@@ -31,11 +31,11 @@ class Builder
      * The `$info` array should have four keys:
      * 
      * - `'identity_field'` (string): The name of the identity field for 
-     *   records of this type. This key is required.
+     *   entities of this type. This key is required.
      * 
-     * - `record_builder` (Record\BuilderInterface): A builder to create
-     *   record objects for the type. This key is optional, and defaults to a
-     *   new Record\Builder object.
+     * - `entity_builder` (Entity\BuilderInterface): A builder to create
+     *   entity objects for the type. This key is optional, and defaults to a
+     *   new Entity\Builder object.
      * 
      * - `collection_builder` (Collection\BuilderInterface): A 
      *   A builder to create collection objects for the type. This key
@@ -51,7 +51,7 @@ class Builder
         $base = [
             'identity_field'        => null,
             'index_fields'          => [],
-            'record_builder'        => null,
+            'entity_builder'        => null,
             'collection_builder'    => null,
             'proxy_builder'         => null,
         ];
@@ -62,8 +62,8 @@ class Builder
             throw new Exception('No identity field specified.');
         }
 
-        if (! $info['record_builder']) {
-            $info['record_builder'] = new RecordBuilder;
+        if (! $info['entity_builder']) {
+            $info['entity_builder'] = new EntityBuilder;
         }
 
         if (! $info['collection_builder']) {
@@ -77,7 +77,7 @@ class Builder
         $type = new GenericType;
         $type->setIdentityField($info['identity_field']);
         $type->setIndexFields($info['index_fields']);
-        $type->setRecordBuilder($info['record_builder']);
+        $type->setEntityBuilder($info['entity_builder']);
         $type->setCollectionBuilder($info['collection_builder']);
         $type->setProxyBuilder($info['proxy_builder']);
         

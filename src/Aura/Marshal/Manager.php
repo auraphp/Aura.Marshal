@@ -62,14 +62,14 @@ class Manager
      *          // the name to use for this type in the manager
      *          'some_type_name' => [
      *      
-     *              // the identity field in each record
+     *              // the identity field in each entity
      *              'identity_field' => 'id', 
      *             
      *              // fields to index against
      *              'index_fields' => ['field1', 'field2'],
      *              
-     *              // a record builder for the type
-     *              'record_builder' => new \Aura\Domain\RecordBuilder,
+     *              // a entity builder for the type
+     *              'entity_builder' => new \Aura\Domain\EntityBuilder,
      *              
      *              // a collection builder for the type
      *              'collection_builder' => new \Aura\Domain\CollectionBuilder,
@@ -103,12 +103,12 @@ class Manager
      *              // foreign type.
      *              'foreign_type' => 'another_type_name',
      *      
-     *              // the name of the native (parent) record field to use
-     *              // when matching foreign (related) records. required.
+     *              // the name of the native (parent) entity field to use
+     *              // when matching foreign (related) entities. required.
      *              'native_field' => 'native_field_name',
      *      
-     *              // the name of the foreign (related) record field to use
-     *              // when matching the native (parent) record. required.
+     *              // the name of the foreign (related) entity field to use
+     *              // when matching the native (parent) entity. required.
      *              'foreign_field' => 'foreign_field_name',
      *              
      *              // -------------------------------------------------------
@@ -119,11 +119,11 @@ class Manager
      *              // and foreign types are mapped to each other.
      *              'through_type' => 'mapping_type_name',
      *      
-     *              // in the "through" record, the name of the field that
+     *              // in the "through" entity, the name of the field that
      *              // maps to the 'native_field' value
      *              'through_native_field' => 'mapping_native_field_name',
      *      
-     *              // in the "through" record, the name of the field that
+     *              // in the "through" entity, the name of the field that
      *              // maps to the 'foreign_field' value
      *              'through_foreign_field' => 'mapping_foreign_field_name',
      *          ),

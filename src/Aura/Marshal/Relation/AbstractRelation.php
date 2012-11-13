@@ -25,7 +25,7 @@ abstract class AbstractRelation
 {
     /**
      * 
-     * The field in the native record to match against.
+     * The field in the native entity to match against.
      * 
      * @var string
      * 
@@ -52,7 +52,7 @@ abstract class AbstractRelation
 
     /**
      * 
-     * The field in the foreign record to match against.
+     * The field in the foreign entity to match against.
      * 
      * @var string
      * 
@@ -70,7 +70,7 @@ abstract class AbstractRelation
     
     /**
      * 
-     * Native and foreign records are mapped to each other through this
+     * Native and foreign entities are mapped to each other through this
      * association type.
      * 
      * @var string
@@ -104,7 +104,7 @@ abstract class AbstractRelation
      * 
      * @param string $type The name of the native type.
      * 
-     * @param string $name The name of the record field where the related
+     * @param string $name The name of the entity field where the related
      * data will be placed.
      * 
      * @param array $info An array of relationship definition information.
