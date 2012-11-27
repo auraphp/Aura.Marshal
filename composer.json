@@ -5,7 +5,7 @@
     "keywords": [ "data", "data mapper", "data marshal", "data marshalling", "data object" ],
     "homepage": "http://auraphp.github.com/Aura.Marshal",
     "version": "1.0.0-dev",
-    "license": "BSD",
+    "license": "BSD-2-Clause",
     "authors": [
         {
             "name": "Aura Contributors",
