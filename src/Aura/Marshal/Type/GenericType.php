@@ -252,7 +252,7 @@ class GenericType extends Data
      * 
      * Sets the lazy builder to create lazy objects.
      * 
-     * @param LazyBuilderInterface $builder The lazy builder.
+     * @param LazyBuilderInterface $lazy_builder The lazy builder.
      * 
      * @return void
      * 
