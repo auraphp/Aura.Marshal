@@ -121,4 +121,3 @@ class DataIterator implements \Iterator
         return $this->valid;
     }
 }
- 

@@ -12,7 +12,8 @@ namespace Aura\Marshal\Type;
 
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Exception;
-use Aura\Marshal\Record\Builder as RecordBuilder;
+use Aura\Marshal\Entity\Builder as EntityBuilder;
+use Aura\Marshal\Lazy\Builder as LazyBuilder;
 
 /**
  * 
@@ -30,15 +31,11 @@ class Builder
      * The `$info` array should have four keys:
      * 
      * - `'identity_field'` (string): The name of the identity field for 
-     *   records of this type. This key is required.
+     *   entities of this type. This key is required.
      * 
-     * - `record_class` (string): The name of the record class returned by the
-     *   record Builder. This key is optional, and defaults to 
-     *   `Aura\Marshal\Record`.
-     * 
-     * - `record_builder` (Record\BuilderInterface): A builder to create
-     *   record objects for the type. This key is optional, and defaults to a
-     *   new Record\Builder object.
+     * - `entity_builder` (Entity\BuilderInterface): A builder to create
+     *   entity objects for the type. This key is optional, and defaults to a
+     *   new Entity\Builder object.
      * 
      * - `collection_builder` (Collection\BuilderInterface): A 
      *   A builder to create collection objects for the type. This key
@@ -54,9 +51,9 @@ class Builder
         $base = [
             'identity_field'        => null,
             'index_fields'          => [],
-            'record_class'          => 'Aura\Marshal\Record\GenericRecord',
-            'record_builder'        => null,
+            'entity_builder'        => null,
             'collection_builder'    => null,
+            'lazy_builder'          => null,
         ];
 
         $info = array_merge($base, $info);
@@ -65,22 +62,25 @@ class Builder
             throw new Exception('No identity field specified.');
         }
 
-        if (! $info['record_builder']) {
-            $info['record_builder'] = new RecordBuilder;
+        if (! $info['entity_builder']) {
+            $info['entity_builder'] = new EntityBuilder;
         }
 
         if (! $info['collection_builder']) {
             $info['collection_builder'] = new CollectionBuilder;
         }
 
+        if (! $info['lazy_builder']) {
+            $info['lazy_builder'] = new LazyBuilder;
+        }
+
         $type = new GenericType;
         $type->setIdentityField($info['identity_field']);
         $type->setIndexFields($info['index_fields']);
-        $type->setRecordClass($info['record_class']);
-        $type->setRecordBuilder($info['record_builder']);
+        $type->setEntityBuilder($info['entity_builder']);
         $type->setCollectionBuilder($info['collection_builder']);
-
+        $type->setLazyBuilder($info['lazy_builder']);
+        
         return $type;
     }
 }
- 

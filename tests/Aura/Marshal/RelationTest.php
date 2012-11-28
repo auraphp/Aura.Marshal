@@ -2,6 +2,7 @@
 namespace Aura\Marshal;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Aura\Marshal\Type\Builder as TypeBuilder;
+use Aura\Marshal\Lazy\Builder as LazyBuilder;
 
 /**
  * Test class for Manager.
@@ -43,7 +44,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoRelationship()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -57,7 +57,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoForeignType()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -71,7 +70,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoNativeField()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -85,7 +83,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoForeignField()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -99,7 +96,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoThroughType()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -113,7 +109,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoThroughNativeField()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -127,7 +122,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testNoThroughForeignField()
     {
-        parent::setUp();
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
         $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -139,16 +133,23 @@ class RelationTest extends \PHPUnit_Framework_TestCase
         $this->manager->posts;
     }
     
+    public function testGetForeignType()
+    {
+        $relation = $this->manager->posts->getRelation('author');
+        $actual = $relation->getForeignType();
+        $this->assertSame('authors', $actual);
+    }
+    
     public function testBelongsTo()
     {
-        $post = $this->manager->posts->getRecord(1);
+        $post = $this->manager->posts->getEntity(1);
         $this->assertSame('1', $post->author->id);
         $this->assertSame('Anna', $post->author->name);
     }
     
     public function testHasOne()
     {
-        $post = $this->manager->posts->getRecord(1);
+        $post = $this->manager->posts->getEntity(1);
         $this->assertSame('1', $post->meta->id);
         $this->assertSame('1', $post->meta->post_id);
         $this->assertSame('meta 1', $post->meta->data);
@@ -156,7 +157,7 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testHasMany()
     {
-        $post = $this->manager->posts->getRecord(5);
+        $post = $this->manager->posts->getEntity(5);
         $this->assertSame(3, count($post->comments));
         
         $data  = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
@@ -175,7 +176,7 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     
     public function testHasManyThrough()
     {
-        $post = $this->manager->posts->getRecord(3);
+        $post = $this->manager->posts->getEntity(3);
         $this->assertSame(2, count($post->tags));
         
         $data  = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';

@@ -8,15 +8,18 @@
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
-namespace Aura\Marshal;
+namespace Aura\Marshal\Entity;
+
+use Aura\Marshal\Data;
 
 /**
  * 
- * A package-level exception.
+ * Represents a single entity.
  * 
  * @package Aura.Marshal
  * 
  */
-class Exception extends \Exception
+class GenericEntity extends Data
 {
+    use MagicArrayAccessTrait;
 }

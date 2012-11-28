@@ -9,6 +9,7 @@
  * 
  */
 namespace Aura\Marshal\Collection;
+
 use Aura\Marshal\Type\GenericType;
 
 /**
@@ -24,16 +25,13 @@ class Builder implements BuilderInterface
      * 
      * Creates a new collection object.
      * 
-     * @param GenericType $type The type for this collection.
-     * 
      * @param array $data Data to load into the collection.
      * 
      * @return GenericCollection
      * 
      */
-    public function newInstance(GenericType $type, array $data)
+    public function newInstance(array $data)
     {
-        return new GenericCollection($data, $type);
+        return new GenericCollection($data);
     }
 }
- 

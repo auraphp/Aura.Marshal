@@ -21,14 +21,22 @@ interface RelationInterface
 {
     /**
      * 
-     * Returns the foreign record or collection for a native record.
+     * Returns the foreign entity or collection for a native entity.
      * 
-     * @param mixed $record The record to get the related record or
+     * @param mixed $entity The entity to get the related entity or
      * collection for.
      * 
-     * @return GenericRecord|GenericCollection
+     * @return GenericEntity|GenericCollection
      * 
      */
-    public function getForRecord($record);
+    public function getForEntity($entity);
+    
+    /**
+     * 
+     * Gets the name of the foreign type in the manager.
+     * 
+     * @return string
+     * 
+     */
+    public function getForeignType();
 }
- 
