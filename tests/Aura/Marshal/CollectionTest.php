@@ -4,7 +4,7 @@ use Aura\Marshal\Collection\GenericCollection;
 use Aura\Marshal\Type\GenericType;
 use Aura\Marshal\Entity\Builder as EntityBuilder;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
-use Aura\Marshal\Proxy\Builder as ProxyBuilder;
+use Aura\Marshal\Lazy\Builder as LazyBuilder;
 
 /**
  * Test class for Collection.

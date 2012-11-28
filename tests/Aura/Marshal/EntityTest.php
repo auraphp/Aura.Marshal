@@ -5,8 +5,8 @@ use Aura\Marshal\Entity\GenericEntity;
 use Aura\Marshal\MockEntity;
 use Aura\Marshal\Entity\Builder;
 use Aura\Marshal\MockEntityBuilder;
-use Aura\Marshal\Proxy\Builder as ProxyBuilder;
-use Aura\Marshal\Proxy\GenericProxy;
+use Aura\Marshal\Lazy\Builder as LazyBuilder;
+use Aura\Marshal\Lazy\GenericLazy;
 
 /**
  * Test class for Entity.
@@ -20,7 +20,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'foo' => 'bar',
             'baz' => 'dim',
             'zim' => 'gir',
-            'related' => new GenericProxy(new MockRelation),
+            'related' => new GenericLazy(new MockRelation),
         ];
     }
     

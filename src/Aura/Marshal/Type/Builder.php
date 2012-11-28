@@ -13,7 +13,7 @@ namespace Aura\Marshal\Type;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Exception;
 use Aura\Marshal\Entity\Builder as EntityBuilder;
-use Aura\Marshal\Proxy\Builder as ProxyBuilder;
+use Aura\Marshal\Lazy\Builder as LazyBuilder;
 
 /**
  * 
@@ -53,7 +53,7 @@ class Builder
             'index_fields'          => [],
             'entity_builder'        => null,
             'collection_builder'    => null,
-            'proxy_builder'         => null,
+            'lazy_builder'          => null,
         ];
 
         $info = array_merge($base, $info);
@@ -70,8 +70,8 @@ class Builder
             $info['collection_builder'] = new CollectionBuilder;
         }
 
-        if (! $info['proxy_builder']) {
-            $info['proxy_builder'] = new ProxyBuilder;
+        if (! $info['lazy_builder']) {
+            $info['lazy_builder'] = new LazyBuilder;
         }
 
         $type = new GenericType;
@@ -79,7 +79,7 @@ class Builder
         $type->setIndexFields($info['index_fields']);
         $type->setEntityBuilder($info['entity_builder']);
         $type->setCollectionBuilder($info['collection_builder']);
-        $type->setProxyBuilder($info['proxy_builder']);
+        $type->setLazyBuilder($info['lazy_builder']);
         
         return $type;
     }

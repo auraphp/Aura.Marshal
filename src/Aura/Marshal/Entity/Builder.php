@@ -11,7 +11,7 @@
 namespace Aura\Marshal\Entity;
 
 use Aura\Marshal\Type\GenericType;
-use Aura\Marshal\Proxy\BuilderInterface as ProxyBuilderInterface;
+use Aura\Marshal\Lazy\BuilderInterface as LazyBuilderInterface;
 
 /**
  * 

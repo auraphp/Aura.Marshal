@@ -13,7 +13,7 @@ namespace Aura\Marshal\Type;
 use Aura\Marshal\Collection\BuilderInterface as CollectionBuilderInterface;
 use Aura\Marshal\Data;
 use Aura\Marshal\Exception;
-use Aura\Marshal\Proxy\BuilderInterface as ProxyBuilderInterface;
+use Aura\Marshal\Lazy\BuilderInterface as LazyBuilderInterface;
 use Aura\Marshal\Entity\BuilderInterface as EntityBuilderInterface;
 use Aura\Marshal\Relation\RelationInterface;
 use SplObjectStorage;
@@ -108,12 +108,12 @@ class GenericType extends Data
     
     /**
      * 
-     * A builder to create proxy objects.
+     * A builder to create Lazy objects.
      * 
-     * @var ProxyBuilderInterface
+     * @var LazyBuilderInterface
      * 
      */
-    protected $proxy_builder;
+    protected $lazy_builder;
     
     /**
      * 
@@ -250,28 +250,28 @@ class GenericType extends Data
 
     /**
      * 
-     * Sets the proxy builder to create proxy objects.
+     * Sets the lazy builder to create lazy objects.
      * 
-     * @param ProxyBuilderInterface $builder The proxy builder.
+     * @param LazyBuilderInterface $builder The lazy builder.
      * 
      * @return void
      * 
      */
-    public function setProxyBuilder(ProxyBuilderInterface $proxy_builder)
+    public function setLazyBuilder(LazyBuilderInterface $lazy_builder)
     {
-        $this->proxy_builder = $proxy_builder;
+        $this->lazy_builder = $lazy_builder;
     }
     
     /**
      * 
-     * Returns the proxy builder that creates proxy objects.
+     * Returns the lazy builder that creates lazy objects.
      * 
-     * @return ProxyBuilderInterface
+     * @return LazyBuilderInterface
      * 
      */
-    public function getProxyBuilder()
+    public function getLazyBuilder()
     {
-        return $this->proxy_builder;
+        return $this->lazy_builder;
     }
     
     /**
@@ -438,7 +438,7 @@ class GenericType extends Data
         
         // set related fields
         foreach ($this->getRelations() as $field => $relation) {
-            $entity->$field = $this->proxy_builder->newInstance($relation);
+            $entity->$field = $this->lazy_builder->newInstance($relation);
         }
         
         // done! return the new offset number.

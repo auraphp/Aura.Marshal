@@ -2,7 +2,7 @@
 namespace Aura\Marshal;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Aura\Marshal\Type\Builder as TypeBuilder;
-use Aura\Marshal\Proxy\Builder as ProxyBuilder;
+use Aura\Marshal\Lazy\Builder as LazyBuilder;
 
 /**
  * Test class for Manager.

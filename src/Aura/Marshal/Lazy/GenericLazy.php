@@ -8,19 +8,19 @@
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
-namespace Aura\Marshal\Proxy;
+namespace Aura\Marshal\Lazy;
 
 use Aura\Marshal\Relation\RelationInterface;
 
 /**
  * 
- * A generic Proxy object, useful in cases when special functionality is not
+ * A generic Lazy object, useful in cases when special functionality is not
  * needed.
  * 
  * @package Aura.Marshal
  * 
  */
-class GenericProxy implements ProxyInterface
+class GenericLazy implements LazyInterface
 {
     /**
      * 

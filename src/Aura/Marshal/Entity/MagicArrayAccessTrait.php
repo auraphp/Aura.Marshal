@@ -10,7 +10,7 @@
  */
 namespace Aura\Marshal\Entity;
 
-use Aura\Marshal\Proxy\ProxyInterface;
+use Aura\Marshal\Lazy\LazyInterface;
 
 /**
  * 
@@ -24,7 +24,7 @@ trait MagicArrayAccessTrait
 {
     /**
      * 
-     * Calls ArrayAccess::offsetGet() to get a field value; converts proxy
+     * Calls ArrayAccess::offsetGet() to get a field value; converts Lazy
      * objects for related entites and collections in place.
      * 
      * @param string $field The field name to get.
@@ -37,9 +37,9 @@ trait MagicArrayAccessTrait
         // get the field value
         $value = $this->offsetGet($field);
         
-        // is it a proxy for a related?
-        if ($value instanceof ProxyInterface) {
-            // replace the proxy value with the real value
+        // is it a Lazy placeholder?
+        if ($value instanceof LazyInterface) {
+            // replace the Lazy placeholder with the real object
             $value = $value->get($this);
             $this->offsetSet($field, $value);
         }

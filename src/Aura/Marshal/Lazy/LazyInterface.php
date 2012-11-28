@@ -8,16 +8,16 @@
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
-namespace Aura\Marshal\Proxy;
+namespace Aura\Marshal\Lazy;
 
 /**
  * 
- * An interface for Proxy objects.
+ * An interface for Lazy objects.
  * 
  * @package Aura.Marshal
  * 
  */
-interface ProxyInterface
+interface LazyInterface
 {
     /**
      * 

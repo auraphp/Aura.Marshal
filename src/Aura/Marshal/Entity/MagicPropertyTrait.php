@@ -10,7 +10,7 @@
  */
 namespace Aura\Marshal\Entity;
 
-use Aura\Marshal\Proxy\ProxyInterface;
+use Aura\Marshal\Lazy\LazyInterface;
 
 /**
  * 
@@ -24,7 +24,7 @@ trait MagicPropertyTrait
 {
     /**
      * 
-     * Gets a protected property as a field value; converts proxy objects for
+     * Gets a protected property as a field value; converts Lazy objects for
      * related entites and collections in place.
      * 
      * Note that this will *not* be invoked by in-class uses of the protected
@@ -40,9 +40,9 @@ trait MagicPropertyTrait
         // get the property value
         $value = $this->$field;
         
-        // is it a proxy for a related?
-        if ($value instanceof ProxyInterface) {
-            // replace the proxy value with the real value
+        // is it a Lazy placeholder?
+        if ($value instanceof LazyInterface) {
+            // replace the Lazy placeholder with the real object
             $value = $value->get($this);
             $this->$field = $value;
         }

@@ -8,7 +8,7 @@ use Aura\Marshal\Entity\GenericEntity;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Aura\Marshal\Type\Builder as TypeBuilder;
 use Aura\Marshal\Type\GenericType;
-use Aura\Marshal\Proxy\Builder as ProxyBuilder;
+use Aura\Marshal\Lazy\Builder as LazyBuilder;
 
 /**
  * Test class for Type.
@@ -35,7 +35,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new GenericType;
         $this->type->setIdentityField($info['identity_field']);
         $this->type->setIndexFields($info['index_fields']);
-        $this->type->setEntityBuilder(new EntityBuilder(new ProxyBuilder));
+        $this->type->setEntityBuilder(new EntityBuilder(new LazyBuilder));
         $this->type->setCollectionBuilder(new CollectionBuilder);
     }
     
@@ -87,11 +87,11 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($builder, $actual);
     }
     
-    public function testSetAndGetProxyBuilder()
+    public function testSetAndGetLazyBuilder()
     {
-        $builder = new ProxyBuilder;
-        $this->type->setProxyBuilder($builder);
-        $actual = $this->type->getProxyBuilder();
+        $builder = new LazyBuilder;
+        $this->type->setLazyBuilder($builder);
+        $actual = $this->type->getLazyBuilder();
         $this->assertSame($builder, $actual);
     }
     
