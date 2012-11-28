@@ -39,6 +39,15 @@ class GenericType extends Data
 
     /**
      * 
+     * A builder to create entity objects for this type.
+     * 
+     * @var EntityBuilderInterface
+     * 
+     */
+    protected $entity_builder;
+
+    /**
+     * 
      * The entity field representing its unique identifier value. The
      * IdentityMap will be keyed on these values.
      * 
@@ -46,6 +55,21 @@ class GenericType extends Data
      * 
      */
     protected $identity_field;
+
+    /**
+     * 
+     * An array of fields to index on for quicker lookups. The array format
+     * is:
+     * 
+     *     $index_fields[$field_name][$field_value] = (array) $offsets;
+     * 
+     * Note that we always have an array of offsets, and the keys are by
+     * the field name and the values for that field.
+     * 
+     * @var array
+     * 
+     */
+    protected $index_fields = [];
 
     /**
      * 
@@ -75,21 +99,6 @@ class GenericType extends Data
 
     /**
      * 
-     * An array of fields to index on for quicker lookups. The array format
-     * is:
-     * 
-     *     $index_fields[$field_name][$field_value] = (array) $offsets;
-     * 
-     * Note that we always have an array of offsets, and the keys are by
-     * the field name and the values for that field.
-     * 
-     * @var array
-     * 
-     */
-    protected $index_fields = [];
-
-    /**
-     * 
      * An object store of the initial data for entity in the IdentityMap.
      * 
      * @var SplObjectStorage
@@ -97,17 +106,15 @@ class GenericType extends Data
      */
     protected $initial_data;
     
-    protected $proxy_builder;
-    
     /**
      * 
-     * A builder to create entity objects for this type.
+     * A builder to create proxy objects.
      * 
-     * @var object
+     * @var ProxyBuilderInterface
      * 
      */
-    protected $entity_builder;
-
+    protected $proxy_builder;
+    
     /**
      * 
      * An array of relationship descriptions, where the key is a
@@ -118,10 +125,17 @@ class GenericType extends Data
      */
     protected $relations = [];
 
+    /**
+     * 
+     * Constructor; overrides the parent entirely.
+     * 
+     * @param array $data The initial data for all entities in the type.
+     * 
+     */
     public function __construct(array $data = [])
     {
-        parent::__construct($data);
         $this->initial_data = new SplObjectStorage;
+        $this->load($data);
     }
     
     /**
@@ -226,7 +240,7 @@ class GenericType extends Data
      * 
      * Returns the builder that creates collection objects.
      * 
-     * @return object
+     * @return CollectionBuilderInterface
      * 
      */
     public function getCollectionBuilder()
@@ -234,11 +248,27 @@ class GenericType extends Data
         return $this->collection_builder;
     }
 
+    /**
+     * 
+     * Sets the proxy builder to create proxy objects.
+     * 
+     * @param ProxyBuilderInterface $builder The proxy builder.
+     * 
+     * @return void
+     * 
+     */
     public function setProxyBuilder(ProxyBuilderInterface $proxy_builder)
     {
         $this->proxy_builder = $proxy_builder;
     }
     
+    /**
+     * 
+     * Returns the proxy builder that creates proxy objects.
+     * 
+     * @return ProxyBuilderInterface
+     * 
+     */
     public function getProxyBuilder()
     {
         return $this->proxy_builder;
@@ -303,6 +333,15 @@ class GenericType extends Data
         return $return_values;
     }
 
+    /**
+     * 
+     * Loads a single entity into the identity map.
+     * 
+     * @param array $initial_data The initial data for the entity.
+     * 
+     * @return object The newly-loaded entity.
+     * 
+     */
     public function loadEntity(array $initial_data)
     {
         // what is the identity field for the type?
@@ -322,6 +361,15 @@ class GenericType extends Data
         return $this->offsetGet($offset);
     }
     
+    /**
+     * 
+     * Loads an entity collection into the identity map.
+     * 
+     * @param array $data The initial data for the entities.
+     * 
+     * @return object The newly-loaded collection.
+     * 
+     */
     public function loadCollection(array $data)
     {
         // what is the identity field for the type?
@@ -348,10 +396,23 @@ class GenericType extends Data
         return $this->collection_builder->newInstance($entities);
     }
     
+    /**
+     * 
+     * Loads an entity into the identity map.
+     * 
+     * @param array $initial_data The initial data for the entity.
+     * 
+     * @param string $identity_field The identity field for the entity.
+     * 
+     * @param array $index_fields The fields to index on.
+     * 
+     * @return int The identity map offset of the new entity.
+     * 
+     */
     protected function loadData(
         array $initial_data,
         $identity_field,
-        $index_fields
+        array $index_fields
     ) {
         // does the identity already exist in the map?
         $identity_value = $initial_data[$identity_field];
@@ -651,6 +712,13 @@ class GenericType extends Data
         return $this->relations[$name];
     }
 
+    /**
+     * 
+     * Returns the array of all relationship definition objects.
+     * 
+     * @return array
+     * 
+     */
     public function getRelations()
     {
         return $this->relations;
@@ -715,6 +783,15 @@ class GenericType extends Data
         return $list;
     }
     
+    /**
+     * 
+     * Returns the initial data for a given entity.
+     * 
+     * @param object $entity The entity to find initial data for.
+     * 
+     * @return array The initial data for the entity.
+     * 
+     */
     public function getInitialData($entity)
     {
         if ($this->initial_data->contains($entity)) {
@@ -722,6 +799,16 @@ class GenericType extends Data
         }
     }
     
+    /**
+     * 
+     * Returns the changed fields and their values for an entity.
+     * 
+     * @param object $entity The entity to find changes for.
+     *  
+     * @return array An array of key-value pairs where the key is the field
+     * name and the value is the changed value.
+     * 
+     */
     public function getChangedFields($entity)
     {
         // the eventual list of changed fields and values

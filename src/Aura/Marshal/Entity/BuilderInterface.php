@@ -25,7 +25,7 @@ interface BuilderInterface
      * 
      * Creates a new entity object.
      * 
-     * @param mixed $data Data to load into the entity.
+     * @param array $data Data to load into the entity.
      * 
      */
     public function newInstance(array $data);

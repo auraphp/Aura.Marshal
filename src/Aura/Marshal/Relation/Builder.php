@@ -52,7 +52,7 @@ class Builder
      * @return RelationInterface
      * 
      */
-    public function newInstance($type, $name, $info, Manager $manager)
+    public function newInstance($type, $name, array $info, Manager $manager)
     {
         $base = [
             'relationship'          => null,
@@ -88,21 +88,54 @@ class Builder
         );
     }
     
-    protected function prepRelationship(&$info, $manager)
+    /**
+     * 
+     * Prepares the type-of-relationship name.
+     * 
+     * @param array $info The relationship definition.
+     * 
+     * @param Manager $manager The type manager.
+     * 
+     * @return void
+     * 
+     */
+    protected function prepRelationship(&$info, Manager $manager)
     {
         if (! $info['relationship']) {
             throw new Exception("No 'relationship' specified for relation '{$info['name']}' on type '{$info['type']}'.");
         }
     }
     
-    protected function prepNative(&$info, $manager)
+    /**
+     * 
+     * Prepares the native field name.
+     * 
+     * @param array $info The relationship definition.
+     * 
+     * @param Manager $manager The type manager.
+     * 
+     * @return void
+     * 
+     */
+    protected function prepNative(&$info, Manager $manager)
     {
         if (! $info['native_field']) {
             throw new Exception("No 'native_field' specified for relation '{$info['name']}' on type '{$info['type']}'.");
         }
     }
     
-    protected function prepForeign(&$info, $manager)
+    /**
+     * 
+     * Prepares the foreign type name, field name, and type object.
+     * 
+     * @param array $info The relationship definition.
+     * 
+     * @param Manager $manager The type manager.
+     * 
+     * @return void
+     * 
+     */
+    protected function prepForeign(&$info, Manager $manager)
     {
         if (! $info['foreign_type']) {
             throw new Exception("No 'foreign_type' specified for relation '{$info['name']}' on type '{$info['type']}'.");
@@ -115,13 +148,24 @@ class Builder
         $info['foreign'] = $manager->__get($info['foreign_type']);
     }
     
-    protected function prepThrough(&$info, $manager)
+    /**
+     * 
+     * Prepares the through type name, field names, and type object.
+     * 
+     * @param array $info The relationship definition.
+     * 
+     * @param Manager $manager The type manager.
+     * 
+     * @return void
+     * 
+     */
+    protected function prepThrough(&$info, Manager $manager)
     {
         if ($info['relationship'] != 'has_many_through') {
             $info['through'] = null;
             return;
         }
-            
+
         if (! $info['through_type']) {
             throw new Exception("No 'through_type' specified for relation '{$info['name']}' on type '{$info['type']}'.");
         }

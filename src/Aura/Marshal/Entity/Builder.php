@@ -22,6 +22,13 @@ use Aura\Marshal\Proxy\BuilderInterface as ProxyBuilderInterface;
  */
 class Builder implements BuilderInterface
 {
+    /**
+     * 
+     * The class to use for new instances.
+     * 
+     * @var string
+     * 
+     */
     protected $class = 'Aura\Marshal\Entity\GenericEntity';
     
     /**

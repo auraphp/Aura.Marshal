@@ -102,12 +102,23 @@ abstract class AbstractRelation
      * 
      * Constructor.
      * 
-     * @param string $type The name of the native type.
+     * @param string $native_field The name of the native field.
      * 
-     * @param string $name The name of the entity field where the related
-     * data will be placed.
+     * @param GenericType $foreign The foreign type object.
      * 
-     * @param array $info An array of relationship definition information.
+     * @param string $foreign_type The manager name of the foreign type.
+     * 
+     * @param string $foreign_field The name of the foreign field.
+     * 
+     * @param GenericType $through The through type object.
+     * 
+     * @param string $through_type The manager name of the through type.
+     * 
+     * @param string $through_native_field The name of the native field in
+     * the through type.
+     * 
+     * @param string $through_foreign_field The name of the foreign field in
+     * the through type.
      * 
      */
     public function __construct(
@@ -130,6 +141,13 @@ abstract class AbstractRelation
         $this->through_foreign_field = $through_foreign_field;
     }
     
+    /**
+     * 
+     * Gets the name of the foreign type in the manager.
+     * 
+     * @return string
+     * 
+     */
     public function getForeignType()
     {
         return $this->foreign_type;
