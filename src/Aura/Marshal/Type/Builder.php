@@ -80,7 +80,7 @@ class Builder
         $type->setEntityBuilder($info['entity_builder']);
         $type->setCollectionBuilder($info['collection_builder']);
         $type->setLazyBuilder($info['lazy_builder']);
-        
+
         return $type;
     }
 }

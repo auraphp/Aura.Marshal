@@ -14,7 +14,7 @@ use Aura\Marshal\Type\GenericType;
 
 /**
  * 
- * An inteface for collection builder objects.
+ * An interface for collection builder objects.
  * 
  * @package Aura.Marshal
  * 
