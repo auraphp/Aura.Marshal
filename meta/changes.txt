@@ -58,7 +58,7 @@ Other Changes
   for related entity and collection objects.  The Lazy\Magic*Trait traits
   perform the replacement of the Lazy with the real entity or collection.
 
-- [ADD] Method GenercType::getRelations() to get all relationship definitions.
+- [ADD] Method GenericType::getRelations() to get all relationship definitions.
 
 - [CHG] Make the AbstractRelation object more explicit and a little dumber;
   move prep/checking from AbstractRelation to RelationBuilder
