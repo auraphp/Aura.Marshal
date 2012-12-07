@@ -105,7 +105,7 @@ class GenericType extends Data
      * 
      */
     protected $initial_data;
-    
+
     /**
      * 
      * A builder to create Lazy objects.
@@ -114,7 +114,7 @@ class GenericType extends Data
      * 
      */
     protected $lazy_builder;
-    
+
     /**
      * 
      * An array of relationship descriptions, where the key is a
@@ -137,7 +137,7 @@ class GenericType extends Data
         $this->initial_data = new SplObjectStorage;
         $this->load($data);
     }
-    
+
     /**
      * 
      * Sets the name of the field that uniquely identifies each entity for
@@ -261,7 +261,7 @@ class GenericType extends Data
     {
         $this->lazy_builder = $lazy_builder;
     }
-    
+
     /**
      * 
      * Returns the lazy builder that creates lazy objects.
@@ -273,7 +273,7 @@ class GenericType extends Data
     {
         return $this->lazy_builder;
     }
-    
+
     /**
      * 
      * Loads the IdentityMap for this type with data for entity objects. 
@@ -318,7 +318,7 @@ class GenericType extends Data
         if (! $return_field) {
             $return_field = $identity_field;
         }
-        
+
         // load each data element as a entity
         foreach ($data as $initial_data) {
             // cast the element to an object for consistent addressing
@@ -356,11 +356,11 @@ class GenericType extends Data
             $identity_field,
             $index_fields
         );
-        
+
         // return the entity at the offset
         return $this->offsetGet($offset);
     }
-    
+
     /**
      * 
      * Loads an entity collection into the identity map.
@@ -380,7 +380,7 @@ class GenericType extends Data
 
         // the entities for the collection
         $entities = [];
-        
+
         // load each new entity
         foreach ($data as $initial_data) {
             $offset = $this->loadData(
@@ -391,11 +391,11 @@ class GenericType extends Data
             $entity = $this->offsetGet($offset);
             $entities[] =& $entity;
         }
-        
+
         // return a collection of the loaded entities
         return $this->collection_builder->newInstance($entities);
     }
-    
+
     /**
      * 
      * Loads an entity into the identity map.
@@ -420,14 +420,14 @@ class GenericType extends Data
             // yes; we're done, return the offset number
             return $this->index_identity[$identity_value];
         }
-        
+
         // convert the initial data to a real entity in the identity map
         $this->data[] = $this->entity_builder->newInstance($initial_data);
-        
+
         // get the entity and retain initial data
         $entity = end($this->data);
         $this->initial_data->attach($entity, $initial_data);
-        
+
         // build indexes by offset
         $offset = key($this->data);
         $this->index_identity[$identity_value] = $offset;
@@ -435,16 +435,16 @@ class GenericType extends Data
             $value = $entity->$field;
             $this->index_fields[$field][$value][] = $offset;
         }
-        
+
         // set related fields
         foreach ($this->getRelations() as $field => $relation) {
             $entity->$field = $this->lazy_builder->newInstance($relation);
         }
-        
+
         // done! return the new offset number.
         return $offset;
     }
-    
+
     /**
      * 
      * Returns the array keys for the for the entities in the IdentityMap;
@@ -723,7 +723,7 @@ class GenericType extends Data
     {
         return $this->relations;
     }
-    
+
     /**
      * 
      * Adds a new entity to the IdentityMap.
@@ -816,7 +816,7 @@ class GenericType extends Data
 
         // initial data for this entity
         $initial_data = $this->getInitialData($entity);
-        
+
         // go through all the initial data values
         foreach ($initial_data as $field => $old) {
 

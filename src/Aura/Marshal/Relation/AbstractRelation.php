@@ -40,7 +40,7 @@ abstract class AbstractRelation
      * 
      */
     protected $foreign;
-    
+
     /**
      * 
      * The name of the foreign type.
@@ -67,7 +67,7 @@ abstract class AbstractRelation
      * 
      */
     protected $through;
-    
+
     /**
      * 
      * Native and foreign entities are mapped to each other through this
@@ -140,7 +140,7 @@ abstract class AbstractRelation
         $this->through_native_field  = $through_native_field;
         $this->through_foreign_field = $through_foreign_field;
     }
-    
+
     /**
      * 
      * Gets the name of the foreign type in the manager.

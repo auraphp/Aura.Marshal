@@ -25,7 +25,7 @@ trait MagicArrayAccessTrait
     /**
      * 
      * Calls ArrayAccess::offsetGet() to get a field value; converts Lazy
-     * objects for related entites and collections in place.
+     * objects for related entities and collections in place.
      * 
      * @param string $field The field name to get.
      * 
@@ -36,18 +36,18 @@ trait MagicArrayAccessTrait
     {
         // get the field value
         $value = $this->offsetGet($field);
-        
+
         // is it a Lazy placeholder?
         if ($value instanceof LazyInterface) {
             // replace the Lazy placeholder with the real object
             $value = $value->get($this);
             $this->offsetSet($field, $value);
         }
-        
+
         // done!
         return $value;
     }
-    
+
     /**
      * 
      * Calls ArrayAccess::offsetSet() to set a field value.
@@ -63,7 +63,7 @@ trait MagicArrayAccessTrait
     {
         $this->offsetSet($field, $value);
     }
-    
+
     /**
      * 
      * Calls ArrayAccess::offsetExists() to see if a field is set.
@@ -77,7 +77,7 @@ trait MagicArrayAccessTrait
     {
         return $this->offsetExists($field);
     }
-    
+
     /**
      * 
      * Calls ArrayAccess::offsetUnset() to unset a field.

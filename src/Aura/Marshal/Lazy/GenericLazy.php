@@ -30,7 +30,7 @@ class GenericLazy implements LazyInterface
      * 
      */
     protected $relation;
-    
+
     /**
      * 
      * Constructor.
@@ -43,10 +43,10 @@ class GenericLazy implements LazyInterface
     {
         $this->relation = $relation;
     }
-    
+
     /**
      * 
-     * Gets a related foriegn entity or collection for a native entity.
+     * Gets a related foreign entity or collection for a native entity.
      * 
      * @param object $entity The native entity.
      * 

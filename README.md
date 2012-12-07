@@ -118,7 +118,7 @@ $manager = new \Aura\Marshal\Manager(
 Defining Types
 --------------
 
-Now we add definitons for each of the entity types in our domain model. These
+Now we add definitions for each of the entity types in our domain model. These
 do not have to map directly to tables, but it is often the case that they do.
 Because Aura Marshal does not read schemas, we need to identify explicitly the
 primary key fields and the relationships (along with the relationship fields).
@@ -445,7 +445,7 @@ Indexing
 By default, the `Type` objects do not index the values when loading entities.
 You are likely to see a performance improvement when Aura Marshal wires up
 related collections if you add indexes for native fields used in
-relationships. For example, you could tell the `posts_tags` assocation mapping
+relationships. For example, you could tell the `posts_tags` association mapping
 type to index on `post_id` and `tag_id` for faster lookups:
 
 ```php

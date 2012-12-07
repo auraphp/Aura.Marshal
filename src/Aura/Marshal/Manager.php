@@ -74,7 +74,7 @@ class Manager
      *              // a collection builder for the type
      *              'collection_builder' => new \Aura\Domain\CollectionBuilder,
      *              
-     *              // relationship definitons
+     *              // relationship definitions
      *              'relation_names' => [
      *                  // discussed below
      *              ],
