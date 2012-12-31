@@ -22,4 +22,5 @@ use Aura\Marshal\Data;
 class GenericEntity extends Data
 {
     use MagicArrayAccessTrait;
+
 }
