@@ -95,7 +95,18 @@ class GenericType extends Data
      * @var array
      * 
      */
-    protected $index_new;
+    protected $index_new = [];
+
+    /**
+     *
+     * An index of all entities deleted via deleteEntity(). The format is:
+     *
+     *      $index_delete[] = $identity_value
+     *
+     * @var array
+     *
+     */
+    protected $index_deleted = [];
 
     /**
      * 
@@ -747,6 +758,57 @@ class GenericType extends Data
     }
 
     /**
+     *
+     * Delete an Entity
+     *
+     * First deletes the Entity from all Indexes, then unsets the Entity itself.
+     * Add the Entities identity_value to the index_deleted.
+     *
+     *
+     * @param $identity_value int identity_value of the Entity to be deleted
+     *
+     * @return bool success
+     */
+    public function deleteEntity($identity_value)
+    {
+        // if the entity is not in the identity index, exit early
+        if (! isset($this->index_identity[$identity_value])) {
+            return false;
+        }
+
+        // look up the sequential offset for the identity value
+        $offset = $this->index_identity[$identity_value];
+        // get the Entity
+        $entity = $this->offsetGet($offset);
+
+        // add Entities identity_value to the deleted Index
+        $this->index_deleted[] = $identity_value;
+
+        // delete the Entity from the Identity Index
+        unset($this->index_identity[$identity_value]);
+
+        // get Index Fields
+        $index_fields = array_keys($this->index_fields);
+
+        // loop trough indicies and delete offsets of this Entity
+        foreach ($index_fields as $field) {
+            $value = $entity->$field;
+            // find index of the offset
+            $offset_idx = array_search($offset, $this->index_fields[$field][$value]);
+            if ($offset === false) {
+                continue;
+            } else {
+                // remove the offset from the index, preserving index integrity
+                array_splice($this->index_fields[$field][$value], $offset_idx, 1);
+            }
+        }
+
+        //unset the Entity
+        $this->offsetUnset($offset);
+        return true;
+    }
+
+    /**
      * 
      * Returns an array of all entities in the IdentityMap that have been 
      * modified.
@@ -781,6 +843,17 @@ class GenericType extends Data
             $list[] = $this->data[$offset];
         }
         return $list;
+    }
+
+    /**
+     * Returns an array of identity_values from entities that were deleted
+     * using `deleteEntity()`.
+     *
+     * @return array
+     */
+    public function getDeletedEntitiesIds()
+    {
+        return $this->index_deleted;
     }
     
     /**

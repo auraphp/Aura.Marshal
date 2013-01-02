@@ -448,4 +448,177 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             $collection
         );
     }
+
+    public function testDelete_none()
+    {
+        $this->loadTypeWithPosts();
+
+        $this->assertSame([], $this->type->getDeletedEntitiesIds());
+    }
+
+    public function testDelete_single()
+    {
+        $this->loadTypeWithPosts();
+
+        $this->assertTrue($this->type->deleteEntity(1));
+
+        $this->assertSame([1], $this->type->getDeletedEntitiesIds());
+    }
+
+    public function testDelete_many()
+    {
+        $this->loadTypeWithPosts();
+
+        $this->assertTrue($this->type->deleteEntity(1));
+        $this->assertTrue($this->type->deleteEntity(2));
+        $this->assertTrue($this->type->deleteEntity(3));
+
+        $this->assertSame([1, 2, 3], $this->type->getDeletedEntitiesIds());
+    }
+
+    public function testDeleteNonExistent()
+    {
+        $this->loadTypeWithPosts();
+
+        $this->assertFalse($this->type->deleteEntity(99999));
+    }
+
+    public function testDeleteAndGet()
+    {
+        $this->loadTypeWithPosts();
+        $this->assertTrue($this->type->deleteEntity(1));
+
+        $this->assertNull($this->type->getEntity(1));
+    }
+
+    public function testDeleteAndDeleteAgain()
+    {
+        $this->loadTypeWithPosts();
+        $this->assertTrue($this->type->deleteEntity(1));
+        $this->assertFalse($this->type->deleteEntity(1));
+    }
+
+    public function testDeleteEmpty()
+    {
+        $this->assertFalse($this->type->deleteEntity(1));
+    }
+
+    public function testDeleteAndGetCollectionByIndex_first()
+    {
+        $data = $this->loadTypeWithPosts();
+
+        $expect = [
+            (object) $data[1],
+            (object) $data[2]
+        ];
+
+        $this->assertTrue($this->type->deleteEntity(1));
+
+        $collection = $this->type->getCollectionByField('author_id', 1);
+
+        foreach ($collection as $offset => $actual) {
+            $this->assertSame($expect[$offset]->id, $actual->id);
+            $this->assertSame($expect[$offset]->author_id, $actual->author_id);
+            $this->assertSame($expect[$offset]->body, $actual->body);
+            $this->assertSame($expect[$offset]->fake_field, $actual->fake_field);
+        }
+    }
+
+    public function testDeleteAndGetCollectionByIndex_second()
+    {
+        $data = $this->loadTypeWithPosts();
+
+        $expect = [
+            (object) $data[0],
+            (object) $data[2]
+        ];
+
+        $this->assertTrue($this->type->deleteEntity(2));
+
+        $collection = $this->type->getCollectionByField('author_id', 1);
+
+        foreach ($collection as $offset => $actual) {
+            $this->assertSame($expect[$offset]->id, $actual->id);
+            $this->assertSame($expect[$offset]->author_id, $actual->author_id);
+            $this->assertSame($expect[$offset]->body, $actual->body);
+            $this->assertSame($expect[$offset]->fake_field, $actual->fake_field);
+        }
+    }
+
+    public function testDeleteAndGetCollectionByField_first()
+    {
+        $data = $this->loadTypeWithPosts();
+
+        $expect = [
+            (object) $data[4]
+        ];
+
+        $this->assertTrue($this->type->deleteEntity(4));
+
+        $collection = $this->type->getCollectionByField('fake_field', 88);
+
+        foreach ($collection as $offset => $actual) {
+            $this->assertSame($expect[$offset]->id, $actual->id);
+            $this->assertSame($expect[$offset]->author_id, $actual->author_id);
+            $this->assertSame($expect[$offset]->body, $actual->body);
+            $this->assertSame($expect[$offset]->fake_field, $actual->fake_field);
+        }
+    }
+
+    public function testDeleteAndGetCollectionByField_second()
+    {
+        $data = $this->loadTypeWithPosts();
+
+        $expect = [
+            (object) $data[0],
+            (object) $data[2],
+        ];
+
+        $this->assertTrue($this->type->deleteEntity(2));
+
+        $collection = $this->type->getCollectionByField('fake_field', 69);
+
+        foreach ($collection as $offset => $actual) {
+            $this->assertSame($expect[$offset]->id, $actual->id);
+            $this->assertSame($expect[$offset]->author_id, $actual->author_id);
+            $this->assertSame($expect[$offset]->body, $actual->body);
+            $this->assertSame($expect[$offset]->fake_field, $actual->fake_field);
+        }
+    }
+
+    public function testDeleteAndGetCollectionByField_many()
+    {
+        $data = $this->loadTypeWithPosts();
+
+        $expect = [
+            (object) $data[0],
+            (object) $data[2],
+            (object) $data[4]
+        ];
+
+        $this->assertTrue($this->type->deleteEntity(2));
+        $this->assertTrue($this->type->deleteEntity(4));
+
+        $collection = $this->type->getCollectionByField('fake_field', [88, 69]);
+
+        foreach ($collection as $offset => $actual) {
+            $this->assertSame($expect[$offset]->id, $actual->id);
+            $this->assertSame($expect[$offset]->author_id, $actual->author_id);
+            $this->assertSame($expect[$offset]->body, $actual->body);
+            $this->assertSame($expect[$offset]->fake_field, $actual->fake_field);
+        }
+    }
+
+    public function testDeleteAll()
+    {
+        $data = $this->loadTypeWithPosts();
+
+        foreach ($data as $post) {
+            $this->assertTrue($this->type->deleteEntity($post['id']));
+        }
+
+        $this->assertSame(0, $this->type->count());
+
+        $this->assertNull($this->type->getEntity(1));
+    }
 }
