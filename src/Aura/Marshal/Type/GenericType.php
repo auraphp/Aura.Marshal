@@ -95,7 +95,7 @@ class GenericType extends Data
      * @var array
      * 
      */
-    protected $index_new;
+    protected $index_new = [];
 
     /**
      *
