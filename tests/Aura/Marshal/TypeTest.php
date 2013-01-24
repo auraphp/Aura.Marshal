@@ -353,6 +353,15 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $actual = $this->type->getChangedEntities();
         $this->assertSame($expect, $actual);
     }
+
+    public function testGetChangedEntities_empty()
+    {
+        $data = $this->loadTypeWithPosts();
+        $expect = [];
+
+        $actual = $this->type->getChangedEntities();
+        $this->assertSame($expect, $actual);
+    }
     
     public function testGetNewEntities()
     {
@@ -362,6 +371,14 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             $this->type->newEntity(['fake_field' => 102]),
             $this->type->newEntity(['fake_field' => 105]),
         ];
+        $actual = $this->type->getNewEntities();
+        $this->assertSame($expect, $actual);
+    }
+
+    public function testGetNewEntities_empty()
+    {
+        $data = $this->loadTypeWithPosts();
+        $expect = [];
         $actual = $this->type->getNewEntities();
         $this->assertSame($expect, $actual);
     }
