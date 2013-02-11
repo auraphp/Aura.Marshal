@@ -4,7 +4,6 @@
     "description": "The Aura Marshal package is a data-object marshalling tool; it takes results from data sources and marshals those result sets into domain model objects of your own design, preserving data relationships along the way.",
     "keywords": [ "data", "data mapper", "data marshal", "data marshalling", "data object" ],
     "homepage": "http://auraphp.github.com/Aura.Marshal",
-    "version": "1.0.0-dev",
     "license": "BSD-2-Clause",
     "authors": [
         {
