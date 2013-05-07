@@ -98,8 +98,17 @@ class GenericType extends Data
     protected $index_new = [];
 
     /**
+     *
+     * An array of all entities removed via `removeEntity()`.
+     *
+     * @var array
+     *
+     */
+    protected $removed = [];
+
+    /**
      * 
-     * An object store of the initial data for entity in the IdentityMap.
+     * An object store of the initial data for entities in the IdentityMap.
      * 
      * @var SplObjectStorage
      * 
@@ -747,6 +756,65 @@ class GenericType extends Data
     }
 
     /**
+     *
+     * Removes an entity from the collection.
+     *
+     * @param $identity_value int The identity value of the entity to be
+     * removed.
+     *
+     * @return bool True on success, false on failure.
+     * 
+     */
+    public function removeEntity($identity_value)
+    {
+        // if the entity is not in the identity index, exit early
+        if (! isset($this->index_identity[$identity_value])) {
+            return false;
+        }
+
+        // look up the sequential offset for the identity value
+        $offset = $this->index_identity[$identity_value];
+        
+        // get the entity
+        $entity = $this->offsetGet($offset);
+
+        // add the entity to the removed array
+        $this->removed[$identity_value] = $entity;
+
+        // remove the entity from the identity index
+        unset($this->index_identity[$identity_value]);
+
+        // get the index fields
+        $index_fields = array_keys($this->index_fields);
+
+        // loop through indices and remove offsets of this entity
+        foreach ($index_fields as $field) {
+            
+            // get the field value
+            $value = $entity->$field;
+            
+            // find index of the offset with that value
+            $offset_idx = array_search(
+                $offset,
+                $this->index_fields[$field][$value]
+            );
+            
+            // if the index exists, remove it, preserving index integrity
+            if ($offset_idx !== false) {
+                array_splice(
+                    $this->index_fields[$field][$value],
+                    $offset_idx,
+                    1
+                );
+            }
+        }
+
+        // really remove the entity, and done
+        $this->offsetUnset($offset);
+        return true;
+    }
+
+    /**
      * 
      * Returns an array of all entities in the IdentityMap that have been 
      * modified.
@@ -781,6 +849,19 @@ class GenericType extends Data
             $list[] = $this->data[$offset];
         }
         return $list;
+    }
+
+    /**
+     * 
+     * Returns an array of all entities that were removed using
+     * `removeEntity()`.
+     *
+     * @return array
+     * 
+     */
+    public function getRemovedEntities()
+    {
+        return $this->removed;
     }
     
     /**
