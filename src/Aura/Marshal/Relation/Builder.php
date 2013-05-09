@@ -67,15 +67,15 @@ class Builder
         $info = array_merge($base, $info);
         $info['type'] = $type;
         $info['name'] = $name;
-        
+
         $this->prepRelationship($info, $manager);
         $this->prepNative($info, $manager);
         $this->prepForeign($info, $manager);
         $this->prepThrough($info, $manager);
-        
+
         $relationship = $info['relationship'];
         $class = $this->relationship_class[$relationship];
-        
+
         return new $class(
             $info['native_field'],
             $info['foreign'],
@@ -87,7 +87,7 @@ class Builder
             $info['through_foreign_field']
         );
     }
-    
+
     /**
      * 
      * Prepares the type-of-relationship name.
@@ -105,7 +105,7 @@ class Builder
             throw new Exception("No 'relationship' specified for relation '{$info['name']}' on type '{$info['type']}'.");
         }
     }
-    
+
     /**
      * 
      * Prepares the native field name.
@@ -123,7 +123,7 @@ class Builder
             throw new Exception("No 'native_field' specified for relation '{$info['name']}' on type '{$info['type']}'.");
         }
     }
-    
+
     /**
      * 
      * Prepares the foreign type name, field name, and type object.
@@ -147,7 +147,7 @@ class Builder
 
         $info['foreign'] = $manager->__get($info['foreign_type']);
     }
-    
+
     /**
      * 
      * Prepares the through type name, field names, and type object.

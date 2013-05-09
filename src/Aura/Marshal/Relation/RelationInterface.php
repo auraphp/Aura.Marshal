@@ -30,7 +30,7 @@ interface RelationInterface
      * 
      */
     public function getForEntity($entity);
-    
+
     /**
      * 
      * Gets the name of the foreign type in the manager.

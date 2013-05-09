@@ -95,17 +95,26 @@ class GenericType extends Data
      * @var array
      * 
      */
-    protected $index_new;
+    protected $index_new = [];
+
+    /**
+     *
+     * An array of all entities removed via `removeEntity()`.
+     *
+     * @var array
+     *
+     */
+    protected $removed = [];
 
     /**
      * 
-     * An object store of the initial data for entity in the IdentityMap.
+     * An object store of the initial data for entities in the IdentityMap.
      * 
      * @var SplObjectStorage
      * 
      */
     protected $initial_data;
-    
+
     /**
      * 
      * A builder to create Lazy objects.
@@ -114,7 +123,7 @@ class GenericType extends Data
      * 
      */
     protected $lazy_builder;
-    
+
     /**
      * 
      * An array of relationship descriptions, where the key is a
@@ -137,7 +146,7 @@ class GenericType extends Data
         $this->initial_data = new SplObjectStorage;
         $this->load($data);
     }
-    
+
     /**
      * 
      * Sets the name of the field that uniquely identifies each entity for
@@ -261,7 +270,7 @@ class GenericType extends Data
     {
         $this->lazy_builder = $lazy_builder;
     }
-    
+
     /**
      * 
      * Returns the lazy builder that creates lazy objects.
@@ -273,7 +282,7 @@ class GenericType extends Data
     {
         return $this->lazy_builder;
     }
-    
+
     /**
      * 
      * Loads the IdentityMap for this type with data for entity objects. 
@@ -318,7 +327,7 @@ class GenericType extends Data
         if (! $return_field) {
             $return_field = $identity_field;
         }
-        
+
         // load each data element as a entity
         foreach ($data as $initial_data) {
             // cast the element to an object for consistent addressing
@@ -356,11 +365,11 @@ class GenericType extends Data
             $identity_field,
             $index_fields
         );
-        
+
         // return the entity at the offset
         return $this->offsetGet($offset);
     }
-    
+
     /**
      * 
      * Loads an entity collection into the identity map.
@@ -380,7 +389,7 @@ class GenericType extends Data
 
         // the entities for the collection
         $entities = [];
-        
+
         // load each new entity
         foreach ($data as $initial_data) {
             $offset = $this->loadData(
@@ -391,11 +400,11 @@ class GenericType extends Data
             $entity = $this->offsetGet($offset);
             $entities[] =& $entity;
         }
-        
+
         // return a collection of the loaded entities
         return $this->collection_builder->newInstance($entities);
     }
-    
+
     /**
      * 
      * Loads an entity into the identity map.
@@ -420,14 +429,14 @@ class GenericType extends Data
             // yes; we're done, return the offset number
             return $this->index_identity[$identity_value];
         }
-        
+
         // convert the initial data to a real entity in the identity map
         $this->data[] = $this->entity_builder->newInstance($initial_data);
-        
+
         // get the entity and retain initial data
         $entity = end($this->data);
         $this->initial_data->attach($entity, $initial_data);
-        
+
         // build indexes by offset
         $offset = key($this->data);
         $this->index_identity[$identity_value] = $offset;
@@ -435,16 +444,16 @@ class GenericType extends Data
             $value = $entity->$field;
             $this->index_fields[$field][$value][] = $offset;
         }
-        
+
         // set related fields
         foreach ($this->getRelations() as $field => $relation) {
             $entity->$field = $this->lazy_builder->newInstance($relation);
         }
-        
+
         // done! return the new offset number.
         return $offset;
     }
-    
+
     /**
      * 
      * Returns the array keys for the for the entities in the IdentityMap;
@@ -723,7 +732,7 @@ class GenericType extends Data
     {
         return $this->relations;
     }
-    
+
     /**
      * 
      * Adds a new entity to the IdentityMap.
@@ -744,6 +753,65 @@ class GenericType extends Data
         $this->index_new[] = count($this->data);
         $this->data[] = $entity;
         return $entity;
+    }
+
+    /**
+     *
+     * Removes an entity from the collection.
+     *
+     * @param $identity_value int The identity value of the entity to be
+     * removed.
+     *
+     * @return bool True on success, false on failure.
+     * 
+     */
+    public function removeEntity($identity_value)
+    {
+        // if the entity is not in the identity index, exit early
+        if (! isset($this->index_identity[$identity_value])) {
+            return false;
+        }
+
+        // look up the sequential offset for the identity value
+        $offset = $this->index_identity[$identity_value];
+        
+        // get the entity
+        $entity = $this->offsetGet($offset);
+
+        // add the entity to the removed array
+        $this->removed[$identity_value] = $entity;
+
+        // remove the entity from the identity index
+        unset($this->index_identity[$identity_value]);
+
+        // get the index fields
+        $index_fields = array_keys($this->index_fields);
+
+        // loop through indices and remove offsets of this entity
+        foreach ($index_fields as $field) {
+            
+            // get the field value
+            $value = $entity->$field;
+            
+            // find index of the offset with that value
+            $offset_idx = array_search(
+                $offset,
+                $this->index_fields[$field][$value]
+            );
+            
+            // if the index exists, remove it, preserving index integrity
+            if ($offset_idx !== false) {
+                array_splice(
+                    $this->index_fields[$field][$value],
+                    $offset_idx,
+                    1
+                );
+            }
+        }
+
+        // really remove the entity, and done
+        $this->offsetUnset($offset);
+        return true;
     }
 
     /**
@@ -782,6 +850,19 @@ class GenericType extends Data
         }
         return $list;
     }
+
+    /**
+     * 
+     * Returns an array of all entities that were removed using
+     * `removeEntity()`.
+     *
+     * @return array
+     * 
+     */
+    public function getRemovedEntities()
+    {
+        return $this->removed;
+    }
     
     /**
      * 
@@ -816,7 +897,7 @@ class GenericType extends Data
 
         // initial data for this entity
         $initial_data = $this->getInitialData($entity);
-        
+
         // go through all the initial data values
         foreach ($initial_data as $field => $old) {
 

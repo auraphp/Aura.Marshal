@@ -30,7 +30,7 @@ class Builder implements BuilderInterface
      * 
      */
     protected $class = 'Aura\Marshal\Entity\GenericEntity';
-    
+
     /**
      * 
      * Creates a new entity object.
@@ -44,12 +44,12 @@ class Builder implements BuilderInterface
     {
         $class = $this->class;
         $entity = new $class;
-        
+
         // set fields
         foreach ($data as $field => $value) {
             $entity->$field = $value;
         }
-        
+
         return $entity;
     }
 }

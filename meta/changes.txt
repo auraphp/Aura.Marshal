@@ -1,65 +1,8 @@
-WARNING: Backwards compatibility breaks in this release.
+- [CHG] Typo fixes from Pascal Borrelli.
 
-Breaks
-------
+- [CHG] PSR-2 coding style fixes from Nakymaton.
 
-These breaks are generally to allow plain old PHP object (POPO) entity
-classes.  This means that while one can use GenericEntity and extend it if
-one likes, there is no requirement to do so.
+- [FIX] In Type/GenericType, fixed initialization of $index_new to empty array
 
-- [BRK] Renamed "Record" and "Records" to "Entity" and "Entities" across the
-  package. This is to keep it in line with changes to naming in other packages
-  and libraries that use unit-of-work, identity maps, etc.
-
-- [BRK] Remove GenericCollection::getIdentityValues() and appendNewRecord().
-
-- [BRK] GenericEntity (previously GenericRecord) no longer tracks changes on
-  itself. Use GenericType::getChangedFields($entity) instead. The new version
-  checks **only** for changes to initial data, and does not report if fields
-  have been added.
-
-- [BRK] Entity\Builder (previously RecordBuilder) now sets field values by
-  property (i.e., `$entity->field = $value`) instead of as an array passed to
-  the constructor. This is to enable plain-old PHP object entity classes that
-  do not depend on inherit GenericEntity (previously GenericRecord).
-  
-- [BRK] Entity\Builder now needs a Lazy\Builder.
-
-- [BRK] Remove GenericEntity::$type and magic methods; moved methods to
-  traits.
-
-- [BRK] In GenericType, rename $relation to $relations
-
-- [BRK] In GenericType, remove getRelationNames()
-
-
-Other Changes
--------------
-
-- [CHG] GenericType::load() now allows you to specify what field to use for
-  the return values
-
-- [CHG] GenericType no longer does lazy-loading of entities; it now builds
-  each one at load() time.
-
-- [REF] GenericCollection no longer uses a $type property.
-
-- [ADD] Property Entity\Builder::$class, for extension purposes
-
-- [NEW] Traits Lazy\MagicArrayAccessTrait and Lazy\MagicPropertyTrait to allow
-  automatic replacement of Lazy placeholders for related entities and
-  collections, along with magic get/set/isset/unset.  These traits can be used
-  in any POPO entity class.
-
-- [ADD] Methods GenericType::loadEntity() and loadCollection(); these return
-  the newly-loaded data as an entity or collection object.
-
-- [ADD] The GenericType, when creating an entity, now sets Lazy placeholders
-  for related entity and collection objects.  The Lazy\Magic*Trait traits
-  perform the replacement of the Lazy with the real entity or collection.
-
-- [ADD] Method GenercType::getRelations() to get all relationship definitions.
-
-- [CHG] Make the AbstractRelation object more explicit and a little dumber;
-  move prep/checking from AbstractRelation to RelationBuilder
-
+- [ADD] Methods Type\GenericType::removeEntities() and getRemovedEntities(),
+  to remove entities from the identity map.

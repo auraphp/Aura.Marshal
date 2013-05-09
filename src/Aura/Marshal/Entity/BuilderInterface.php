@@ -14,7 +14,7 @@ use Aura\Marshal\Type\GenericType;
 
 /**
  * 
- * An inteface for EntityBuilder objects.
+ * An interface for EntityBuilder objects.
  * 
  * @package Aura.Marshal
  * 

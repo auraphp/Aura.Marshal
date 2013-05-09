@@ -74,7 +74,7 @@ class Manager
      *              // a collection builder for the type
      *              'collection_builder' => new \Aura\Domain\CollectionBuilder,
      *              
-     *              // relationship definitons
+     *              // relationship definitions
      *              'relation_names' => [
      *                  // discussed below
      *              ],
@@ -143,9 +143,9 @@ class Manager
      * 
      */
     public function __construct(
-        TypeBuilder     $type_builder,
+        TypeBuilder $type_builder,
         RelationBuilder $relation_builder,
-        array           $types = []
+        array $types = []
     ) {
         $this->type_builder     = $type_builder;
         $this->relation_builder = $relation_builder;

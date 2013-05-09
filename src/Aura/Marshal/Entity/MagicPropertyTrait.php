@@ -25,7 +25,7 @@ trait MagicPropertyTrait
     /**
      * 
      * Gets a protected property as a field value; converts Lazy objects for
-     * related entites and collections in place.
+     * related entities and collections in place.
      * 
      * Note that this will *not* be invoked by in-class uses of the protected
      * property; this means proxies will not be converted in those cases.
@@ -39,18 +39,18 @@ trait MagicPropertyTrait
     {
         // get the property value
         $value = $this->$field;
-        
+
         // is it a Lazy placeholder?
         if ($value instanceof LazyInterface) {
             // replace the Lazy placeholder with the real object
             $value = $value->get($this);
             $this->$field = $value;
         }
-        
+
         // done!
         return $value;
     }
-    
+
     /**
      * 
      * Sets a protected property.
@@ -66,7 +66,7 @@ trait MagicPropertyTrait
     {
         $this->$field = $value;
     }
-    
+
     /**
      * 
      * Checks to see if a protected property is set.
@@ -80,7 +80,7 @@ trait MagicPropertyTrait
     {
         return isset($this->$field);
     }
-    
+
     /**
      * 
      * Unsets a protected property.

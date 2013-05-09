@@ -29,7 +29,7 @@ class Builder implements BuilderInterface
      * 
      */
     protected $class = 'Aura\Marshal\Lazy\GenericLazy';
-    
+
     /**
      * 
      * Creates a new Lazy object.
