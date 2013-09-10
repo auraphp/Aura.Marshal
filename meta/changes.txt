@@ -1,8 +1,1 @@
-- [CHG] Typo fixes from Pascal Borrelli.
-
-- [CHG] PSR-2 coding style fixes from Nakymaton.
-
-- [FIX] In Type/GenericType, fixed initialization of $index_new to empty array
-
-- [ADD] Methods Type\GenericType::removeEntities() and getRemovedEntities(),
-  to remove entities from the identity map.
+- [DOC] Add PHP 5.5 to Travis build, and add status badge to README.
