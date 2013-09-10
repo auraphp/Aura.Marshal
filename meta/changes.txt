@@ -1,1 +1,1 @@
-- [DOC] Added PHP 5.5 to Travis build, updated license and readme
+- [DOC] Add PHP 5.5 to Travis build, and add status badge to README.
