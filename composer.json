@@ -1,19 +1,47 @@
 {
     "name": "aura/marshal",
+    "version": "1.1.1",
     "type": "aura-package",
     "description": "The Aura Marshal package is a data-object marshalling tool; it takes results from data sources and marshals those result sets into domain model objects of your own design, preserving data relationships along the way.",
-    "keywords": [ "data", "data mapper", "data marshal", "data marshalling", "data object" ],
-    "homepage": "http://auraphp.github.com/Aura.Marshal",
+    "keywords": [
+        "data",
+        "data mapper",
+        "data marshal",
+        "data marshalling",
+        "data object"
+    ],
+    "homepage": "http://auraphp.com/Aura.Marshal",
+    "time": "2013-09-09",
     "license": "BSD-2-Clause",
     "authors": [
         {
-            "name": "Aura Contributors",
+            "name": "Aura.Marshal Contributors",
             "homepage": "https://github.com/auraphp/Aura.Marshal/contributors"
+        },
+        {
+            "name": "Paul M. Jones",
+            "email": "pmjones88@gmail.com",
+            "homepage": "http://paul-m-jones.com"
+        },
+        {
+            "name": "Hari KT",
+            "email": "kthari85@gmail.com",
+            "homepage": "http://harikt.com"
+        },
+        {
+            "name": "Pascal Borrelli",
+            "email": "pascal@borreli.com",
+            "homepage": ""
+        },
+        {
+            "name": "Nakymaton",
+            "email": "nakymaton.hdc@googlemail.com",
+            "homepage": ""
         }
     ],
     "require": {
         "php": ">=5.4.0",
-        "aura/installer-default": "1.0.0"
+        "aura/installer-default": ">=1.0.0"
     },
     "autoload": {
         "psr-0": {
