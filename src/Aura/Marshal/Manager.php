@@ -273,4 +273,20 @@ class Manager
     {
         return array_keys($this->types);
     }
+    
+    /**
+     * 
+     * Unsets all entities in all types in the manager.
+     * 
+     * @return null
+     * 
+     */
+    public function clear()
+    {
+        foreach ($this->types as $type) {
+            if ($type instanceof GenericType) {
+                $type->clear();
+            }
+        }
+    }
 }

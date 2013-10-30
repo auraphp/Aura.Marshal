@@ -112,4 +112,21 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $expect = ['posts'];
         $this->assertSame($expect, $actual);
     }
+    
+    public function testClear()
+    {
+        // load data into the types
+        $fixture = include __DIR__ . '/fixture_data.php';
+        foreach ($fixture as $type => $data) {
+            $this->manager->$type->load($data);
+        }
+        
+        // clear the data
+        $this->manager->clear();
+        
+        // now there should be nothing
+        foreach (array_keys($fixture) as $type) {
+            $this->assertSame([], $this->manager->$type->getAllEntities());
+        }
+    }
 }

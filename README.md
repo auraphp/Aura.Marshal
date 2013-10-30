@@ -100,6 +100,7 @@ relationships.
 ```php
 <?php
 $manager = include '/path/to/Aura.Marshal/scripts/instance.php';
+?>
 ```
 
 Alternatively, you can add Aura Marshal to your autoloader and instantiate it
@@ -115,6 +116,7 @@ $manager = new \Aura\Marshal\Manager(
     new TypeBuilder,
     new RelationBuilder
 );
+?>
 ```
 
 Defining Types
@@ -138,6 +140,7 @@ $manager->setType('comments',   ['identity_field' => 'id']);
 $manager->setType('summaries',  ['identity_field' => 'id']);
 $manager->setType('tags',       ['identity_field' => 'id']);
 $manager->setType('posts_tags', ['identity_field' => 'id']);
+?>
 ```
     
 
@@ -228,6 +231,7 @@ $manager->setRelation('posts', 'comments', [
     // the comments field to match against
     'foreign_field' => 'post_id'
 ]);
+?>
 ```
     
 Now let's set up the more complex many-to-many relationship between posts and
@@ -282,6 +286,7 @@ $manager->setRelation('tags', 'posts', [
     // association mapping
     'foreign_field' => 'id',
 ]);
+?>
 ```
 
 
@@ -324,6 +329,7 @@ $result = $sql->fetchAll(
     ]
 );
 $manager->comments->load($result);
+?>
 ```
     
 Note that we are able to select all the comments for all the posts at once.
@@ -369,6 +375,7 @@ $manager->posts_tags->load($result);
 // finally, query and load all tags regardless of posts
 $result = $sql->fetchAll('SELECT * FROM tags');
 $manager->tags->load($result);
+?>
 ```
 
 Reading Data
@@ -405,6 +412,7 @@ foreach ($posts as $post) {
     
     echo PHP_EOL;
 }
+?>
 ```
 
 Advanced Usage
@@ -435,6 +443,7 @@ $manager->setType('posts', [
     // Aura\Marshal\Collection\Builder
     'collection_builder' => new \Vendor\Package\Posts\CollectionBuilder,
 ]);
+?>
 ```
     
 The builders should implement `Aura\Marshal\Entity\BuilderInterface` and
@@ -456,6 +465,7 @@ $manager->setType('posts_tags', [
     'identity_field' => 'id',
     'index_fields'   => ['post_id', 'tag_id'],
 ]);
+?>
 ```
 
 We suggest adding an index for all `native_field` fields in the relationships
@@ -465,6 +475,40 @@ another type.
 
 Indexes are created *only at `load()` time*. They are not updated when the
 entity object is modified.
+
+
+Removing and Clearing Entities
+------------------------------
+
+There are times at which you will want to mark an entity for removal. You can
+do so using the `Type::removeEntity()` method; this will remove it from the
+the indexes, but retains it in the type object. Later, you can check to see
+which entities have been removed using the `Type::getRemovedEntities()` method.
+
+```php
+<?php
+// remove the post with identity value 88
+$manager->posts->removeEntity('88');
+
+// get the list of removed entities
+$removed_posts = $manager->posts->getRemovedEntities();
+?>
+```
+
+Alternative, you can clear out all entity objects from a type using
+`Type::clear()`. To clear all entity objects from all types, use
+`Manager::clear()`. These will reset the type objects to their initial
+unloaded states, unsetting all objects, indexes, and references internally.
+
+```php
+<?php
+// clear all post entities
+$manager->posts->clear();
+
+// clear all entities from all types
+$manager->clear();
+?>
+```
 
 
 All-At-Once Definition
@@ -585,4 +629,5 @@ $manager = new Manager(new TypeBuilder, new RelationBuilder, [
         ],
     ],
 ]);
+?>
 ```
