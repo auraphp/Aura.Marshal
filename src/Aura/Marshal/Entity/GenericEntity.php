@@ -22,4 +22,28 @@ use Aura\Marshal\Data;
 class GenericEntity extends Data
 {
     use MagicArrayAccessTrait;
+
+    /**
+     *
+     * ArrayAccess: get a key value.
+     *
+     * @param int|string $key The requested key.
+     *
+     * @return mixed
+     *
+     */
+    public function offsetGet($field)
+    {
+        // get the field value
+        $value = $this->data[$field];
+
+        // is it a Lazy placeholder?
+        if ($value instanceof LazyInterface) {
+            // replace the Lazy placeholder with the real object
+            $value = $value->get($this);
+        }
+
+        // done!
+        return $value;
+    }
 }

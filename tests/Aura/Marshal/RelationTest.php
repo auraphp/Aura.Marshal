@@ -190,4 +190,14 @@ class RelationTest extends \PHPUnit_Framework_TestCase
             $this->assertSame($expect[$offset]['name'], $tag->name);
         }
     }
+
+    public function testIteratorToArrayEntityHasRelationships()
+    {
+        $posts = $this->manager->posts->getCollection($this->manager->posts->getIdentityValues());
+        $postsArray = iterator_to_array($posts);
+
+        $this->assertCount(3, $postsArray[0]->comments);
+        $this->assertCount(2, $postsArray[0]->tags);
+        $this->assertEquals('Anna', $postsArray[0]->author->name);
+    }
 }
