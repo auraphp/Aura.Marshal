@@ -41,6 +41,8 @@ class GenericEntity extends Data
         if ($value instanceof LazyInterface) {
             // replace the Lazy placeholder with the real object
             $value = $value->get($this);
+            // retain the real object
+            $this->offsetSet($field, $value);
         }
 
         // done!
