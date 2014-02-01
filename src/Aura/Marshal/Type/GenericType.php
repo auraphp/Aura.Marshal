@@ -82,7 +82,7 @@ class GenericType extends Data
      * @var array
      * 
      */
-    protected $index_identity;
+    protected $index_identity = [];
 
     /**
      * 
@@ -850,7 +850,19 @@ class GenericType extends Data
         }
         return $list;
     }
-
+    
+    /**
+     * 
+     * Returns all non-removed entities in the type.
+     * 
+     * @return array
+     * 
+     */
+    public function getAllEntities()
+    {
+        return $this->data;
+    }
+    
     /**
      * 
      * Returns an array of all entities that were removed using
@@ -922,5 +934,21 @@ class GenericType extends Data
 
         // done!
         return $changed;
+    }
+    
+    /**
+     * 
+     * Unsets all entities from this type.
+     * 
+     * @return null
+     * 
+     */
+    public function clear()
+    {
+        $this->data = [];
+        $this->index_identity = [];
+        $this->index_new = [];
+        $this->removed = [];
+        $this->initial_data = new SplObjectStorage;
     }
 }

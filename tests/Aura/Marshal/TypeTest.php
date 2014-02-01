@@ -641,4 +641,20 @@ class TypeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNull($this->type->getEntity(1));
     }
+    
+    public function testClear()
+    {
+        $data = $this->loadTypeWithPosts();
+        
+        // remove three entities so we can check if removed gets cleared
+        for ($i = 0; $i < 3; $i++) {
+            $post = $data[$i];
+            $this->assertTrue($this->type->removeEntity($post['id']));
+        }
+        
+        // now clear it and make sure we have nothing
+        $this->type->clear();
+        $this->assertSame([], $this->type->getAllEntities());
+        $this->assertSame([], $this->type->getRemovedEntities());
+    }
 }

@@ -1,1 +1,5 @@
 - [DOC] Add PHP 5.5 to Travis build, and add status badge to README.
+
+- [FIX] Move conversion of Lazy Objects to GenericEntity. This allows for proper/expected usage with iterator_to_array for relationships, in particular when using Twig.
+
+- [ADD] Methods GenericType::clear() and Manager::clear(). Fixes #11 from @pminnieur.
