@@ -25,9 +25,9 @@ class GenericEntity extends Data
 
     /**
      *
-     * ArrayAccess: get a key value.
+     * ArrayAccess: get a field value.
      *
-     * @param int|string $key The requested key.
+     * @param string $field The requested field.
      *
      * @return mixed
      *
