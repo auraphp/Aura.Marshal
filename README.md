@@ -447,7 +447,7 @@ $manager->setType('posts', [
 ```
     
 The builders should implement `Aura\Marshal\Entity\BuilderInterface` and
-`Aura\Marshal\Collection\CollectionInterface`, respectively.
+`Aura\Marshal\Collection\BuilderInterface`, respectively.
 
 
 Indexing
