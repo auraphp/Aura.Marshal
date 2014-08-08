@@ -45,5 +45,16 @@
         "psr-0": {
             "Aura\\Marshal": "src/"
         }
+    },
+    "extra": {
+        "aura": {
+            "type": "library",
+            "config": {
+                "common": "Aura\\Marshal\\_Config\\Common"
+            }
+        },
+        "branch-alias": {
+            "dev-develop": "1.2.x-dev"
+        }
     }
 }
