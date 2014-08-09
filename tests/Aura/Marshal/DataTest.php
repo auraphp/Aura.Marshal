@@ -26,7 +26,7 @@ class DataTest extends \PHPUnit_Framework_TestCase
             'zim' => 'gir',
         ]);
     }
-    
+
     /**
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.

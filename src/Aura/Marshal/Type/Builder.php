@@ -1,12 +1,12 @@
 <?php
 /**
- * 
+ *
  * This file is part of the Aura project for PHP.
- * 
+ *
  * @package Aura.Marshal
- * 
+ *
  * @license http://opensource.org/licenses/bsd-license.php BSD
- * 
+ *
  */
 namespace Aura\Marshal\Type;
 
@@ -16,35 +16,35 @@ use Aura\Marshal\Entity\Builder as EntityBuilder;
 use Aura\Marshal\Lazy\Builder as LazyBuilder;
 
 /**
- * 
+ *
  * Builds a type object from an array of description information.
- * 
+ *
  * @package Aura.Marshal
- * 
+ *
  */
 class Builder
 {
     /**
-     * 
+     *
      * Returns a new type instance.
-     * 
+     *
      * The `$info` array should have four keys:
-     * 
-     * - `'identity_field'` (string): The name of the identity field for 
+     *
+     * - `'identity_field'` (string): The name of the identity field for
      *   entities of this type. This key is required.
-     * 
+     *
      * - `entity_builder` (Entity\BuilderInterface): A builder to create
      *   entity objects for the type. This key is optional, and defaults to a
      *   new Entity\Builder object.
-     * 
-     * - `collection_builder` (Collection\BuilderInterface): A 
+     *
+     * - `collection_builder` (Collection\BuilderInterface): A
      *   A builder to create collection objects for the type. This key
      *   is optional, and defaults to a new Collection\Builder object.
-     * 
+     *
      * @param array $info An array of information about the type.
-     * 
+     *
      * @return GenericType
-     * 
+     *
      */
     public function newInstance($info)
     {
