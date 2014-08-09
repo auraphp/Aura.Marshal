@@ -13,11 +13,11 @@ use Aura\Marshal\Lazy\Builder as LazyBuilder;
 class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     protected $type;
-    
+
     protected $collection;
-    
+
     protected $empty_collection;
-    
+
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -33,11 +33,11 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
                 'name' => $name
             ];
         }
-        
+
         $this->collection = new GenericCollection($data);
         $this->empty_collection = new GenericCollection([]);
     }
-    
+
     /**
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
@@ -59,14 +59,14 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->empty_collection->isEmpty());
         $this->assertFalse($this->collection->isEmpty());
     }
-    
+
     public function testObjectsInCollectionAreInIdentityMap()
     {
         $type = new GenericType;
         $type->setIdentityField('id');
         $type->setEntityBuilder(new EntityBuilder);
         $type->setCollectionBuilder(new CollectionBuilder);
-        
+
         $ids = [1, 2, 3, 5, 7, 11, 13];
         $names = ['foo', 'bar', 'baz', 'dib', 'zim', 'gir', 'irk'];
         $data = [];
@@ -76,18 +76,18 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
                 'name' => $name
             ];
         }
-        
+
         $type->load($data);
-        
+
         // get a collection of all the IDs from the type *before* creating
         // any entity objects.
         $collection = $type->getCollection($ids);
-        
+
         // get a entity by ID from the type and change it.
         // note that getEntity() is by identity value, not offset.
         $expect = $type->getEntity(1);
         $expect->name = 'changed';
-        
+
         // now get what should be the same entity from the collection.
         // it should be changed as well.
         // note that collection is by offset, not identity value.
