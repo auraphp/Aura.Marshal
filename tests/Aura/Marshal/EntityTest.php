@@ -23,67 +23,67 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'related' => new GenericLazy(new MockRelation),
         ];
     }
-    
+
     protected function newGenericEntity()
     {
         $builder = new Builder;
         return $builder->newInstance($this->getData());
     }
-    
+
     protected function newMockEntity()
     {
         $builder = new MockEntityBuilder;
         return $builder->newInstance($this->getData());
     }
-    
+
     public function testMagicArrayAccess()
     {
         $entity = $this->newGenericEntity();
-        
+
         // check set/get
         $entity->irk = 'doom';
         $this->assertSame('doom', $entity->irk);
-        
+
         // check isset/unset
         $this->assertTrue(isset($entity->foo));
         unset($entity->foo);
         $this->assertFalse(isset($entity->foo));
-        
+
         $this->assertFalse(isset($entity->newfield));
-        
+
         $entity->newfield = 'something';
         $this->assertTrue(isset($entity->newfield));
-        
+
         unset($entity->newfield);
         $this->assertFalse(isset($entity->newfield));
-        
+
         // check relateds
         $actual = $entity->related;
         $expect = (object) ['foreign_field' => 'foreign_value'];
         $this->assertEquals($expect, $actual);
     }
-    
+
     public function testMagicPropertyAccess()
     {
         $entity = $this->newMockEntity();
-        
+
         // check set/get
         $entity->irk = 'doom';
         $this->assertSame('doom', $entity->irk);
-        
+
         // check isset/unset
         $this->assertTrue(isset($entity->foo));
         unset($entity->foo);
         $this->assertFalse(isset($entity->foo));
-        
+
         $this->assertFalse(isset($entity->newfield));
-        
+
         $entity->newfield = 'something';
         $this->assertTrue(isset($entity->newfield));
-        
+
         unset($entity->newfield);
         $this->assertFalse(isset($entity->newfield));
-        
+
         // check relateds
         $actual = $entity->related;
         $expect = (object) ['foreign_field' => 'foreign_value'];

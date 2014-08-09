@@ -1,12 +1,12 @@
 <?php
 /**
- * 
+ *
  * This file is part of the Aura project for PHP.
- * 
+ *
  * @package Aura.Marshal
- * 
+ *
  * @license http://opensource.org/licenses/bsd-license.php BSD
- * 
+ *
  */
 namespace Aura\Marshal\Relation;
 
@@ -14,20 +14,20 @@ use Aura\Marshal\Exception;
 use Aura\Marshal\Manager;
 
 /**
- * 
+ *
  * A builder to create relationship definition objects.
- * 
+ *
  * @package Aura.Marshal
- * 
+ *
  */
 class Builder
 {
     /**
-     * 
+     *
      * A map of relationships to classes.
-     * 
+     *
      * @var array
-     * 
+     *
      */
     protected $relationship_class = [
         'belongs_to'       => 'Aura\Marshal\Relation\BelongsTo',
@@ -37,20 +37,20 @@ class Builder
     ];
 
     /**
-     * 
+     *
      * Builds and returns a relation object.
-     * 
+     *
      * @param string $type The name of the native type in the manager.
-     * 
+     *
      * @param string $name The name of the native field for the related
      * entity or collection.
-     * 
+     *
      * @param array $info An array of relationship definition information.
-     * 
+     *
      * @param Manager $manager A type manager.
-     * 
+     *
      * @return RelationInterface
-     * 
+     *
      */
     public function newInstance($type, $name, array $info, Manager $manager)
     {
@@ -89,15 +89,15 @@ class Builder
     }
 
     /**
-     * 
+     *
      * Prepares the type-of-relationship name.
-     * 
+     *
      * @param array $info The relationship definition.
-     * 
+     *
      * @param Manager $manager The type manager.
-     * 
+     *
      * @return void
-     * 
+     *
      */
     protected function prepRelationship(&$info, Manager $manager)
     {
@@ -107,15 +107,15 @@ class Builder
     }
 
     /**
-     * 
+     *
      * Prepares the native field name.
-     * 
+     *
      * @param array $info The relationship definition.
-     * 
+     *
      * @param Manager $manager The type manager.
-     * 
+     *
      * @return void
-     * 
+     *
      */
     protected function prepNative(&$info, Manager $manager)
     {
@@ -125,15 +125,15 @@ class Builder
     }
 
     /**
-     * 
+     *
      * Prepares the foreign type name, field name, and type object.
-     * 
+     *
      * @param array $info The relationship definition.
-     * 
+     *
      * @param Manager $manager The type manager.
-     * 
+     *
      * @return void
-     * 
+     *
      */
     protected function prepForeign(&$info, Manager $manager)
     {
@@ -149,15 +149,15 @@ class Builder
     }
 
     /**
-     * 
+     *
      * Prepares the through type name, field names, and type object.
-     * 
+     *
      * @param array $info The relationship definition.
-     * 
+     *
      * @param Manager $manager The type manager.
-     * 
+     *
      * @return void
-     * 
+     *
      */
     protected function prepThrough(&$info, Manager $manager)
     {

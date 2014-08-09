@@ -1,6 +1,6 @@
 <?php
 return [
-    
+
     'authors' => [
         'identity_field'                => 'id',
         'relation_names'                => [
@@ -11,7 +11,7 @@ return [
             ],
         ],
     ],
-    
+
     'posts' => [
         'identity_field'                => 'id',
         'index_fields'                  => [
@@ -45,7 +45,7 @@ return [
             ],
         ],
     ],
-    
+
     'metas' => [
         'identity_field'                => 'id',
         'index_fields'                  => [
@@ -60,7 +60,7 @@ return [
             ],
         ],
     ],
-    
+
     'comments' => [
         'identity_field'                => 'id',
         'index_fields'                  => [
@@ -75,7 +75,7 @@ return [
             ],
         ],
     ],
-    
+
     'posts_tags' => [
         'identity_field'                => 'id',
         'index_fields'                  => [
@@ -97,7 +97,7 @@ return [
             ],
         ]
     ],
-    
+
     'tags' => [
         'identity_field'                => 'id',
         'relation_names'                => [
