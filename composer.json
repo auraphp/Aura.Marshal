@@ -44,6 +44,9 @@
     "autoload": {
         "psr-0": {
             "Aura\\Marshal": "src/"
+        },
+        "psr-4": {
+            "Aura\\Marshal\\_Config\\": "config/"
         }
     },
     "extra": {
