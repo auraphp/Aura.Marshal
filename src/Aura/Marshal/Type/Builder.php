@@ -26,6 +26,15 @@ class Builder
 {
     /**
      *
+     * The class to use for new instances.
+     *
+     * @var string
+     *
+     */
+    protected $class = 'Aura\Marshal\Type\GenericType';
+
+    /**
+     *
      * Returns a new type instance.
      *
      * The `$info` array should have four keys:
@@ -74,7 +83,9 @@ class Builder
             $info['lazy_builder'] = new LazyBuilder;
         }
 
-        $type = new GenericType;
+        $class = $this->class;
+        $type = new $class;
+
         $type->setIdentityField($info['identity_field']);
         $type->setIndexFields($info['index_fields']);
         $type->setEntityBuilder($info['entity_builder']);
