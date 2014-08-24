@@ -1,3 +1,11 @@
-Hygiene release.
+Hygiene release:
 
-- Merge pull request #15 from harikt/collection; use Collection BuilderInterface, not CollectionInterface, in README.
+- Merge pull request #20 from chobe3x/autoload
+
+- Add v2 config psr-4 autoload in composer.json
+
+- Add branch alias and v2 config in composer.json
+
+- Whitespace fixes
+
+Thanks to @chobe3x and @yutakachiba for their help on this release.
