@@ -21,7 +21,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        
+
         $relation_builder = new RelationBuilder;
         $type_builder = new TypeBuilder;
         $types = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
@@ -30,7 +30,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
             $this->manager->setType($name, $info);
         }
     }
-    
+
     /**
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
@@ -46,13 +46,13 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $expect = 'Aura\Marshal\Type\GenericType';
         $this->assertInstanceOf($expect, $actual);
     }
-    
+
     public function test__getNoSuchType()
     {
         $this->setExpectedException('Aura\Marshal\Exception');
         $actual = $this->manager->no_such_type;
     }
-    
+
     public function testGetTypes()
     {
         $actual = $this->manager->getTypes();
@@ -64,36 +64,36 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
             'posts_tags',
             'tags',
         ];
-        
+
         $this->assertSame($expect, $actual);
     }
-    
+
     public function testSetType_alreadySet()
     {
         $this->setExpectedException('Aura\Marshal\Exception');
         $this->manager->setType('authors', []);
     }
-    
+
     public function testSetRelation_noSuchType()
     {
         $this->setExpectedException('Aura\Marshal\Exception');
         $this->manager->setRelation('no_such_type', 'relation_name', []);
     }
-    
+
     public function testSetRelation_typeNotInstantiated()
     {
         $relation_builder = new RelationBuilder;
         $type_builder = new TypeBuilder;
         $types = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
         $manager = new Manager($type_builder, $relation_builder);
-        
+
         foreach ($types as $name => $info) {
             // remove the relationship information
             unset($info['relation_names']);
             // set into manager
             $manager->setType($name, $info);
         }
-        
+
         // add relations just for authors, before instantiating the authors type
         $type = $types['authors'];
         $rels = $type['relation_names'];
@@ -101,18 +101,18 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         foreach ($rels as $name => $info) {
             $this->manager->setRelation('authors', $name, $info);
         }
-        
+
         // now instantiate the authors type...
         $actual = $this->manager->authors;
         $expect = 'Aura\Marshal\Type\GenericType';
         $this->assertInstanceOf($expect, $actual);
-        
+
         // ... and make sure we have a posts relation.
         $actual = array_keys($this->manager->authors->getRelations());
         $expect = ['posts'];
         $this->assertSame($expect, $actual);
     }
-    
+
     public function testClear()
     {
         // load data into the types
@@ -120,10 +120,10 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         foreach ($fixture as $type => $data) {
             $this->manager->$type->load($data);
         }
-        
+
         // clear the data
         $this->manager->clear();
-        
+
         // now there should be nothing
         foreach (array_keys($fixture) as $type) {
             $this->assertSame([], $this->manager->$type->getAllEntities());
