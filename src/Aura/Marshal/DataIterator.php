@@ -10,6 +10,8 @@
  */
 namespace Aura\Marshal;
 
+use ArrayAccess;
+
 /**
  *
  * An object to allow iteration over the elements of a Data object.
@@ -21,9 +23,9 @@ class DataIterator implements \Iterator
 {
     /**
      *
-     * The Data over which we are iterating.
+     * The data over which we are iterating.
      *
-     * @var Data
+     * @var ArrayAccess
      *
      */
     protected $data;
@@ -50,12 +52,12 @@ class DataIterator implements \Iterator
      *
      * Constructor.
      *
-     * @param Data $data The Data object over which to iterate.
+     * @param ArrayAccess $data The Data object over which to iterate.
      *
      * @param array $keys The keys in the Data object.
      *
      */
-    public function __construct(Data $data, array $keys = [])
+    public function __construct(ArrayAccess $data, array $keys = [])
     {
         $this->data = $data;
         $this->keys = $keys;
