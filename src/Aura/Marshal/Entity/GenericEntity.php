@@ -11,6 +11,7 @@
 namespace Aura\Marshal\Entity;
 
 use Aura\Marshal\Data;
+use Aura\Marshal\Lazy\LazyInterface;
 
 /**
  *

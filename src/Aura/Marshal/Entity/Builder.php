@@ -10,7 +10,6 @@
  */
 namespace Aura\Marshal\Entity;
 
-use Aura\Marshal\Type\GenericType;
 use Aura\Marshal\Lazy\BuilderInterface as LazyBuilderInterface;
 
 /**
