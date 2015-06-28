@@ -3,8 +3,6 @@ namespace Aura\Marshal;
 
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Entity\Builder as EntityBuilder;
-use Aura\Marshal\Entity\GenericCollection;
-use Aura\Marshal\Entity\GenericEntity;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Aura\Marshal\Type\Builder as TypeBuilder;
 use Aura\Marshal\Type\GenericType;
@@ -321,7 +319,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
 
         // do we actually get a new entity back?
         $entity = $this->type->newEntity();
-        $this->assertInstanceOf('Aura\Marshal\Entity\GenericEntity', $entity);
+        $this->assertInstanceOf('stdClass', $entity);
 
         // has it been added to the identity map?
         $expect = $before + 1;

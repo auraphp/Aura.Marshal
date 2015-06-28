@@ -15,6 +15,7 @@ use Aura\Marshal\Data;
 use Aura\Marshal\Exception;
 use Aura\Marshal\Lazy\BuilderInterface as LazyBuilderInterface;
 use Aura\Marshal\Entity\BuilderInterface as EntityBuilderInterface;
+use Aura\Marshal\Lazy\LazyInterface;
 use Aura\Marshal\Relation\RelationInterface;
 use SplObjectStorage;
 
@@ -437,17 +438,38 @@ class GenericType extends Data
         $entity = end($this->data);
         $this->initial_data->attach($entity, $initial_data);
 
+
+        $writer = \Closure::bind(function ($object, $prop, $value) {
+            $object->$prop = $value;
+        },null, get_class($entity));
+
+        $reader = \Closure::bind(function ($object, $prop) {
+            return $object->$prop;
+        }, null, get_class($entity));
+
+        $unset = \Closure::bind(function ($object, $prop) {
+            unset($object->$prop);
+        }, null, get_class($entity));
+
         // build indexes by offset
         $offset = key($this->data);
         $this->index_identity[$identity_value] = $offset;
         foreach ($index_fields as $field) {
-            $value = $entity->$field;
+            $value = $reader($entity, $field);
             $this->index_fields[$field][$value][] = $offset;
         }
 
         // set related fields
         foreach ($this->getRelations() as $field => $relation) {
-            $entity->$field = $this->lazy_builder->newInstance($relation);
+            $value = $this->lazy_builder->newInstance($relation);
+
+            if ($value instanceof LazyInterface) {
+                //unset() the property, so PHP is triggering __get call for lazy loaded properties
+                $unset($entity, $field);
+                //rename field, so __get use the correct temp property to resolve lazy loading
+                $field = '_lazy_' . $field;
+            }
+            $writer($entity, $field, $value);
         }
 
         // done! return the new offset number.

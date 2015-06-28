@@ -1,7 +1,6 @@
 <?php
 namespace Aura\Marshal;
 
-use Aura\Marshal\Entity\GenericEntity;
 use Aura\Marshal\MockEntity;
 use Aura\Marshal\Entity\Builder;
 use Aura\Marshal\MockEntityBuilder;
@@ -24,7 +23,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    protected function newGenericEntity()
+    protected function newStdClass()
     {
         $builder = new Builder;
         return $builder->newInstance($this->getData());
@@ -38,24 +37,29 @@ class EntityTest extends \PHPUnit_Framework_TestCase
 
     public function testMagicArrayAccess()
     {
-        $entity = $this->newGenericEntity();
+        $entity = $this->newStdClass();
+
+        // custom $isset is required since MockEntity has only protected properties
+        $isset = \Closure::bind(function ($object, $prop) {
+            return isset($object->$prop);
+        }, null, get_class($entity));
 
         // check set/get
         $entity->irk = 'doom';
         $this->assertSame('doom', $entity->irk);
 
         // check isset/unset
-        $this->assertTrue(isset($entity->foo));
+        $this->assertTrue($isset($entity, 'foo'));
         unset($entity->foo);
-        $this->assertFalse(isset($entity->foo));
+        $this->assertFalse($isset($entity, 'foo'));
 
-        $this->assertFalse(isset($entity->newfield));
+        $this->assertFalse($isset($entity, 'newfield'));
 
         $entity->newfield = 'something';
-        $this->assertTrue(isset($entity->newfield));
+        $this->assertTrue($isset($entity, 'newfield'));
 
         unset($entity->newfield);
-        $this->assertFalse(isset($entity->newfield));
+        $this->assertFalse($isset($entity, 'newfield'));
 
         // check relateds
         $actual = $entity->related;
@@ -67,22 +71,32 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     {
         $entity = $this->newMockEntity();
 
+        // custom $isset is required since MockEntity has only protected properties
+        $isset = \Closure::bind(function ($object, $prop) {
+            return isset($object->$prop);
+        }, null, get_class($entity));
+
+        // custom $unset is required since MockEntity has only protected properties
+        $unset = \Closure::bind(function ($object, $prop) {
+            unset($object->$prop);
+        }, null, get_class($entity));
+
         // check set/get
         $entity->irk = 'doom';
         $this->assertSame('doom', $entity->irk);
 
         // check isset/unset
-        $this->assertTrue(isset($entity->foo));
-        unset($entity->foo);
-        $this->assertFalse(isset($entity->foo));
+        $this->assertTrue($isset($entity, 'foo'));
+        $unset($entity, 'foo');
+        $this->assertFalse($isset($entity, 'foo'));
 
-        $this->assertFalse(isset($entity->newfield));
+        $this->assertFalse($isset($entity, 'newfield'));
 
         $entity->newfield = 'something';
-        $this->assertTrue(isset($entity->newfield));
+        $this->assertTrue($isset($entity, 'newfield'));
 
         unset($entity->newfield);
-        $this->assertFalse(isset($entity->newfield));
+        $this->assertFalse($isset($entity, 'newfield'));
 
         // check relateds
         $actual = $entity->related;
