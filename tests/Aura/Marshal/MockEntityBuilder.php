@@ -5,5 +5,13 @@ use Aura\Marshal\Entity\Builder;
 
 class MockEntityBuilder extends Builder
 {
-    protected $class = 'Aura\Marshal\MockEntity';
+    /**
+     * MockEntityBuilder constructor.
+     *
+     * @param string $class
+     */
+    public function __construct($class)
+    {
+        $this->class = $class;
+    }
 }

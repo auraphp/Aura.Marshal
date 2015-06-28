@@ -1,7 +1,7 @@
 <?php
-namespace Aura\Marshal;
+namespace Aura\Marshal\Mock;
 
-class MockEntity
+class StandardMockEntity
 {
     protected $foo;
     protected $bar;

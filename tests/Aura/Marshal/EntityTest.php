@@ -1,10 +1,8 @@
 <?php
 namespace Aura\Marshal;
 
-use Aura\Marshal\MockEntity;
+use Aura\Marshal\Mock\StandardMockEntity;
 use Aura\Marshal\Entity\Builder;
-use Aura\Marshal\MockEntityBuilder;
-use Aura\Marshal\Lazy\Builder as LazyBuilder;
 use Aura\Marshal\Lazy\GenericLazy;
 
 /**
@@ -29,57 +27,61 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         return $builder->newInstance($this->getData());
     }
 
-    protected function newMockEntity()
+    protected function newStdMockClass()
     {
-        $builder = new MockEntityBuilder;
+        $builder = new MockEntityBuilder('Aura\Marshal\Mock\StandardMockEntity');
         return $builder->newInstance($this->getData());
     }
 
-    public function testMagicArrayAccess()
+    protected function newPropertyTraitMockEntity()
     {
-        $entity = $this->newStdClass();
-
-        // custom $isset is required since MockEntity has only protected properties
-        $isset = \Closure::bind(function ($object, $prop) {
-            return isset($object->$prop);
-        }, null, get_class($entity));
-
-        // check set/get
-        $entity->irk = 'doom';
-        $this->assertSame('doom', $entity->irk);
-
-        // check isset/unset
-        $this->assertTrue($isset($entity, 'foo'));
-        unset($entity->foo);
-        $this->assertFalse($isset($entity, 'foo'));
-
-        $this->assertFalse($isset($entity, 'newfield'));
-
-        $entity->newfield = 'something';
-        $this->assertTrue($isset($entity, 'newfield'));
-
-        unset($entity->newfield);
-        $this->assertFalse($isset($entity, 'newfield'));
-
-        // check relateds
-        $actual = $entity->related;
-        $expect = (object) ['foreign_field' => 'foreign_value'];
-        $this->assertEquals($expect, $actual);
+        $builder = new MockEntityBuilder('Aura\Marshal\Mock\PropertyTraitMockEntity');
+        return $builder->newInstance($this->getData());
     }
 
-    public function testMagicPropertyAccess()
+    protected function newArrayTraitMockEntity()
     {
-        $entity = $this->newMockEntity();
+        $builder = new MockEntityBuilder('Aura\Marshal\Mock\ArrayAccessTraitMockEntity');
+        return $builder->newInstance($this->getData());
+    }
 
-        // custom $isset is required since MockEntity has only protected properties
-        $isset = \Closure::bind(function ($object, $prop) {
-            return isset($object->$prop);
-        }, null, get_class($entity));
+    public function provideMocks()
+    {
+        return [
+            [$this->newStdClass()],
+            [$this->newStdMockClass()],
+            [$this->newArrayTraitMockEntity()],
+            [$this->newPropertyTraitMockEntity()],
+        ];
+    }
 
-        // custom $unset is required since MockEntity has only protected properties
-        $unset = \Closure::bind(function ($object, $prop) {
-            unset($object->$prop);
-        }, null, get_class($entity));
+    /**
+     * @dataProvider provideMocks
+     */
+    public function testMagicPropertyAccess($entity)
+    {
+        if ($entity instanceof StandardMockEntity) {
+            // custom $isset is required since MockEntity has only protected properties
+            $isset = \Closure::bind(
+                function ($object, $prop) {
+                    return isset($object->$prop);
+                },
+                null,
+                get_class($entity)
+            );
+
+            // custom $unset is required since MockEntity has only protected properties
+            $unset = \Closure::bind(
+                function ($object, $prop) {
+                    unset($object->$prop);
+                },
+                null,
+                get_class($entity)
+            );
+        } else {
+            $isset = function ($entity, $prop){ return isset($entity->$prop); };
+            $unset = function ($entity, $prop){ unset($entity->$prop); };
+        }
 
         // check set/get
         $entity->irk = 'doom';

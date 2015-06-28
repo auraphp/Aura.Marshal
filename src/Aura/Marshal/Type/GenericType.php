@@ -12,6 +12,7 @@ namespace Aura\Marshal\Type;
 
 use Aura\Marshal\Collection\BuilderInterface as CollectionBuilderInterface;
 use Aura\Marshal\Data;
+use Aura\Marshal\Entity\Builder as EntityBuilder;
 use Aura\Marshal\Exception;
 use Aura\Marshal\Lazy\BuilderInterface as LazyBuilderInterface;
 use Aura\Marshal\Entity\BuilderInterface as EntityBuilderInterface;
@@ -437,25 +438,33 @@ class GenericType extends Data
         // get the entity and retain initial data
         $entity = end($this->data);
         $this->initial_data->attach($entity, $initial_data);
+        $class = get_class($entity);
 
-
+        $hasMagicTrait = false;
+        if ($this->entity_builder instanceof EntityBuilder) {
+            $hasMagicTrait = $this->entity_builder->hasMagicTrait();
+        }
         $writer = \Closure::bind(function ($object, $prop, $value) {
             $object->$prop = $value;
-        },null, get_class($entity));
+        },null, $class);
 
         $reader = \Closure::bind(function ($object, $prop) {
             return $object->$prop;
-        }, null, get_class($entity));
+        }, null, $class);
 
         $unset = \Closure::bind(function ($object, $prop) {
             unset($object->$prop);
-        }, null, get_class($entity));
+        }, null, $class);
 
         // build indexes by offset
         $offset = key($this->data);
         $this->index_identity[$identity_value] = $offset;
         foreach ($index_fields as $field) {
-            $value = $reader($entity, $field);
+            if ($hasMagicTrait) {
+                $value = $entity->$field;
+            } else {
+                $value = $reader($entity, $field);
+            }
             $this->index_fields[$field][$value][] = $offset;
         }
 
@@ -463,13 +472,17 @@ class GenericType extends Data
         foreach ($this->getRelations() as $field => $relation) {
             $value = $this->lazy_builder->newInstance($relation);
 
-            if ($value instanceof LazyInterface) {
-                //unset() the property, so PHP is triggering __get call for lazy loaded properties
-                $unset($entity, $field);
-                //rename field, so __get use the correct temp property to resolve lazy loading
-                $field = '_lazy_' . $field;
+            if ($hasMagicTrait) {
+                $entity->$field = $value;
+            } else {
+                if ($value instanceof LazyInterface) {
+                    //unset() the property, so PHP is triggering __get call for lazy loaded properties
+                    $unset($entity, $field);
+                    //rename field, so __get use the correct temp property to resolve lazy loading
+                    $field = '_lazy_' . $field;
+                }
+                $writer($entity, $field, $value);
             }
-            $writer($entity, $field, $value);
         }
 
         // done! return the new offset number.

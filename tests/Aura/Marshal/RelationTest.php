@@ -29,7 +29,7 @@ class RelationTest extends \PHPUnit_Framework_TestCase
         $this->manager      = new Manager($type_builder, $relation_builder, $types);
         $data               = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
         foreach ($this->manager->getTypes() as $type) {
-            $obj = $this->manager->{$type}->load($data[$type]);
+            $this->manager->{$type}->load($data[$type]);
         }
     }
 

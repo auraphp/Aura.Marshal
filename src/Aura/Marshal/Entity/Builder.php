@@ -41,15 +41,63 @@ class Builder implements BuilderInterface
      */
     public function newInstance(array $data)
     {
+        if ($this->hasMagicTrait()) {
+            return $this->buildMagicInstance($data);
+        } else {
+            return $this->buildProxyInstance($data);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMagicTrait()
+    {
+        $traits = class_uses($this->class);
+        return isset($traits['Aura\Marshal\Entity\MagicPropertyTrait']) || is_subclass_of($this->class, 'Aura\Marshal\Entity\GenericEntity');
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return mixed
+     */
+    protected function buildMagicInstance(array $data)
+    {
+        $class = $this->class;
+
+        $entity = new $class;
+
+        foreach ($data as $field => $value) {
+            $entity->$field = $value;
+        }
+
+        return $entity;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return object
+     */
+    protected function buildProxyInstance(array $data){
         $entity = $this->createProxy();
 
-        $writer = \Closure::bind(function ($object, $prop, $value) {
-            $object->$prop = $value;
-        },null, get_class($entity));
+        $writer = \Closure::bind(
+            function ($object, $prop, $value) {
+                $object->$prop = $value;
+            },
+            null,
+            get_class($entity)
+        );
 
-        $unset = \Closure::bind(function ($object, $prop) {
-            unset($object->$prop);
-        }, null, get_class($entity));
+        $unset = \Closure::bind(
+            function ($object, $prop) {
+                unset($object->$prop);
+            },
+            null,
+            get_class($entity)
+        );
 
         // set fields
         foreach ($data as $field => $value) {
@@ -70,7 +118,7 @@ class Builder implements BuilderInterface
      *
      * @return object
      */
-    public function createProxy()
+    protected function createProxy()
     {
         $class = $this->class;
 
