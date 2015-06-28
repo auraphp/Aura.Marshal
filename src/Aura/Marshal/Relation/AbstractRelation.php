@@ -140,16 +140,4 @@ abstract class AbstractRelation
         $this->through_native_field  = $through_native_field;
         $this->through_foreign_field = $through_foreign_field;
     }
-
-    /**
-     *
-     * Gets the name of the foreign type in the manager.
-     *
-     * @return string
-     *
-     */
-    public function getForeignType()
-    {
-        return $this->foreign_type;
-    }
 }

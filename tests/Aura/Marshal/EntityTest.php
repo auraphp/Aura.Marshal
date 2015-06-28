@@ -21,45 +21,25 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    protected function newStdClass()
-    {
-        $builder = new Builder;
-        return $builder->newInstance($this->getData());
-    }
-
-    protected function newStdMockClass()
-    {
-        $builder = new MockEntityBuilder('Aura\Marshal\Mock\StandardMockEntity');
-        return $builder->newInstance($this->getData());
-    }
-
-    protected function newPropertyTraitMockEntity()
-    {
-        $builder = new MockEntityBuilder('Aura\Marshal\Mock\PropertyTraitMockEntity');
-        return $builder->newInstance($this->getData());
-    }
-
-    protected function newArrayTraitMockEntity()
-    {
-        $builder = new MockEntityBuilder('Aura\Marshal\Mock\ArrayAccessTraitMockEntity');
-        return $builder->newInstance($this->getData());
-    }
-
     public function provideMocks()
     {
         return [
-            [$this->newStdClass()],
-            [$this->newStdMockClass()],
-            [$this->newArrayTraitMockEntity()],
-            [$this->newPropertyTraitMockEntity()],
+            ['stdClass'],
+            ['Aura\Marshal\Mock\GenericMockEntity'],
+            ['Aura\Marshal\Mock\StandardMockEntity'],
+            ['Aura\Marshal\Mock\PropertyTraitMockEntity'],
+            ['Aura\Marshal\Mock\ArrayAccessTraitMockEntity'],
         ];
     }
 
     /**
      * @dataProvider provideMocks
      */
-    public function testMagicPropertyAccess($entity)
+    public function testPropertyAccess($entityClass)
     {
+        $builder = new MockEntityBuilder($entityClass);
+        $entity = $builder->newInstance($this->getData());
+
         if ($entity instanceof StandardMockEntity) {
             // custom $isset is required since MockEntity has only protected properties
             $isset = \Closure::bind(

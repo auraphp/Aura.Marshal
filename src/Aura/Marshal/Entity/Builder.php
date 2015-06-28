@@ -54,7 +54,9 @@ class Builder implements BuilderInterface
     public function hasMagicTrait()
     {
         $traits = class_uses($this->class);
-        return isset($traits['Aura\Marshal\Entity\MagicPropertyTrait']) || is_subclass_of($this->class, 'Aura\Marshal\Entity\GenericEntity');
+        return isset($traits['Aura\Marshal\Entity\MagicArrayAccessTrait'])
+            || isset($traits['Aura\Marshal\Entity\MagicPropertyTrait'])
+            || is_subclass_of($this->class, 'Aura\Marshal\Entity\GenericEntity');
     }
 
     /**
