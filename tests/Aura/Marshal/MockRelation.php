@@ -9,4 +9,9 @@ class MockRelation implements RelationInterface
     {
         return (object) ['foreign_field' => 'foreign_value'];
     }
+
+    public function getForeignType()
+    {
+        return 'foreign_type';
+    }
 }

@@ -134,6 +134,13 @@ class RelationTest extends \PHPUnit_Framework_TestCase
         $this->manager->posts;
     }
 
+    public function testGetForeignType()
+    {
+        $relation = $this->manager->posts->getRelation('author');
+        $actual = $relation->getForeignType();
+        $this->assertSame('authors', $actual);
+    }
+
     public function testBelongsTo()
     {
         $post = $this->manager->posts->getEntity(1);
