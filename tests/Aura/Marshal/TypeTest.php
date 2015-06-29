@@ -3,8 +3,6 @@ namespace Aura\Marshal;
 
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Entity\Builder as EntityBuilder;
-use Aura\Marshal\Entity\GenericCollection;
-use Aura\Marshal\Entity\GenericEntity;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Aura\Marshal\Type\Builder as TypeBuilder;
 use Aura\Marshal\Type\GenericType;

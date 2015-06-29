@@ -54,6 +54,7 @@ class Builder
      *
      * @return GenericType
      *
+     * @throws Exception if no "identity_field" is passed
      */
     public function newInstance($info)
     {

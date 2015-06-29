@@ -1,9 +1,9 @@
 <?php
-namespace Aura\Marshal;
+namespace Aura\Marshal\Mock;
 
 use Aura\Marshal\Entity\MagicPropertyTrait;
 
-class MockEntity
+class PropertyTraitMockEntity
 {
     use MagicPropertyTrait;
 

@@ -26,10 +26,11 @@ class RelationTest extends \PHPUnit_Framework_TestCase
         $relation_builder   = new RelationBuilder;
         $types              = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
 
+        $types['posts']['entity_builder'] = new MockEntityBuilder('stdClass');
         $this->manager      = new Manager($type_builder, $relation_builder, $types);
         $data               = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
         foreach ($this->manager->getTypes() as $type) {
-            $obj = $this->manager->{$type}->load($data[$type]);
+            $this->manager->{$type}->load($data[$type]);
         }
     }
 
