@@ -59,28 +59,28 @@ class Builder
     public function newInstance($info)
     {
         $base = [
-            'identity_field' => null,
-            'index_fields' => [],
-            'entity_builder' => null,
-            'collection_builder' => null,
-            'lazy_builder' => null,
+            'identity_field'        => null,
+            'index_fields'          => [],
+            'entity_builder'        => null,
+            'collection_builder'    => null,
+            'lazy_builder'          => null,
         ];
 
         $info = array_merge($base, $info);
 
-        if (!$info['identity_field']) {
+        if (! $info['identity_field']) {
             throw new Exception('No identity field specified.');
         }
 
-        if (!$info['entity_builder']) {
+        if (! $info['entity_builder']) {
             $info['entity_builder'] = new EntityBuilder;
         }
 
-        if (!$info['collection_builder']) {
+        if (! $info['collection_builder']) {
             $info['collection_builder'] = new CollectionBuilder;
         }
 
-        if (!$info['lazy_builder']) {
+        if (! $info['lazy_builder']) {
             $info['lazy_builder'] = new LazyBuilder;
         }
 

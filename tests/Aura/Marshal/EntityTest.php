@@ -25,6 +25,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['stdClass'],
+            ['stdClass'], //same again to see that entity builder doesn't create two proxy classes
             ['Aura\Marshal\Mock\GenericMockEntity'],
             ['Aura\Marshal\Mock\StandardMockEntity'],
             ['Aura\Marshal\Mock\PropertyTraitMockEntity'],

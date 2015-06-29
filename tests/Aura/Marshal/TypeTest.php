@@ -319,7 +319,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
 
         // do we actually get a new entity back?
         $entity = $this->type->newEntity();
-        $this->assertInstanceOf('stdClass', $entity);
+        $this->assertInstanceOf('Aura\Marshal\Entity\GenericEntity', $entity);
 
         // has it been added to the identity map?
         $expect = $before + 1;

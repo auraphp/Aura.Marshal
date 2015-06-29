@@ -28,7 +28,7 @@ class Builder implements BuilderInterface
      * @var string
      *
      */
-    protected $class = 'stdClass';
+    protected $class = 'Aura\Marshal\Entity\GenericEntity';
 
     /**
      *
