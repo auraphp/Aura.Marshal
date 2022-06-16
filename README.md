@@ -1,7 +1,4 @@
-Aura Marshal
-============
-
-[![Build Status](https://travis-ci.org/auraphp/Aura.Marshal.png?branch=develop)](https://travis-ci.org/auraphp/Aura.Marshal)
+# Aura Marshal
 
 > marshal (verb): to arrange in proper order; set out in an orderly manner;
 > arrange clearly: to marshal facts; to marshal one's arguments. --
@@ -11,15 +8,37 @@ The Aura Marshal package is a data-object marshalling tool. It takes results
 from data sources and marshals those result sets into domain model objects of
 your own design, preserving data relationships along the way.
 
-This package is compliant with [PSR-0][], [PSR-1][], and [PSR-2][]. If you
-notice compliance oversights, please send a patch via pull request.
+## Foreword
 
-[PSR-0]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
+### Installation
+
+This library requires PHP 5.3 or later; we recommend using the latest available version of PHP as a matter of principle. It has no userland dependencies.
+
+It is installable and autoloadable via Composer as [aura/marshal](https://packagist.org/packages/aura/marshal).
+
+Alternatively, [download a release](https://github.com/auraphp/Aura.Marshal/releases) or clone this repository, then require or include its _autoload.php_ file.
+
+### Quality
+
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/auraphp/Aura.Marshal/badges/quality-score.png?b=1.x)](https://scrutinizer-ci.com/g/auraphp/Aura.Marshal/)
+[![codecov](https://codecov.io/gh/auraphp/Aura.Marshal/branch/1.x/graph/badge.svg?token=UASDouLxyc)](https://codecov.io/gh/auraphp/Aura.Marshal)
+[![Continuous Integration](https://github.com/auraphp/Aura.Marshal/actions/workflows/continuous-integration.yml/badge.svg?branch=1.x)](https://github.com/auraphp/Aura.Marshal/actions/workflows/continuous-integration.yml)
+
+To run the unit tests at the command line, issue `composer install` and then `./vendor/bin/phpunit` at the package root. This requires [Composer](http://getcomposer.org/) to be available as `composer`.
+
+This library attempts to comply with [PSR-1][], [PSR-2][], and [PSR-4][]. If
+you notice compliance oversights, please send a patch via pull request.
+
 [PSR-1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
 [PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
+[PSR-4]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md
 
-Overview
---------
+### Community
+
+To ask questions, provide feedback, or otherwise communicate with the Aura community, please join our [Google Group](http://groups.google.com/group/auraphp), follow [@auraphp on Twitter](http://twitter.com/auraphp), or chat with us on #auraphp on Freenode.
+
+
+## Overview
 
 You can use any database access layer you like with Aura Marshal, such as ...
 
@@ -63,8 +82,7 @@ objects. The `Type` objects are accessed through a type `Manager`. You load
 data into each `Type` in the `Manager`, then you retrieve entities and
 collections from each `Type`.
 
-Example Schema
---------------
+### Example Schema
 
 For the rest of this narrative, we will assume the existence of the following
 SQL tables and columns in a naive multiuser blogging system:
@@ -88,11 +106,9 @@ many tags, and each tag can be applied to many posts. They map to each other
 through `posts_tags`.
 
 
-Basic Usage
-===========
+## Getting Started
 
-Instantiation
--------------
+### Instantiation
 
 First, instantiate a `Manager` so we can define our `Type` objects and
 relationships.
@@ -119,8 +135,7 @@ $manager = new \Aura\Marshal\Manager(
 ?>
 ```
 
-Defining Types
---------------
+### Defining Types
 
 Now we add definitions for each of the entity types in our domain model. These
 do not have to map directly to tables, but it is often the case that they do.
@@ -142,10 +157,9 @@ $manager->setType('tags',       ['identity_field' => 'id']);
 $manager->setType('posts_tags', ['identity_field' => 'id']);
 ?>
 ```
-    
 
-Defining Relationships
-----------------------
+
+### Defining Relationships
 
 Aura Marshal recognizes four kinds of relationships between types:
 
@@ -175,47 +189,47 @@ parameter is an array of information about the relationship.
 <?php
 // each author has many posts
 $manager->setRelation('authors', 'posts', [
-    
+
     // the kind of relationship
     'relationship'  => 'has_many',
-    
+
     // the authors field to match against
     'native_field'  => 'id',
-    
+
     // the posts field to match against
     'foreign_field' => 'author_id',
 ]);
 
 // each post belongs to one author
 $manager->setRelation('posts', 'author', [
-    
+
     // the kind of relationship
     'relationship'  => 'belongs_to',
-    
+
     // normally the second param doubles as the foreign_type, but here
     // we are using plural type names, so we need to specify the
     // foreign_type explicitly
     'foreign_type'  => 'authors',
-    
+
     // the posts field to match against
     'native_field'  => 'author_id',
-    
+
     // the authors field to match against
     'foreign_field' => 'id',
 ]);
 
 // posts have one summary
 $manager->setRelation('posts', 'summary', [
-    
+
     // the kind of relationship
     'relationship'  => 'has_one',
-    
+
     // the explicit foreign type
     'foreign_type'  => 'summaries',
-    
+
     // the posts field to match against
     'native_field'  => 'id',
-    
+
     // the summaries field to match against
     'foreign_field' => 'post_id'
 ]);
@@ -224,16 +238,16 @@ $manager->setRelation('posts', 'summary', [
 $manager->setRelation('posts', 'comments', [
     // the kind of relationship
     'relationship'  => 'has_many',
-    
+
     // the posts field to match against
     'native_field'  => 'id',
-    
+
     // the comments field to match against
     'foreign_field' => 'post_id'
 ]);
 ?>
 ```
-    
+
 Now let's set up the more complex many-to-many relationship between posts and
 tags.
 
@@ -241,23 +255,23 @@ tags.
 <?php
 // posts have many tags, as mapped through posts_tags
 $manager->setRelation('posts', 'tags', [
-    
+
     // the kind of relationship
     'relationship' => 'has_many_through',
-    
+
     // the association mapping type that links posts and tags
     'through_type' => 'posts_tags',
-    
+
     // the posts field that should map to the "posts" side of the
     // association mapping type
     'native_field' => 'id',
-    
+
     // the "posts" side of the association mapping type
     'through_native_field' => 'post_id',
-    
+
     // the "tags" side of the association mapping type
     'through_foreign_field' => 'tag_id',
-    
+
     // the tags field that should map to the "tags" side of the
     // association mapping type
     'foreign_field' => 'id',
@@ -265,23 +279,23 @@ $manager->setRelation('posts', 'tags', [
 
 // tags have many posts, as mapped through posts_tags
 $manager->setRelation('tags', 'posts', [
-    
+
     // the kind of relationship
     'relationship' => 'has_many_through',
-    
+
     // the association mapping type that links posts and tags
     'through_type' => 'posts_tags',
-    
+
     // the tags field that should map to the "tags" side of the
     // association mapping type
     'native_field' => 'id',
-    
+
     // the "tags" side of the association mapping
     'through_native_field' => 'tag_id',
-    
+
     // the "posts" side of the association mapping
     'through_foreign_field' => 'post_id',
-    
+
     // the posts field that should map to the "posts" side of the
     // association mapping
     'foreign_field' => 'id',
@@ -290,8 +304,7 @@ $manager->setRelation('tags', 'posts', [
 ```
 
 
-Loading Data
-------------
+### Loading Data
 
 Now that we have defined the `Type` objects and their relationships to each
 other in the `Manager`, we can load data into the `Type` objects. In the
@@ -301,7 +314,7 @@ but any database access tool can be used.
 ```php
 <?php
 /**
- * @var Aura\Sql\AdapterFactory $adapter_factory 
+ * @var Aura\Sql\AdapterFactory $adapter_factory
  */
 // instantiate a database adapter for MySQL
 $sql = $adapter_factory->newInstance(
@@ -331,7 +344,7 @@ $result = $sql->fetchAll(
 $manager->comments->load($result);
 ?>
 ```
-    
+
 Note that we are able to select all the comments for all the posts at once.
 This means that instead of issuing 10 queries to get comments (one for each
 blog post), we can issue a single query to get all comments at one time; the
@@ -378,8 +391,7 @@ $manager->tags->load($result);
 ?>
 ```
 
-Reading Data
-------------
+### Reading Data
 
 Now that the domain model has been loaded with data, we can read out the
 entity objects, with related data wired up for us automatically.
@@ -391,13 +403,13 @@ $posts = $manager->posts->getCollection($post_ids);
 
 // loop through posts collection, getting a post entity each time
 foreach ($posts as $post) {
-    
+
     // address the native and foreign fields
     echo "The post titled {$post->title} "
        . "was written by {$post->author->name}. "
        . "It has been read {$post->summary->read_sum} times "
        . "and has " . count($post->comments) . " comments. ";
-    
+
     // loop through the tags
     if ($post->tags->isEmpty()) {
         echo "It has no tags.";
@@ -409,17 +421,15 @@ foreach ($posts as $post) {
         }
         echo implode(', ', $tags);
     }
-    
+
     echo PHP_EOL;
 }
 ?>
 ```
 
-Advanced Usage
-==============
+## Advanced Usage
 
-Entity and Collection Builders
-------------------------------
+### Entity and Collection Builders
 
 We have a good amount of control over how the type objects create entities and
 collections. The instantiation responsibilities are delegated to builder
@@ -434,24 +444,23 @@ type object know when the loaded data has been converted to a entity object.
 $manager->setType('posts', [
     // the field with the unique identifying value
     'identity_field' => 'id',
-    
+
     // an object to build entities; default is a new instance of
     // Aura\Marshal\Entity\Builder
     'entity_builder' => new \Vendor\Package\Posts\EntityBuilder,
-    
+
     // an object to build collections; default is a new instance of
     // Aura\Marshal\Collection\Builder
     'collection_builder' => new \Vendor\Package\Posts\CollectionBuilder,
 ]);
 ?>
 ```
-    
+
 The builders should implement `Aura\Marshal\Entity\BuilderInterface` and
 `Aura\Marshal\Collection\BuilderInterface`, respectively.
 
 
-Indexing
---------
+### Indexing
 
 By default, the `Type` objects do not index the values when loading entities.
 You are likely to see a performance improvement when Aura Marshal wires up
@@ -477,8 +486,7 @@ Indexes are created *only at `load()` time*. They are not updated when the
 entity object is modified.
 
 
-Removing and Clearing Entities
-------------------------------
+### Removing and Clearing Entities
 
 There are times at which you will want to mark an entity for removal. You can
 do so using the `Type::removeEntity()` method; this will remove it from the
@@ -511,8 +519,7 @@ $manager->clear();
 ```
 
 
-All-At-Once Definition
-----------------------
+### All-At-Once Definition
 
 You can define all your types and their relationships through the manager at
 instantiation time. The following is the equivalent all-at-once definition
@@ -526,7 +533,7 @@ use Aura\Marshal\Type\Builder as TypeBuilder;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 
 $manager = new Manager(new TypeBuilder, new RelationBuilder, [
-    
+
     'authors' => [
         'identity_field'                => 'id',
         'relation_names'                => [
@@ -537,7 +544,7 @@ $manager = new Manager(new TypeBuilder, new RelationBuilder, [
             ],
         ],
     ],
-    
+
     'posts' => [
         'identity_field'                => 'id',
         'index_fields'                  => ['author_id'],
@@ -569,7 +576,7 @@ $manager = new Manager(new TypeBuilder, new RelationBuilder, [
             ],
         ],
     ],
-    
+
     'metas' => [
         'identity_field'                => 'id',
         'index_fields'                  => ['post_id'],
@@ -582,7 +589,7 @@ $manager = new Manager(new TypeBuilder, new RelationBuilder, [
             ],
         ],
     ],
-    
+
     'comments' => [
         'identity_field'                => 'id',
         'index_fields'                  => ['post_id'],
@@ -595,7 +602,7 @@ $manager = new Manager(new TypeBuilder, new RelationBuilder, [
             ],
         ],
     ],
-    
+
     'posts_tags' => [
         'identity_field'                => 'id',
         'index_fields'                  => ['post_id', 'tag_id'],
@@ -614,7 +621,7 @@ $manager = new Manager(new TypeBuilder, new RelationBuilder, [
             ],
         ],
     ],
-    
+
     'tags' => [
         'identity_field'                => 'id',
         'relation_names'                => [
