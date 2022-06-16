@@ -18,12 +18,12 @@
         "yoast/phpunit-polyfills": "^1.0.0"
     },
     "autoload": {
-        "psr-0": {
-            "Aura\\Marshal": "src/"
+        "psr-4": {
+            "Aura\\Marshal\\": "src/"
         }
     },
     "autoload-dev": {
-        "psr-0": {
+        "psr-4": {
             "Aura\\Marshal\\": "tests/"
         }
     }
