@@ -12,7 +12,7 @@ your own design, preserving data relationships along the way.
 
 ### Installation
 
-This library requires PHP 5.3 or later; we recommend using the latest available version of PHP as a matter of principle. It has no userland dependencies.
+This library requires PHP 7.2 or later; we recommend using the latest available version of PHP as a matter of principle. It has no userland dependencies.
 
 It is installable and autoloadable via Composer as [aura/marshal](https://packagist.org/packages/aura/marshal).
 
@@ -20,9 +20,9 @@ Alternatively, [download a release](https://github.com/auraphp/Aura.Marshal/rele
 
 ### Quality
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/auraphp/Aura.Marshal/badges/quality-score.png?b=1.x)](https://scrutinizer-ci.com/g/auraphp/Aura.Marshal/)
-[![codecov](https://codecov.io/gh/auraphp/Aura.Marshal/branch/1.x/graph/badge.svg?token=UASDouLxyc)](https://codecov.io/gh/auraphp/Aura.Marshal)
-[![Continuous Integration](https://github.com/auraphp/Aura.Marshal/actions/workflows/continuous-integration.yml/badge.svg?branch=1.x)](https://github.com/auraphp/Aura.Marshal/actions/workflows/continuous-integration.yml)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/auraphp/Aura.Marshal/badges/quality-score.png?b=4.x)](https://scrutinizer-ci.com/g/auraphp/Aura.Marshal/)
+[![codecov](https://codecov.io/gh/auraphp/Aura.Marshal/branch/4.x/graph/badge.svg?token=UASDouLxyc)](https://codecov.io/gh/auraphp/Aura.Marshal)
+[![Continuous Integration](https://github.com/auraphp/Aura.Marshal/actions/workflows/continuous-integration.yml/badge.svg?branch=4.x)](https://github.com/auraphp/Aura.Marshal/actions/workflows/continuous-integration.yml)
 
 To run the unit tests at the command line, issue `composer install` and then `./vendor/bin/phpunit` at the package root. This requires [Composer](http://getcomposer.org/) to be available as `composer`.
 
