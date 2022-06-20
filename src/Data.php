@@ -5,7 +5,7 @@
  *
  * @package Aura.Marshal
  *
- * @license http://opensource.org/licenses/bsd-license.php BSD
+ * @license https://opensource.org/licenses/mit-license.php MIT
  *
  */
 namespace Aura\Marshal;
