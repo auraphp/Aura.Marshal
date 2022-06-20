@@ -1,1 +1,0 @@
-Marshals data result sets into domain model objects
