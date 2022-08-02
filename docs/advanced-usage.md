@@ -1,5 +1,13 @@
 # Advanced Usage
 
+## Extracting Marshaled Collections To Array
+
+Say you want to get your data back out, relations and all, but in array format. You can call toArray() on any collection:
+
+```php
+$posts = $manager->posts->toArray();
+```
+
 ## Entity and Collection Builders
 
 We have a good amount of control over how the type objects create entities and

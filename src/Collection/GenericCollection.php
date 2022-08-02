@@ -11,7 +11,7 @@
 namespace Aura\Marshal\Collection;
 
 use Aura\Marshal\Data;
-use Aura\Marshal\Type\GenericType;
+use Aura\Marshal\ToArrayTrait;
 
 /**
  *
@@ -22,6 +22,8 @@ use Aura\Marshal\Type\GenericType;
  */
 class GenericCollection extends Data
 {
+    use ToArrayTrait;
+
     /**
      *
      * Returns an array of all values for a single field in the collection.

@@ -4,7 +4,6 @@ use Aura\Marshal\Collection\GenericCollection;
 use Aura\Marshal\Type\GenericType;
 use Aura\Marshal\Entity\Builder as EntityBuilder;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
-use Aura\Marshal\Lazy\Builder as LazyBuilder;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
@@ -13,6 +12,8 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  */
 class CollectionTest extends TestCase
 {
+    protected $data;
+
     protected $type;
 
     protected $collection;
@@ -35,6 +36,7 @@ class CollectionTest extends TestCase
             ];
         }
 
+        $this->data = $data;
         $this->collection = new GenericCollection($data);
         $this->empty_collection = new GenericCollection([]);
     }
@@ -94,5 +96,10 @@ class CollectionTest extends TestCase
         // note that collection is by offset, not identity value.
         $actual = $collection[0];
         $this->assertSame($expect->name, $actual->name);
+    }
+
+    public function testToArray()
+    {
+        $this->assertEquals($this->data, $this->collection->toArray());
     }
 }
