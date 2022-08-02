@@ -15,8 +15,7 @@
         "php": "^7.2 || ^8.0"
     },
     "require-dev": {
-        "yoast/phpunit-polyfills": "^1.0.0",
-        "phpunit/phpunit": "^9.5"
+        "yoast/phpunit-polyfills": "^1.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -29,6 +28,6 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "vendor/bin/phpunit"
     }
 }
