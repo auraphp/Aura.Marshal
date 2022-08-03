@@ -26,5 +26,8 @@
         "psr-4": {
             "Aura\\Marshal\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
     }
 }

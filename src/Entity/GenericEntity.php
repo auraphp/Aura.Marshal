@@ -12,6 +12,7 @@ namespace Aura\Marshal\Entity;
 
 use Aura\Marshal\Data;
 use Aura\Marshal\Lazy\LazyInterface;
+use Aura\Marshal\ToArrayTrait;
 
 /**
  *
@@ -23,6 +24,7 @@ use Aura\Marshal\Lazy\LazyInterface;
 class GenericEntity extends Data
 {
     use MagicArrayAccessTrait;
+    use ToArrayTrait;
 
     /**
      *
