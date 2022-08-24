@@ -11,6 +11,7 @@
 namespace Aura\Marshal\Collection;
 
 use Aura\Marshal\Data;
+use Aura\Marshal\ToArrayInterface;
 use Aura\Marshal\ToArrayTrait;
 
 /**
