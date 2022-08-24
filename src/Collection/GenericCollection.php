@@ -21,7 +21,7 @@ use Aura\Marshal\ToArrayTrait;
  * @package Aura.Marshal
  *
  */
-class GenericCollection extends Data
+class GenericCollection extends Data implements ToArrayInterface
 {
     use ToArrayTrait;
 
