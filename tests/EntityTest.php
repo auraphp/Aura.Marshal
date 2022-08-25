@@ -94,14 +94,15 @@ class EntityTest extends TestCase
     public function testToArray()
     {
         $entity = $this->newGenericEntity();
-        $expect = [
+        $expected = [
             'foo' => 'bar',
             'baz' => 'dim',
             'zim' => 'gir',
-            'related' => (object) [
+            'related' => [
                 'foreign_field' => 'foreign_value',
             ],
         ];
-        $this->assertEquals($expect, $entity->toArray());
+        $actual = $entity->toArray();
+        $this->assertEquals($expected, $actual);
     }
 }
