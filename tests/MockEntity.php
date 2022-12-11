@@ -2,8 +2,9 @@
 namespace Aura\Marshal;
 
 use Aura\Marshal\Entity\MagicPropertyTrait;
+use stdClass;
 
-class MockEntity
+class MockEntity extends stdClass
 {
     use MagicPropertyTrait;
 
