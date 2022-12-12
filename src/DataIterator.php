@@ -70,6 +70,7 @@ class DataIterator implements \Iterator
      * @return mixed
      *
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->data->offsetGet($this->key());
@@ -82,6 +83,7 @@ class DataIterator implements \Iterator
      * @return mixed
      *
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return current($this->keys);
@@ -94,6 +96,7 @@ class DataIterator implements \Iterator
      * @return void
      *
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->valid = (next($this->keys) !== false);
@@ -106,6 +109,7 @@ class DataIterator implements \Iterator
      * @return void
      *
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->valid = (reset($this->keys) !== false);
@@ -115,9 +119,10 @@ class DataIterator implements \Iterator
      *
      * Is the current iterator position valid?
      *
-     * @return void
+     * @return bool
      *
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->valid;

@@ -58,6 +58,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      * @return bool
      *
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($key)
     {
         return array_key_exists($key, $this->data);
@@ -72,6 +73,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      * @return mixed
      *
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         return $this->data[$key];
@@ -88,6 +90,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      * @return void
      *
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($key, $val)
     {
         $this->data[$key] = $val;
@@ -102,6 +105,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      * @return void
      *
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($key)
     {
         unset($this->data[$key]);
@@ -114,6 +118,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      * @return int
      *
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->data);
@@ -126,6 +131,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      * @return DataIterator
      *
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return new DataIterator($this, array_keys($this->data));

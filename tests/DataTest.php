@@ -12,7 +12,7 @@ class DataTest extends TestCase
     /**
      * @var Data
      */
-    protected $object;
+    protected $data;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
