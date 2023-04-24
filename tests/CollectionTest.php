@@ -100,6 +100,11 @@ class CollectionTest extends TestCase
 
     public function testToArray()
     {
-        $this->assertEquals($this->data, $this->collection->toArray());
+        $expected = array_map(
+            fn (object $entity): array => (array) $entity,
+            $this->data
+        );
+        $actual = $this->collection->toArray();
+        $this->assertEquals($expected, $actual);
     }
 }

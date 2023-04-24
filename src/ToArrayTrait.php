@@ -19,6 +19,10 @@ trait ToArrayTrait
                     return $entity->toArray();
                 }
 
+                if (is_object($entity)) {
+                    return (array) $entity;
+                }
+
                 return $entity;
             },
             $this->data

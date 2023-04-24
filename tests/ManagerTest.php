@@ -130,4 +130,34 @@ class ManagerTest extends TestCase
             $this->assertSame([], $this->manager->$type->getAllEntities());
         }
     }
+
+    public function testToArray()
+    {
+        $relation_builder = new RelationBuilder;
+        $type_builder = new TypeBuilder;
+        $this->manager = new Manager($type_builder, $relation_builder);
+        
+        // toArray() cannot handle circular relationshiops
+        $types = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
+        unset($types['authors']['relation_names']);
+        unset($types['comments']['relation_names']);
+        unset($types['metas']['relation_names']);
+        unset($types['tags']['relation_names']);
+        foreach ($types as $name => $info) {
+            $this->manager->setType($name, $info);
+        }
+
+        // load data into the types
+        $fixture = include __DIR__ . '/fixture_data.php';
+        foreach ($fixture as $type => $data) {
+            $this->manager->$type->load($data);
+        }
+
+        $postIds = array_column($fixture['posts'], 'id');
+        $actual = $this->manager->posts->getCollection($postIds)->toArray();
+
+        $expected = include __DIR__ . '/to_array.php';
+
+        $this->assertEquals($expected, $actual);
+    }
 }
