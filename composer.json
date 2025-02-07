@@ -29,7 +29,7 @@
         }
     },
     "scripts": {
-        "analyze": "vendor/bin/phpstan analyse -c phpstan.neon",
+        "analyse": "vendor/bin/phpstan analyse -c phpstan.neon",
         "test": "vendor/bin/phpunit"
     }
 }
