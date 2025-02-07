@@ -26,7 +26,7 @@ class HasOne extends AbstractRelation implements RelationInterface
      *
      * @param mixed $entity The native entity.
      *
-     * @return GenericEntity
+     * @return ?object
      *
      */
     public function getForEntity($entity)

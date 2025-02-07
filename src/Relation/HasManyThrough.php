@@ -10,6 +10,8 @@
  */
 namespace Aura\Marshal\Relation;
 
+use Aura\Marshal\Collection\GenericCollection;
+use Aura\Marshal\Entity\GenericEntity;
 use Aura\Marshal\Exception;
 use Aura\Marshal\Manager;
 use Aura\Marshal\Type\GenericType;
@@ -35,23 +37,25 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
      */
     public function getForEntity($entity)
     {
-        // first, find the native values in the through type
-        $native_field = $this->native_field;
-        $native_value = $entity->$native_field;
-        $through_coll = $this->through->getCollectionByField(
-            $this->through_native_field,
-            $native_value
-        );
-
-        // now find the foreign values from the through collection
-        $foreign_values = $through_coll->getFieldValues(
-            $this->through_foreign_field
-        );
+        if (isset($this->through, $this->through_native_field, $this->through_foreign_field)) {
+            // first, find the native values in the through type
+            $native_field = $this->native_field;
+            $native_value = $entity->$native_field;
+            $through_coll = $this->through->getCollectionByField(
+                $this->through_native_field,
+                $native_value
+            );
+    
+            // now find the foreign values from the through collection
+            $foreign_values = $through_coll->getFieldValues(
+                $this->through_foreign_field
+            );
+        }
 
         // finally, return a foreign collection based on the foreign values
         return $this->foreign->getCollectionByField(
             $this->foreign_field,
-            $foreign_values
+            $foreign_values ?? []
         );
     }
 }

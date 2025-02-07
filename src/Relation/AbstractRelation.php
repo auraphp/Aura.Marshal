@@ -63,7 +63,7 @@ abstract class AbstractRelation
      *
      * The through type object.
      *
-     * @var GenericType
+     * @var ?GenericType
      *
      */
     protected $through;
@@ -73,7 +73,7 @@ abstract class AbstractRelation
      * Native and foreign entities are mapped to each other through this
      * association type.
      *
-     * @var string
+     * @var ?string
      *
      */
     protected $through_type;
@@ -83,7 +83,7 @@ abstract class AbstractRelation
      * The field name for the native side of the association mapping in the
      * "through" type.
      *
-     * @var string
+     * @var ?string
      *
      */
     protected $through_native_field;
@@ -93,7 +93,7 @@ abstract class AbstractRelation
      * The field name for the foreign side of the association mapping in the
      * "through" type.
      *
-     * @var string
+     * @var ?string
      *
      */
     protected $through_foreign_field;
@@ -112,12 +112,12 @@ abstract class AbstractRelation
      *
      * @param GenericType $through The through type object.
      *
-     * @param string $through_type The manager name of the through type.
+     * @param ?string $through_type The manager name of the through type.
      *
-     * @param string $through_native_field The name of the native field in
+     * @param ?string $through_native_field The name of the native field in
      * the through type.
      *
-     * @param string $through_foreign_field The name of the foreign field in
+     * @param ?string $through_foreign_field The name of the foreign field in
      * the through type.
      *
      */
@@ -126,7 +126,7 @@ abstract class AbstractRelation
         GenericType $foreign,
         $foreign_type,
         $foreign_field,
-        GenericType $through = null,
+        ?GenericType $through = null,
         $through_type = null,
         $through_native_field = null,
         $through_foreign_field = null

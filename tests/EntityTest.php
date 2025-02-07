@@ -15,6 +15,9 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  */
 class EntityTest extends TestCase
 {
+    /**
+     * @return array<string, string|GenericLazy>
+     */
     protected function getData()
     {
         return [
@@ -25,19 +28,25 @@ class EntityTest extends TestCase
         ];
     }
 
+    /**
+     * @return GenericEntity
+     */
     protected function newGenericEntity()
     {
         $builder = new Builder;
         return $builder->newInstance($this->getData());
     }
 
+    /**
+     * @return MockEntity
+     */
     protected function newMockEntity()
     {
         $builder = new MockEntityBuilder;
         return $builder->newInstance($this->getData());
     }
 
-    public function testMagicArrayAccess()
+    public function testMagicArrayAccess(): void
     {
         $entity = $this->newGenericEntity();
 
@@ -64,7 +73,7 @@ class EntityTest extends TestCase
         $this->assertEquals($expect, $actual);
     }
 
-    public function testMagicPropertyAccess()
+    public function testMagicPropertyAccess(): void
     {
         $entity = $this->newMockEntity();
 
@@ -91,7 +100,7 @@ class EntityTest extends TestCase
         $this->assertEquals($expect, $actual);
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $entity = $this->newGenericEntity();
         $expected = [

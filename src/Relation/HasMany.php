@@ -10,6 +10,8 @@
  */
 namespace Aura\Marshal\Relation;
 
+use Aura\Marshal\Collection\GenericCollection;
+
 /**
  *
  * Represents a relationship where a native entity has many foreign entities

@@ -15,6 +15,7 @@
         "php": "^7.2 || ^8.0"
     },
     "require-dev": {
+        "phpstan/phpstan": "^1.0 || ^2.0",
         "yoast/phpunit-polyfills": "^1.0.0"
     },
     "autoload": {
@@ -28,6 +29,7 @@
         }
     },
     "scripts": {
+        "analyze": "vendor/bin/phpstan analyse -c phpstan.neon",
         "test": "vendor/bin/phpunit"
     }
 }

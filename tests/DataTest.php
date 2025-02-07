@@ -18,7 +18,7 @@ class DataTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function set_up()
+    protected function set_up(): void
     {
         parent::set_up();
         $this->data = new Data([
@@ -32,30 +32,30 @@ class DataTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tear_down()
+    protected function tear_down(): void
     {
         parent::tear_down();
     }
 
-    public function testOffsetExistsAndUnset()
+    public function testOffsetExistsAndUnset(): void
     {
         $this->assertTrue($this->data->offsetExists('foo'));
         $this->data->offsetUnset('foo');
         $this->assertFalse($this->data->offsetExists('foo'));
     }
 
-    public function testOffsetSetAndGet()
+    public function testOffsetSetAndGet(): void
     {
         $this->data->offsetSet('irk', 'doom');
         $this->assertSame('doom', $this->data->offsetGet('irk'));
     }
 
-    public function testCount()
+    public function testCount(): void
     {
         $this->assertSame(3, $this->data->count());
     }
 
-    public function testGetIterator()
+    public function testGetIterator(): void
     {
         $this->assertInstanceOf('Aura\Marshal\DataIterator', $this->data->getIterator());
     }

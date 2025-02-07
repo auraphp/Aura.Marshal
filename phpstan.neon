@@ -1,0 +1,12 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - tests
+    universalObjectCratesClasses:
+        - Aura\Marshal\Manager
+        - Aura\Marshal\Entity\GenericEntity
+    inferPrivatePropertyTypeFromConstructor: true
+    checkFunctionNameCase: true
+    checkInternalClassCaseSensitivity: true
+    treatPhpDocTypesAsCertain: false

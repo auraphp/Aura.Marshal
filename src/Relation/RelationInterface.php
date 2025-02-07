@@ -10,6 +10,9 @@
  */
 namespace Aura\Marshal\Relation;
 
+use Aura\Marshal\Collection\GenericCollection;
+use Aura\Marshal\Entity\GenericEntity;
+
 /**
  *
  * An interface for relationship description objects.
@@ -26,7 +29,7 @@ interface RelationInterface
      * @param mixed $entity The entity to get the related entity or
      * collection for.
      *
-     * @return GenericEntity|GenericCollection
+     * @return object|GenericEntity|GenericCollection
      *
      */
     public function getForEntity($entity);

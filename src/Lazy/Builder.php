@@ -25,7 +25,7 @@ class Builder implements BuilderInterface
      *
      * The class to use for new instances.
      *
-     * @var string
+     * @var class-string<LazyInterface>
      *
      */
     protected $class = 'Aura\Marshal\Lazy\GenericLazy';
@@ -37,7 +37,7 @@ class Builder implements BuilderInterface
      * @param RelationInterface $relation The relationship object between the
      * native and foreign types.
      *
-     * @return Lazy
+     * @return LazyInterface
      *
      */
     public function newInstance(RelationInterface $relation)

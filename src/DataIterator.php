@@ -17,6 +17,8 @@ use ArrayAccess;
  * An object to allow iteration over the elements of a Data object.
  *
  * @package Aura.Marshal
+ * 
+ * @implements \Iterator<int|string, mixed>
  *
  */
 class DataIterator implements \Iterator
@@ -25,7 +27,7 @@ class DataIterator implements \Iterator
      *
      * The data over which we are iterating.
      *
-     * @var ArrayAccess
+     * @var ArrayAccess<int|string, mixed>
      *
      */
     protected $data;
@@ -34,7 +36,7 @@ class DataIterator implements \Iterator
      *
      * The keys to iterate over in the Data object.
      *
-     * @var array
+     * @var array<int|string>
      *
      */
     protected $keys;
@@ -52,9 +54,9 @@ class DataIterator implements \Iterator
      *
      * Constructor.
      *
-     * @param ArrayAccess $data The Data object over which to iterate.
+     * @param ArrayAccess<int|string, mixed> $data The Data object over which to iterate.
      *
-     * @param array $keys The keys in the Data object.
+     * @param array<int|string> $keys The keys in the Data object.
      *
      */
     public function __construct(ArrayAccess $data, array $keys = [])

@@ -1,8 +1,11 @@
 <?php
+
 namespace Aura\Marshal;
+
+use Aura\Marshal\Collection\GenericCollection;
+use Aura\Marshal\Entity\GenericEntity;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Aura\Marshal\Type\Builder as TypeBuilder;
-use Aura\Marshal\Lazy\Builder as LazyBuilder;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
@@ -20,7 +23,7 @@ class RelationTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function set_up()
+    protected function set_up(): void
     {
         parent::set_up();
         $type_builder       = new TypeBuilder;
@@ -38,12 +41,12 @@ class RelationTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tear_down()
+    protected function tear_down(): void
     {
         parent::tear_down();
     }
 
-    public function testNoRelationship()
+    public function testNoRelationship(): void
     {
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
@@ -53,10 +56,10 @@ class RelationTest extends TestCase
 
         $this->manager = new Manager($type_builder, $relation_builder, $types);
         $this->expectException('Aura\Marshal\Exception');
-        $this->manager->posts;
+        $this->manager->__get('posts');
     }
 
-    public function testNoForeignType()
+    public function testNoForeignType(): void
     {
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
@@ -66,10 +69,10 @@ class RelationTest extends TestCase
 
         $this->manager = new Manager($type_builder, $relation_builder, $types);
         $this->expectException('Aura\Marshal\Exception');
-        $this->manager->posts;
+        $this->manager->__get('posts');
     }
 
-    public function testNoNativeField()
+    public function testNoNativeField(): void
     {
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
@@ -79,10 +82,10 @@ class RelationTest extends TestCase
 
         $this->manager = new Manager($type_builder, $relation_builder, $types);
         $this->expectException('Aura\Marshal\Exception');
-        $this->manager->posts;
+        $this->manager->__get('posts');
     }
 
-    public function testNoForeignField()
+    public function testNoForeignField(): void
     {
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
@@ -92,10 +95,10 @@ class RelationTest extends TestCase
 
         $this->manager = new Manager($type_builder, $relation_builder, $types);
         $this->expectException('Aura\Marshal\Exception');
-        $this->manager->posts;
+        $this->manager->__get('posts');
     }
 
-    public function testNoThroughType()
+    public function testNoThroughType(): void
     {
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
@@ -105,10 +108,10 @@ class RelationTest extends TestCase
 
         $this->manager = new Manager($type_builder, $relation_builder, $types);
         $this->expectException('Aura\Marshal\Exception');
-        $this->manager->posts;
+        $this->manager->__get('posts');
     }
 
-    public function testNoThroughNativeField()
+    public function testNoThroughNativeField(): void
     {
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
@@ -118,10 +121,10 @@ class RelationTest extends TestCase
 
         $this->manager = new Manager($type_builder, $relation_builder, $types);
         $this->expectException('Aura\Marshal\Exception');
-        $this->manager->posts;
+        $this->manager->__get('posts');
     }
 
-    public function testNoThroughForeignField()
+    public function testNoThroughForeignField(): void
     {
         $type_builder     = new TypeBuilder;
         $relation_builder = new RelationBuilder;
@@ -131,33 +134,42 @@ class RelationTest extends TestCase
 
         $this->manager = new Manager($type_builder, $relation_builder, $types);
         $this->expectException('Aura\Marshal\Exception');
-        $this->manager->posts;
+        $this->manager->__get('posts');
     }
 
-    public function testGetForeignType()
+    public function testGetForeignType(): void
     {
         $relation = $this->manager->posts->getRelation('author');
         $actual = $relation->getForeignType();
         $this->assertSame('authors', $actual);
     }
 
-    public function testBelongsTo()
+    public function testBelongsTo(): void
     {
+        /**
+         * @var GenericEntity $post
+         */
         $post = $this->manager->posts->getEntity(1);
         $this->assertSame('1', $post->author->id);
         $this->assertSame('Anna', $post->author->name);
     }
 
-    public function testHasOne()
+    public function testHasOne(): void
     {
+        /**
+         * @var GenericEntity $post
+         */
         $post = $this->manager->posts->getEntity(1);
         $this->assertSame('1', $post->meta->id);
         $this->assertSame('1', $post->meta->post_id);
         $this->assertSame('meta 1', $post->meta->data);
     }
 
-    public function testHasMany()
+    public function testHasMany(): void
     {
+        /**
+         * @var GenericEntity $post
+         */
         $post = $this->manager->posts->getEntity(5);
         $this->assertSame(3, count($post->comments));
 
@@ -175,8 +187,11 @@ class RelationTest extends TestCase
         }
     }
 
-    public function testHasManyThrough()
+    public function testHasManyThrough(): void
     {
+        /**
+         * @var GenericEntity $post
+         */
         $post = $this->manager->posts->getEntity(3);
         $this->assertSame(2, count($post->tags));
 
@@ -192,8 +207,9 @@ class RelationTest extends TestCase
         }
     }
 
-    public function testIteratorToArrayEntityHasRelationships()
+    public function testIteratorToArrayEntityHasRelationships(): void
     {
+        /** @var GenericCollection */
         $posts = $this->manager->posts->getCollection($this->manager->posts->getIdentityValues());
         $postsArray = iterator_to_array($posts);
 

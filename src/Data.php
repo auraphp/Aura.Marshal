@@ -24,6 +24,9 @@ namespace Aura\Marshal;
  *   entities.
  *
  * @package Aura.Marshal
+ * 
+ * @implements \ArrayAccess<int|string, mixed>
+ * @implements \IteratorAggregate<int|string, mixed>
  *
  */
 class Data implements \ArrayAccess, \Countable, \IteratorAggregate
@@ -32,7 +35,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * Key-value pairs of data.
      *
-     * @var array
+     * @var array<int|string, GenericEntity|mixed>
      *
      */
     protected $data = [];
@@ -41,7 +44,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * Constructor.
      *
-     * @param array $data The data for this object.
+     * @param array<int|string, mixed> $data The data for this object.
      *
      */
     public function __construct(array $data = [])

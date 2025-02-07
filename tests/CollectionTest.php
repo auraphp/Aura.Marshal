@@ -1,9 +1,12 @@
 <?php
+
 namespace Aura\Marshal;
-use Aura\Marshal\Collection\GenericCollection;
-use Aura\Marshal\Type\GenericType;
-use Aura\Marshal\Entity\Builder as EntityBuilder;
+
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
+use Aura\Marshal\Collection\GenericCollection;
+use Aura\Marshal\Entity\Builder as EntityBuilder;
+use Aura\Marshal\Entity\GenericEntity;
+use Aura\Marshal\Type\GenericType;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
@@ -12,19 +15,20 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  */
 class CollectionTest extends TestCase
 {
+    /** @var array<int, object> */
     protected $data;
 
-    protected $type;
-
+    /** @var GenericCollection */
     protected $collection;
 
+    /** @var GenericCollection */
     protected $empty_collection;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function set_up()
+    protected function set_up(): void
     {
         $ids = [1, 2, 3, 5, 7, 11, 13];
         $names = ['foo', 'bar', 'baz', 'dib', 'zim', 'gir', 'irk'];
@@ -45,25 +49,25 @@ class CollectionTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tear_down()
+    protected function tear_down(): void
     {
         parent::tear_down();
     }
 
-    public function testGetFieldValues()
+    public function testGetFieldValues(): void
     {
         $expect = [1, 2, 3, 5, 7, 11, 13];
         $actual = $this->collection->getFieldValues('id');
         $this->assertSame($expect, $actual);
     }
 
-    public function testIsEmpty()
+    public function testIsEmpty(): void
     {
         $this->assertTrue($this->empty_collection->isEmpty());
         $this->assertFalse($this->collection->isEmpty());
     }
 
-    public function testObjectsInCollectionAreInIdentityMap()
+    public function testObjectsInCollectionAreInIdentityMap(): void
     {
         $type = new GenericType;
         $type->setIdentityField('id');
@@ -86,8 +90,12 @@ class CollectionTest extends TestCase
         // any entity objects.
         $collection = $type->getCollection($ids);
 
-        // get a entity by ID from the type and change it.
-        // note that getEntity() is by identity value, not offset.
+        /**
+         * Get a entity by ID from the type and change it.
+         * Note that getEntity() is by identity value, not offset.
+         * 
+         * @var GenericEntity $expect
+         */
         $expect = $type->getEntity(1);
         $expect->name = 'changed';
 
@@ -98,7 +106,7 @@ class CollectionTest extends TestCase
         $this->assertSame($expect->name, $actual->name);
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $expected = array_map(
             function ($entity): array {

@@ -10,6 +10,8 @@
  */
 namespace Aura\Marshal\Relation;
 
+use Aura\Marshal\Entity\GenericEntity;
+
 /**
  *
  * Represents a relationship where the native entity belongs to a foreign
@@ -26,7 +28,7 @@ class BelongsTo extends AbstractRelation implements RelationInterface
      *
      * @param mixed $entity The native entity.
      *
-     * @return GenericEntity
+     * @return ?object
      *
      */
     public function getForEntity($entity)

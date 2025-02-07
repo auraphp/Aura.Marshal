@@ -23,7 +23,7 @@ class Builder implements BuilderInterface
      *
      * The class to use for new instances.
      *
-     * @var string
+     * @var class-string<GenericCollection>
      *
      */
     protected $class = 'Aura\Marshal\Collection\GenericCollection';
@@ -32,7 +32,7 @@ class Builder implements BuilderInterface
      *
      * Creates a new collection object.
      *
-     * @param array $data Data to load into the collection.
+     * @param array<int|string, mixed> $data Data to load into the collection.
      *
      * @return GenericCollection
      *

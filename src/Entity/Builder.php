@@ -10,8 +10,6 @@
  */
 namespace Aura\Marshal\Entity;
 
-use Aura\Marshal\Lazy\BuilderInterface as LazyBuilderInterface;
-
 /**
  *
  * Creates a new entity object for a type.
@@ -25,7 +23,7 @@ class Builder implements BuilderInterface
      *
      * The class to use for new instances.
      *
-     * @var string
+     * @var class-string<GenericEntity>
      *
      */
     protected $class = 'Aura\Marshal\Entity\GenericEntity';
@@ -34,7 +32,7 @@ class Builder implements BuilderInterface
      *
      * Creates a new entity object.
      *
-     * @param array|object $data Data to load into the entity.
+     * @param array<int|string, mixed> $data Data to load into the entity.
      *
      * @return GenericEntity
      *

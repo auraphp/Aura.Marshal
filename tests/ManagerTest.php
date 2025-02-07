@@ -19,7 +19,7 @@ class ManagerTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function set_up()
+    protected function set_up(): void
     {
         parent::set_up();
 
@@ -36,25 +36,25 @@ class ManagerTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tear_down()
+    protected function tear_down(): void
     {
         parent::tear_down();
     }
 
-    public function test__get()
+    public function test__get(): void
     {
         $actual = $this->manager->posts;
         $expect = 'Aura\Marshal\Type\GenericType';
         $this->assertInstanceOf($expect, $actual);
     }
 
-    public function test__getNoSuchType()
+    public function test__getNoSuchType(): void
     {
         $this->expectException('Aura\Marshal\Exception');
         $actual = $this->manager->no_such_type;
     }
 
-    public function testGetTypes()
+    public function testGetTypes(): void
     {
         $actual = $this->manager->getTypes();
         $expect = [
@@ -69,19 +69,19 @@ class ManagerTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testSetType_alreadySet()
+    public function testSetType_alreadySet(): void
     {
         $this->expectException('Aura\Marshal\Exception');
         $this->manager->setType('authors', []);
     }
 
-    public function testSetRelation_noSuchType()
+    public function testSetRelation_noSuchType(): void
     {
         $this->expectException('Aura\Marshal\Exception');
         $this->manager->setRelation('no_such_type', 'relation_name', []);
     }
 
-    public function testSetRelation_typeNotInstantiated()
+    public function testSetRelation_typeNotInstantiated(): void
     {
         $relation_builder = new RelationBuilder;
         $type_builder = new TypeBuilder;
@@ -114,7 +114,7 @@ class ManagerTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         // load data into the types
         $fixture = include __DIR__ . '/fixture_data.php';
@@ -131,7 +131,7 @@ class ManagerTest extends TestCase
         }
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $relation_builder = new RelationBuilder;
         $type_builder = new TypeBuilder;

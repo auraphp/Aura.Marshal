@@ -11,10 +11,12 @@
 namespace Aura\Marshal\Type;
 
 use Aura\Marshal\Collection\BuilderInterface as CollectionBuilderInterface;
+use Aura\Marshal\Collection\GenericCollection;
 use Aura\Marshal\Data;
 use Aura\Marshal\Exception;
 use Aura\Marshal\Lazy\BuilderInterface as LazyBuilderInterface;
 use Aura\Marshal\Entity\BuilderInterface as EntityBuilderInterface;
+use Aura\Marshal\Entity\GenericEntity;
 use Aura\Marshal\Relation\RelationInterface;
 use SplObjectStorage;
 
@@ -32,7 +34,7 @@ class GenericType extends Data
      *
      * A builder to create collection objects for this type.
      *
-     * @var object
+     * @var CollectionBuilderInterface
      *
      */
     protected $collection_builder;
@@ -66,7 +68,7 @@ class GenericType extends Data
      * Note that we always have an array of offsets, and the keys are by
      * the field name and the values for that field.
      *
-     * @var array
+     * @var array<string, array<string, int[]>>
      *
      */
     protected $index_fields = [];
@@ -79,7 +81,7 @@ class GenericType extends Data
      *
      * Note that we always have only one offset, keyed by identity value.
      *
-     * @var array
+     * @var array<mixed, int>
      *
      */
     protected $index_identity = [];
@@ -92,7 +94,7 @@ class GenericType extends Data
      *
      * Note that we always have one offset, and the key is merely sequential.
      *
-     * @var array
+     * @var int[]
      *
      */
     protected $index_new = [];
@@ -101,7 +103,7 @@ class GenericType extends Data
      *
      * An array of all entities removed via `removeEntity()`.
      *
-     * @var array
+     * @var mixed[]
      *
      */
     protected $removed = [];
@@ -110,7 +112,7 @@ class GenericType extends Data
      *
      * An object store of the initial data for entities in the IdentityMap.
      *
-     * @var SplObjectStorage
+     * @var SplObjectStorage<GenericEntity, array<string, mixed>>
      *
      */
     protected $initial_data;
@@ -129,7 +131,7 @@ class GenericType extends Data
      * An array of relationship descriptions, where the key is a
      * field name for the entity and the value is a relation object.
      *
-     * @var array
+     * @var array<string, RelationInterface>
      *
      */
     protected $relations = [];
@@ -138,7 +140,7 @@ class GenericType extends Data
      *
      * Constructor; overrides the parent entirely.
      *
-     * @param array $data The initial data for all entities in the type.
+     * @param array<int|string, mixed> $data The initial data for all entities in the type.
      *
      */
     public function __construct(array $data = [])
@@ -180,7 +182,7 @@ class GenericType extends Data
      * Sets the fields that should be indexed at load() time; removes all
      * previous field indexes.
      *
-     * @param array $fields The fields to be indexed.
+     * @param string[] $fields The fields to be indexed.
      *
      * @return void
      *
@@ -197,7 +199,7 @@ class GenericType extends Data
      *
      * Returns the list of indexed field names.
      *
-     * @return array
+     * @return string[]
      *
      */
     public function getIndexFields()
@@ -303,12 +305,12 @@ class GenericType extends Data
      * The loaded elements will be converted to entity objects by the
      * entity builder only as you request them from the IdentityMap.
      *
-     * @param array $data Entity data to load into the IdentityMap.
+     * @param array<int|string, mixed> $data Entity data to load into the IdentityMap.
      *
      * @param string $return_field Return values from this field; if empty,
      * return values from the identity field (the default).
      *
-     * @return array The return values from the data elements, regardless
+     * @return mixed[] The return values from the data elements, regardless
      * of whether they were loaded or not.
      *
      */
@@ -346,7 +348,7 @@ class GenericType extends Data
      *
      * Loads a single entity into the identity map.
      *
-     * @param array $initial_data The initial data for the entity.
+     * @param array<string, mixed> $initial_data The initial data for the entity.
      *
      * @return object The newly-loaded entity.
      *
@@ -374,7 +376,7 @@ class GenericType extends Data
      *
      * Loads an entity collection into the identity map.
      *
-     * @param array $data The initial data for the entities.
+     * @param array<array<string, mixed>> $data The initial data for the entities.
      *
      * @return object The newly-loaded collection.
      *
@@ -409,11 +411,11 @@ class GenericType extends Data
      *
      * Loads an entity into the identity map.
      *
-     * @param array $initial_data The initial data for the entity.
+     * @param array<string, mixed> $initial_data The initial data for the entity.
      *
      * @param string $identity_field The identity field for the entity.
      *
-     * @param array $index_fields The fields to index on.
+     * @param string[] $index_fields The fields to index on.
      *
      * @return int The identity map offset of the new entity.
      *
@@ -459,7 +461,7 @@ class GenericType extends Data
      * Returns the array keys for the for the entities in the IdentityMap;
      * the keys were generated at load() time from the identity field values.
      *
-     * @return array
+     * @return mixed[]
      *
      */
     public function getIdentityValues()
@@ -474,7 +476,7 @@ class GenericType extends Data
      *
      * @param string $field The field name to get values for.
      *
-     * @return array An array of key-value pairs where the key is the identity
+     * @return array<mixed, mixed> An array of key-value pairs where the key is the identity
      * value and the value is the requested field value.
      *
      */
@@ -497,7 +499,7 @@ class GenericType extends Data
      * @param int $identity_value The identity value of the entity to be
      * retrieved.
      *
-     * @return object A entity object via the entity builder.
+     * @return ?object A entity object via the entity builder.
      *
      */
     public function getEntity($identity_value)
@@ -525,7 +527,7 @@ class GenericType extends Data
      *
      * @param mixed $value The value of the field to match on.
      *
-     * @return object A entity object via the entity builder.
+     * @return ?object A entity object via the entity builder.
      *
      */
     public function getEntityByField($field, $value)
@@ -560,7 +562,7 @@ class GenericType extends Data
      *
      * @param string $value The field value to match on.
      *
-     * @return object A entity object via the entity builder.
+     * @return ?object A entity object via the entity builder.
      *
      */
     protected function getEntityByIndex($field, $value)
@@ -578,9 +580,9 @@ class GenericType extends Data
      * of their identity fields; each element will be converted to a entity
      * object if it is not already an object of the proper class.
      *
-     * @param array $identity_values An array of identity values to retrieve.
+     * @param mixed[] $identity_values An array of identity values to retrieve.
      *
-     * @return object A collection object via the collection builder.
+     * @return GenericCollection A collection object via the collection builder.
      *
      */
     public function getCollection(array $identity_values)
@@ -619,7 +621,7 @@ class GenericType extends Data
      * @param mixed $values The value of the field to match on; if an array,
      * any value in the array will be counted as a match.
      *
-     * @return object A collection object via the collection builder.
+     * @return GenericCollection A collection object via the collection builder.
      *
      */
     public function getCollectionByField($field, $values)
@@ -665,7 +667,7 @@ class GenericType extends Data
      * @param mixed $values The value of the field to match on; if an array,
      * any value in the array will be counted as a match.
      *
-     * @return object A collection object via the collection builder.
+     * @return GenericCollection A collection object via the collection builder.
      *
      */
     protected function getCollectionByIndex($field, $values)
@@ -725,7 +727,7 @@ class GenericType extends Data
      *
      * Returns the array of all relationship definition objects.
      *
-     * @return array
+     * @return array<string, \Aura\Marshal\Relation\RelationInterface>
      *
      */
     public function getRelations()
@@ -742,9 +744,9 @@ class GenericType extends Data
      * IdentityMap. Typically this is used to add to a collection, or
      * to create a new entity from user input.
      *
-     * @param array $data Data for the new entity.
+     * @param array<int|string, mixed> $data Data for the new entity.
      *
-     * @return object
+     * @return GenericEntity
      *
      */
     public function newEntity(array $data = [])
@@ -759,7 +761,7 @@ class GenericType extends Data
      *
      * Removes an entity from the collection.
      *
-     * @param $identity_value int The identity value of the entity to be
+     * @param int $identity_value The identity value of the entity to be
      * removed.
      *
      * @return bool True on success, false on failure.
@@ -793,7 +795,11 @@ class GenericType extends Data
             // get the field value
             $value = $entity->$field;
 
-            // find index of the offset with that value
+            /**
+             * Find index of the offset with that value
+             * 
+             * @var int|false $offset_idx
+             */
             $offset_idx = array_search(
                 $offset,
                 $this->index_fields[$field][$value]
@@ -819,7 +825,7 @@ class GenericType extends Data
      * Returns an array of all entities in the IdentityMap that have been
      * modified.
      *
-     * @return array
+     * @return array<mixed, GenericEntity|mixed>
      *
      */
     public function getChangedEntities()
@@ -839,7 +845,7 @@ class GenericType extends Data
      * Returns an array of all entities in the IdentityMap that were created
      * using `newEntity()`.
      *
-     * @return array
+     * @return array<GenericEntity|mixed>
      *
      */
     public function getNewEntities()
@@ -855,7 +861,7 @@ class GenericType extends Data
      *
      * Returns all non-removed entities in the type.
      *
-     * @return array
+     * @return array<int|string, \Aura\Marshal\GenericEntity|mixed>
      *
      */
     public function getAllEntities()
@@ -868,7 +874,7 @@ class GenericType extends Data
      * Returns an array of all entities that were removed using
      * `removeEntity()`.
      *
-     * @return array
+     * @return mixed[]
      *
      */
     public function getRemovedEntities()
@@ -880,9 +886,9 @@ class GenericType extends Data
      *
      * Returns the initial data for a given entity.
      *
-     * @param object $entity The entity to find initial data for.
+     * @param GenericEntity $entity The entity to find initial data for.
      *
-     * @return array The initial data for the entity.
+     * @return null|array<string, mixed> The initial data for the entity.
      *
      */
     public function getInitialData($entity)
@@ -890,15 +896,17 @@ class GenericType extends Data
         if ($this->initial_data->contains($entity)) {
             return $this->initial_data[$entity];
         }
+
+        return null;
     }
 
     /**
      *
      * Returns the changed fields and their values for an entity.
      *
-     * @param object $entity The entity to find changes for.
+     * @param GenericEntity $entity The entity to find changes for.
      *
-     * @return array An array of key-value pairs where the key is the field
+     * @return array<string, mixed> An array of key-value pairs where the key is the field
      * name and the value is the changed value.
      *
      */
@@ -908,7 +916,7 @@ class GenericType extends Data
         $changed = [];
 
         // initial data for this entity
-        $initial_data = $this->getInitialData($entity);
+        $initial_data = $this->getInitialData($entity) ?? [];
 
         // go through all the initial data values
         foreach ($initial_data as $field => $old) {
@@ -940,7 +948,7 @@ class GenericType extends Data
      *
      * Unsets all entities from this type.
      *
-     * @return null
+     * @return void
      *
      */
     public function clear()

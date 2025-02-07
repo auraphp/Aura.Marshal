@@ -10,8 +10,6 @@
  */
 namespace Aura\Marshal\Collection;
 
-use Aura\Marshal\Type\GenericType;
-
 /**
  *
  * An interface for collection builder objects.
@@ -25,7 +23,9 @@ interface BuilderInterface
      *
      * Creates a new collection object.
      *
-     * @param array $data Data to load into the collection.
+     * @param array<int|string, mixed> $data Data to load into the collection.
+     * 
+     * @return GenericCollection
      *
      */
     public function newInstance(array $data);

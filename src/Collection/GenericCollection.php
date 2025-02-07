@@ -31,7 +31,7 @@ class GenericCollection extends Data implements ToArrayInterface
      *
      * @param string $field The field name to retrieve values for.
      *
-     * @return array
+     * @return array<int|string, mixed>
      *
      */
     public function getFieldValues($field)

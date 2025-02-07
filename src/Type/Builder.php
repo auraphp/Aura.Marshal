@@ -28,7 +28,7 @@ class Builder
      *
      * The class to use for new instances.
      *
-     * @var string
+     * @var class-string<GenericType>
      *
      */
     protected $class = 'Aura\Marshal\Type\GenericType';
@@ -50,7 +50,7 @@ class Builder
      *   A builder to create collection objects for the type. This key
      *   is optional, and defaults to a new Collection\Builder object.
      *
-     * @param array $info An array of information about the type.
+     * @param array<string, mixed> $info An array of information about the type.
      *
      * @return GenericType
      *

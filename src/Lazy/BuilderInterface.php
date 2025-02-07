@@ -28,7 +28,7 @@ interface BuilderInterface
      * @param RelationInterface $relation The relationship object between the
      * native and foreign types.
      *
-     * @return Lazy
+     * @return LazyInterface
      *
      */
     public function newInstance(RelationInterface $relation);

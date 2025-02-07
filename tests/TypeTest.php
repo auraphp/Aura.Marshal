@@ -1,14 +1,14 @@
 <?php
+
 namespace Aura\Marshal;
 
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Entity\Builder as EntityBuilder;
-use Aura\Marshal\Entity\GenericCollection;
 use Aura\Marshal\Entity\GenericEntity;
+use Aura\Marshal\Lazy\Builder as LazyBuilder;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Aura\Marshal\Type\Builder as TypeBuilder;
 use Aura\Marshal\Type\GenericType;
-use Aura\Marshal\Lazy\Builder as LazyBuilder;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
@@ -26,7 +26,7 @@ class TypeTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function set_up()
+    protected function set_up(): void
     {
         parent::set_up();
 
@@ -36,10 +36,13 @@ class TypeTest extends TestCase
         $this->type = new GenericType;
         $this->type->setIdentityField($info['identity_field']);
         $this->type->setIndexFields($info['index_fields']);
-        $this->type->setEntityBuilder(new EntityBuilder(new LazyBuilder));
+        $this->type->setEntityBuilder(new EntityBuilder);
         $this->type->setCollectionBuilder(new CollectionBuilder);
     }
 
+    /**
+     * @return array<array<string, mixed>>
+     */
     protected function loadTypeWithPosts()
     {
         $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
@@ -51,12 +54,12 @@ class TypeTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tear_down()
+    protected function tear_down(): void
     {
         parent::tear_down();
     }
 
-    public function testSetAndGetIdentityField()
+    public function testSetAndGetIdentityField(): void
     {
         $expect = 'foobar';
         $this->type->setIdentityField('foobar');
@@ -64,7 +67,7 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testSetAndGetIndexFields()
+    public function testSetAndGetIndexFields(): void
     {
         $expect = ['foobar', 'bazdib'];
         $this->type->setIndexFields($expect);
@@ -72,7 +75,7 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
 
     }
-    public function testSetAndGetEntityBuilder()
+    public function testSetAndGetEntityBuilder(): void
     {
         $builder = new EntityBuilder;
         $this->type->setEntityBuilder($builder);
@@ -80,7 +83,7 @@ class TypeTest extends TestCase
         $this->assertSame($builder, $actual);
     }
 
-    public function testSetAndGetCollectionBuilder()
+    public function testSetAndGetCollectionBuilder(): void
     {
         $builder = new CollectionBuilder;
         $this->type->setCollectionBuilder($builder);
@@ -88,7 +91,7 @@ class TypeTest extends TestCase
         $this->assertSame($builder, $actual);
     }
 
-    public function testSetAndGetLazyBuilder()
+    public function testSetAndGetLazyBuilder(): void
     {
         $builder = new LazyBuilder;
         $this->type->setLazyBuilder($builder);
@@ -96,7 +99,7 @@ class TypeTest extends TestCase
         $this->assertSame($builder, $actual);
     }
 
-    public function testLoadAndGetStorage()
+    public function testLoadAndGetStorage(): void
     {
         $data = $this->loadTypeWithPosts();
         $expect = count($data);
@@ -110,7 +113,7 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetIdentityValues()
+    public function testGetIdentityValues(): void
     {
         $data = $this->loadTypeWithPosts();
         $expect = [1, 2, 3, 4, 5];
@@ -118,7 +121,7 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetFieldValues()
+    public function testGetFieldValues(): void
     {
         $data = $this->loadTypeWithPosts();
         $expect = [1 => '1', 2 => '1', 3 => '1', 4 => '2', 5 => '2'];
@@ -126,10 +129,14 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetEntity()
+    public function testGetEntity(): void
     {
         $data = $this->loadTypeWithPosts();
         $expect = (object) $data[2];
+
+        /**
+         * @var GenericEntity $actual
+         */
         $actual = $this->type->getEntity(3);
 
         $this->assertSame($expect->id, $actual->id);
@@ -141,17 +148,21 @@ class TypeTest extends TestCase
         $this->assertSame($actual, $again);
     }
 
-    public function testGetEntity_none()
+    public function testGetEntity_none(): void
     {
         $data = $this->loadTypeWithPosts();
         $actual = $this->type->getEntity(999);
         $this->assertNull($actual);
     }
 
-    public function testGetEntityByField_identity()
+    public function testGetEntityByField_identity(): void
     {
         $data = $this->loadTypeWithPosts();
         $expect = (object) $data[3];
+
+        /**
+         * @var GenericEntity $actual
+         */
         $actual = $this->type->getEntityByField('id', 4);
 
         $this->assertSame($expect->id, $actual->id);
@@ -159,10 +170,14 @@ class TypeTest extends TestCase
         $this->assertSame($expect->body, $actual->body);
     }
 
-    public function testGetEntityByField_index()
+    public function testGetEntityByField_index(): void
     {
         $data = $this->loadTypeWithPosts();
         $expect = (object) $data[3];
+
+        /**
+         * @var GenericEntity $actual
+         */
         $actual = $this->type->getEntityByField('author_id', 2);
 
         $this->assertSame($expect->id, $actual->id);
@@ -170,17 +185,21 @@ class TypeTest extends TestCase
         $this->assertSame($expect->body, $actual->body);
     }
 
-    public function testGetEntityByField_indexNone()
+    public function testGetEntityByField_indexNone(): void
     {
-        $data = $this->loadTypeWithPosts();
+        $this->loadTypeWithPosts();
         $actual = $this->type->getEntityByField('author_id', 'no such value');
         $this->assertNull($actual);
     }
 
-    public function testGetEntityByField_loop()
+    public function testGetEntityByField_loop(): void
     {
         $data = $this->loadTypeWithPosts();
         $expect = (object) $data[3];
+
+        /**
+         * @var GenericEntity $actual
+         */
         $actual = $this->type->getEntityByField('fake_field', '88');
 
         $this->assertSame($expect->id, $actual->id);
@@ -189,14 +208,14 @@ class TypeTest extends TestCase
         $this->assertSame($expect->fake_field, $actual->fake_field);
     }
 
-    public function testGetEntityByField_loopNone()
+    public function testGetEntityByField_loopNone(): void
     {
         $data = $this->loadTypeWithPosts();
         $actual = $this->type->getEntityByField('fake_field', 'no such value');
         $this->assertNull($actual);
     }
 
-    public function getCollection()
+    public function testGetCollection(): void
     {
         $data = $this->loadTypeWithPosts();
         $collection = $this->type->getCollection([1, 2, 3]);
@@ -213,7 +232,7 @@ class TypeTest extends TestCase
         }
     }
 
-    public function testGetCollectionByField()
+    public function testGetCollectionByField(): void
     {
         $data = $this->loadTypeWithPosts();
         $collection = $this->type->getCollectionByField('fake_field', 88);
@@ -230,7 +249,7 @@ class TypeTest extends TestCase
         }
     }
 
-    public function testGetCollectionByField_many()
+    public function testGetCollectionByField_many(): void
     {
         $data = $this->loadTypeWithPosts();
         $collection = $this->type->getCollectionByField('fake_field', [88, 69]);
@@ -250,7 +269,7 @@ class TypeTest extends TestCase
         }
     }
 
-    public function testGetCollectionByField_identity()
+    public function testGetCollectionByField_identity(): void
     {
         $data = $this->loadTypeWithPosts();
         $collection = $this->type->getCollectionByField('id', [4, 5]);
@@ -267,7 +286,7 @@ class TypeTest extends TestCase
         }
     }
 
-    public function getCollectionByField_index()
+    public function testGetCollectionByField_index(): void
     {
         $data = $this->loadTypeWithPosts();
         $collection = $this->type->getCollectionByField('author_id', [2, 1]);
@@ -287,7 +306,7 @@ class TypeTest extends TestCase
         }
     }
 
-    public function testAddAndGetRelation()
+    public function testAddAndGetRelation(): void
     {
         $type_builder = new TypeBuilder;
         $relation_builder = new RelationBuilder;
@@ -308,14 +327,14 @@ class TypeTest extends TestCase
         $this->type->setRelation($name, $relation);
     }
 
-    public function testTypeBuilder_noIdentityField()
+    public function testTypeBuilder_noIdentityField(): void
     {
         $type_builder = new TypeBuilder;
         $this->expectException('Aura\Marshal\Exception');
         $type = $type_builder->newInstance([]);
     }
 
-    public function testNewEntity()
+    public function testNewEntity(): void
     {
         $this->loadTypeWithPosts();
         $before = count($this->type);
@@ -330,17 +349,29 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetChangedEntities()
+    public function testGetChangedEntities(): void
     {
-        $data = $this->loadTypeWithPosts();
+        $this->loadTypeWithPosts();
 
-        // change entity id 1 and 3
+        /**
+         * Change entity id 1 and 3
+         * 
+         * @var GenericEntity $entity_1
+         */
         $entity_1 = $this->type->getEntity(1);
         $entity_1->fake_field = 'changed';
+
+        /**
+         * @var GenericEntity $entity_3
+         */
         $entity_3 = $this->type->getEntity(3);
         $entity_3->fake_field = 'changed';
 
-        // get entity 2 but don't change it
+        /**
+         * Get entity 2 but don't change it
+         * 
+         * @var GenericEntity $entity_2
+         */
         $entity_2 = $this->type->getEntity(2);
         $fake_field = $entity_2->fake_field;
         $entity_2->fake_field = $fake_field;
@@ -355,7 +386,7 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetChangedEntities_empty()
+    public function testGetChangedEntities_empty(): void
     {
         $data = $this->loadTypeWithPosts();
         $expect = [];
@@ -364,7 +395,7 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetNewEntities()
+    public function testGetNewEntities(): void
     {
         $data = $this->loadTypeWithPosts();
         $expect = [
@@ -376,7 +407,7 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetNewEntities_empty()
+    public function testGetNewEntities_empty(): void
     {
         $data = $this->loadTypeWithPosts();
         $expect = [];
@@ -384,15 +415,19 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetInitialData_noEntity()
+    public function testGetInitialData_noEntity(): void
     {
-        $entity = new \StdClass;
+        $entity = new GenericEntity([]);
         $this->assertNull($this->type->getInitialData($entity));
     }
 
-    public function testGetChangedFields_numeric()
+    public function testGetChangedFields_numeric(): void
     {
         $this->loadTypeWithPosts();
+
+        /**
+         * @var GenericEntity $entity
+         */
         $entity = $this->type->getEntity(1);
 
         // change from string '69' to int 69;
@@ -408,9 +443,13 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetChangedFields_toNull()
+    public function testGetChangedFields_toNull(): void
     {
         $this->loadTypeWithPosts();
+
+        /**
+         * @var GenericEntity $entity
+         */
         $entity = $this->type->getEntity(1);
 
         $entity->fake_field = null;
@@ -419,9 +458,13 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetChangedFields_fromNull()
+    public function testGetChangedFields_fromNull(): void
     {
         $this->loadTypeWithPosts();
+
+        /**
+         * @var GenericEntity $entity
+         */
         $entity = $this->type->getEntity(1);
 
         $entity->null_field = 0;
@@ -430,9 +473,13 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetChangedFields_other()
+    public function testGetChangedFields_other(): void
     {
         $this->loadTypeWithPosts();
+
+        /**
+         * @var GenericEntity $entity
+         */
         $entity = $this->type->getEntity(1);
 
         $entity->fake_field = 'changed';
@@ -441,7 +488,7 @@ class TypeTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testLoadEntity()
+    public function testLoadEntity(): void
     {
         $initial_data = [
             'id'  => 88,
@@ -451,13 +498,17 @@ class TypeTest extends TestCase
             'zim' => 'gir',
         ];
 
+        /**
+         * @var GenericEntity $entity
+         */
         $entity = $this->type->loadEntity($initial_data);
+
         foreach ($initial_data as $field => $value) {
             $this->assertSame($value, $entity->$field);
         }
     }
 
-    public function testLoadCollection()
+    public function testLoadCollection(): void
     {
         $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
         $collection = $this->type->loadCollection($data['posts']);
@@ -467,14 +518,14 @@ class TypeTest extends TestCase
         );
     }
 
-    public function testRemove_none()
+    public function testRemove_none(): void
     {
         $this->loadTypeWithPosts();
 
         $this->assertSame([], $this->type->getRemovedEntities());
     }
 
-    public function testRemove_single()
+    public function testRemove_single(): void
     {
         $this->loadTypeWithPosts();
 
@@ -483,7 +534,7 @@ class TypeTest extends TestCase
         $this->assertSame([1], array_keys($this->type->getRemovedEntities()));
     }
 
-    public function testRemove_many()
+    public function testRemove_many(): void
     {
         $this->loadTypeWithPosts();
 
@@ -497,14 +548,14 @@ class TypeTest extends TestCase
         );
     }
 
-    public function testRemoveNonExistent()
+    public function testRemoveNonExistent(): void
     {
         $this->loadTypeWithPosts();
 
         $this->assertFalse($this->type->removeEntity(99999));
     }
 
-    public function testRemoveAndGet()
+    public function testRemoveAndGet(): void
     {
         $this->loadTypeWithPosts();
         $this->assertTrue($this->type->removeEntity(1));
@@ -512,19 +563,19 @@ class TypeTest extends TestCase
         $this->assertNull($this->type->getEntity(1));
     }
 
-    public function testRemoveAndDeleteAgain()
+    public function testRemoveAndDeleteAgain(): void
     {
         $this->loadTypeWithPosts();
         $this->assertTrue($this->type->removeEntity(1));
         $this->assertFalse($this->type->removeEntity(1));
     }
 
-    public function testRemoveEmpty()
+    public function testRemoveEmpty(): void
     {
         $this->assertFalse($this->type->removeEntity(1));
     }
 
-    public function testRemoveAndGetCollectionByIndex_first()
+    public function testRemoveAndGetCollectionByIndex_first(): void
     {
         $data = $this->loadTypeWithPosts();
 
@@ -545,7 +596,7 @@ class TypeTest extends TestCase
         }
     }
 
-    public function testRemoveAndGetCollectionByIndex_second()
+    public function testRemoveAndGetCollectionByIndex_second(): void
     {
         $data = $this->loadTypeWithPosts();
 
@@ -566,7 +617,7 @@ class TypeTest extends TestCase
         }
     }
 
-    public function testRemoveAndGetCollectionByField_first()
+    public function testRemoveAndGetCollectionByField_first(): void
     {
         $data = $this->loadTypeWithPosts();
 
@@ -586,7 +637,7 @@ class TypeTest extends TestCase
         }
     }
 
-    public function testRemoveAndGetCollectionByField_second()
+    public function testRemoveAndGetCollectionByField_second(): void
     {
         $data = $this->loadTypeWithPosts();
 
@@ -607,7 +658,7 @@ class TypeTest extends TestCase
         }
     }
 
-    public function testRemoveAndGetCollectionByField_many()
+    public function testRemoveAndGetCollectionByField_many(): void
     {
         $data = $this->loadTypeWithPosts();
 
@@ -630,7 +681,7 @@ class TypeTest extends TestCase
         }
     }
 
-    public function testRemoveAll()
+    public function testRemoveAll(): void
     {
         $data = $this->loadTypeWithPosts();
 
@@ -643,7 +694,7 @@ class TypeTest extends TestCase
         $this->assertNull($this->type->getEntity(1));
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $data = $this->loadTypeWithPosts();
 

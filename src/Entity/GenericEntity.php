@@ -22,6 +22,7 @@ use Aura\Marshal\ToArrayTrait;
  * @package Aura.Marshal
  *
  */
+#[\AllowDynamicProperties]
 class GenericEntity extends Data implements ToArrayInterface
 {
     use MagicArrayAccessTrait;

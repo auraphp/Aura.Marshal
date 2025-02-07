@@ -26,7 +26,7 @@ class Builder
      *
      * A map of relationships to classes.
      *
-     * @var array
+     * @var array<string, class-string<RelationInterface>>
      *
      */
     protected $relationship_class = [
@@ -45,7 +45,7 @@ class Builder
      * @param string $name The name of the native field for the related
      * entity or collection.
      *
-     * @param array $info An array of relationship definition information.
+     * @param array<string, mixed> $info An array of relationship definition information.
      *
      * @param Manager $manager A type manager.
      *
@@ -92,7 +92,7 @@ class Builder
      *
      * Prepares the type-of-relationship name.
      *
-     * @param array $info The relationship definition.
+     * @param array<string, mixed> $info The relationship definition.
      *
      * @param Manager $manager The type manager.
      *
@@ -110,7 +110,7 @@ class Builder
      *
      * Prepares the native field name.
      *
-     * @param array $info The relationship definition.
+     * @param array<string, mixed> $info The relationship definition.
      *
      * @param Manager $manager The type manager.
      *
@@ -128,7 +128,7 @@ class Builder
      *
      * Prepares the foreign type name, field name, and type object.
      *
-     * @param array $info The relationship definition.
+     * @param array<string, mixed> $info The relationship definition.
      *
      * @param Manager $manager The type manager.
      *
@@ -152,7 +152,7 @@ class Builder
      *
      * Prepares the through type name, field names, and type object.
      *
-     * @param array $info The relationship definition.
+     * @param array<string, mixed> $info The relationship definition.
      *
      * @param Manager $manager The type manager.
      *

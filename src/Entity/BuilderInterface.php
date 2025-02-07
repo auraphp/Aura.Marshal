@@ -10,8 +10,6 @@
  */
 namespace Aura\Marshal\Entity;
 
-use Aura\Marshal\Type\GenericType;
-
 /**
  *
  * An interface for EntityBuilder objects.
@@ -25,7 +23,9 @@ interface BuilderInterface
      *
      * Creates a new entity object.
      *
-     * @param array $data Data to load into the entity.
+     * @param array<int|string, mixed> $data Data to load into the entity.
+     * 
+     * @return GenericEntity
      *
      */
     public function newInstance(array $data);
