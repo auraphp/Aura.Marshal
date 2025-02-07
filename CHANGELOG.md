@@ -1,3 +1,6 @@
+# 4.0.3
+* PHP 8.4 support. Thank you @compwright https://github.com/auraphp/Aura.Marshal/pull/44
+
 # 4.0.2
 
 ## What's Changed
