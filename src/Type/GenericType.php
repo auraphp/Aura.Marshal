@@ -437,7 +437,7 @@ class GenericType extends Data
 
         // get the entity and retain initial data
         $entity = end($this->data);
-        $this->initial_data->attach($entity, $initial_data);
+        $this->initial_data[$entity] = $initial_data;
 
         // build indexes by offset
         $offset = key($this->data);
