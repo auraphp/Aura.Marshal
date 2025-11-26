@@ -1,3 +1,7 @@
+# 4.0.4
+* PHP 8.5 support. Thank you @compwright https://github.com/auraphp/Aura.Marshal/pull/46 , https://github.com/auraphp/Aura.Marshal/pull/47 
+* Add 8.5 to CI : https://github.com/auraphp/Aura.Marshal/pull/48
+
 # 4.0.3
 * PHP 8.4 support. Thank you @compwright https://github.com/auraphp/Aura.Marshal/pull/44
 
