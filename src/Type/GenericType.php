@@ -893,7 +893,7 @@ class GenericType extends Data
      */
     public function getInitialData($entity)
     {
-        if ($this->initial_data->contains($entity)) {
+        if ($this->initial_data->offsetExists($entity)) {
             return $this->initial_data[$entity];
         }
 
